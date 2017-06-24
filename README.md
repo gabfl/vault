@@ -11,6 +11,10 @@ Vault is a simple Python password manager. It allows you to securely save secret
  - Automatic vault locking after inactivity
  - Import / Export in Json
 
+## Basic usage
+
+![Demo](img/demo.gif)
+
 ## Install dependencies
 
 ```
@@ -28,22 +32,7 @@ cd vault
 python3 vault.py
 ```
 
-### Basic usage:
-```
-./vault.py
-    __      __         _ _           .----.
-    \ \    / /        | | |         / /  \ \
-     \ \  / /_ _ _   _| | |_       _| |__| |_
-      \ \/ / _` | | | | | __|    .' |_   |_| '.
-       \  / (_| | |_| | | |_     '.__________.'
-        \/ \__,_|\__,_|_|\__|    |            |
-                                 '.__________.'
-Please enter your master key:
-
-Choose a command [(g)et / (s)earch / show (all) / (a)dd / (d)elete / (cat)egories / (l)ock / (q)uit]:
-```
-
-### Advanced settings:
+## Advanced settings:
 
 ```
 usage: vault.py [-h] [-t [CLIPBOARD_TTL]] [-p [HIDE_SECRET_TTL]]
