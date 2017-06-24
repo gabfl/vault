@@ -177,7 +177,7 @@ class Vault:
         """
 
         # Create `secret` item if necessary
-        if not self.vault.get('secret'):
+        if not self.vault.get('secrets'):
             self.vault['secrets'] = []
 
         # Add item to vault
@@ -266,7 +266,7 @@ class Vault:
         print()
         search = input('Enter search: ')
 
-        if self.vault.get('secret'):
+        if self.vault.get('secrets'):
             # Iterate thru the items
             results = []
             for i, item in enumerate(self.vault['secrets']):
@@ -298,7 +298,7 @@ class Vault:
             Show all items in a table
         """
 
-        if self.vault.get('secret'):
+        if self.vault.get('secrets'):
             # Iterate thru the items
             results = []
             for i, item in enumerate(self.vault['secrets']):
@@ -395,7 +395,7 @@ class Vault:
             If the vault has secrets, this method will show the total number of secrets.
         """
 
-        if self.vault.get('secret'):
+        if self.vault.get('secrets'):
             count = len(self.vault['secrets'])
 
             print()
@@ -520,7 +520,7 @@ class Vault:
             Will return `True` if a category is currently used by a secret
         """
 
-        if self.vault.get('secret'):
+        if self.vault.get('secrets'):
             # Iterate thru the items
             for item in self.vault['secrets']:
                 if categoryId and item['category'] == categoryId: # If the item has a category and it is the category searched

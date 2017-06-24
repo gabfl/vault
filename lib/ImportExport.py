@@ -83,7 +83,7 @@ class ImportExport:
         self.vault.unlock(False) # `False` = don't load menu after unlocking
 
         # If we have a valid vault
-        if self.vault.vault.get('secret'):
+        if self.vault.vault.get('secrets'):
             # Iterate thru the items
             output = []
             for item in self.vault.vault['secrets']:
