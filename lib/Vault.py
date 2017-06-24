@@ -265,8 +265,7 @@ class Vault:
                     self.categoryName(item['category']),
                     item['name'],
                     item['login']
-            ]
-            ]
+            ]]
             from tabulate import tabulate
             print()
             print (tabulate(results, headers=['Category', 'Name / URL', 'Login']))
