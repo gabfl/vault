@@ -14,7 +14,7 @@ Vault is a simple Python password manager. It allows you to securely save secret
 ## Install dependencies
 
 ```
-pip3 install pycryptodome pyperclip tabulate
+pip3 install pycryptodome pyperclip tabulate argparse
 ```
 
 ## Installation and setup
@@ -40,21 +40,22 @@ python3 vault.py
                                  '.__________.'
 Please enter your master key:
 
-Choose a command [(g)et / (s)earch / show (all) / (a)dd / (d)elete / (cat)egories / (l)ock / (q)uit]: 
+Choose a command [(g)et / (s)earch / show (all) / (a)dd / (d)elete / (cat)egories / (l)ock / (q)uit]:
 ```
 
 ### Advanced settings:
 
 ```
-usage: vault.py [-h] [-t CLIPBOARD_TTL] [-a AUTO_LOCK_TTL] [-v VAULT_LOCATION]
-                [-c CONFIG_LOCATION] [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-e]
+usage: vault.py [-h] [-t [CLIPBOARD_TTL]] [-a [AUTO_LOCK_TTL]]
+                [-v VAULT_LOCATION] [-c CONFIG_LOCATION] [-k]
+                [-i IMPORT_ITEMS] [-x EXPORT] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -t CLIPBOARD_TTL, --clipboard_TTL CLIPBOARD_TTL
-                        Set clipboard TTL (in seconds)
-  -a AUTO_LOCK_TTL, --auto_lock_TTL AUTO_LOCK_TTL
-                        Set auto lock TTL (in seconds)
+  -t [CLIPBOARD_TTL], --clipboard_TTL [CLIPBOARD_TTL]
+                        Set clipboard TTL (in seconds, default: 15)
+  -a [AUTO_LOCK_TTL], --auto_lock_TTL [AUTO_LOCK_TTL]
+                        Set auto lock TTL (in seconds, default: 900)
   -v VAULT_LOCATION, --vault_location VAULT_LOCATION
                         Set vault path
   -c CONFIG_LOCATION, --config_location CONFIG_LOCATION

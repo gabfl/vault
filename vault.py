@@ -11,8 +11,8 @@ from lib.Misc import *
 
 # Parse arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-t", "--clipboard_TTL", type=int, help="Set clipboard TTL (in seconds)")
-parser.add_argument("-a", "--auto_lock_TTL", type=int, help="Set auto lock TTL (in seconds)")
+parser.add_argument("-t", "--clipboard_TTL", type=int, help="Set clipboard TTL (in seconds, default: 15)", nargs='?', const = 15)
+parser.add_argument("-a", "--auto_lock_TTL", type=int, help="Set auto lock TTL (in seconds, default: 900)", nargs='?', const = 900)
 parser.add_argument("-v", "--vault_location", type=str, help="Set vault path")
 parser.add_argument("-c", "--config_location", type=str, help="Set config path")
 parser.add_argument("-k", "--change_key", action='store_true', help="Change master key")
