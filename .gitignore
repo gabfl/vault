@@ -1,0 +1,7 @@
+# Python
+__pycache__/
+*.py[cod]
+.Python
+
+# Mac
+.DS_Store
