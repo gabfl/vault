@@ -23,8 +23,9 @@ parser.add_argument("-e", "--erase_vault", action='store_true', help="Erase the 
 args = parser.parse_args()
 
 # Default paths
-ConfigPathDefault = os.path.expanduser('~') + '/.vault_config'
-vaultPathDefault = os.path.expanduser('~') + '/.vault_secure'
+folderPath = os.path.expanduser('~') + '/.vault/'
+ConfigPathDefault = folderPath + '.config'
+vaultPathDefault = folderPath + '.secure'
 
 def getVaultPath():
     """
@@ -51,6 +52,10 @@ def getConfigPath():
 if __name__ == '__main__':
     # Some nice ascii art
     logo()
+
+    # Create the vault folder if it does not exists yet
+    if getVaultPath() == vaultPathDefault or getConfigPath() == ConfigPathDefault:
+        createFolderIfMissing(folderPath)
 
     # Assess files integrity
     assessIntegrity(getVaultPath(), getConfigPath())
