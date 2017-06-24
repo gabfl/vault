@@ -89,6 +89,7 @@ class ImportExport:
             for item in self.vault.vault['secrets']:
                 # Add to output
                 output.append({
+                    'category': item['category'],
                     'categoryName': self.vault.categoryName(item['category']),
                     'name': item['name'],
                     'login': item['login'],
