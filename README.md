@@ -46,14 +46,17 @@ Choose a command [(g)et / (s)earch / show (all) / (a)dd / (d)elete / (cat)egorie
 ### Advanced settings:
 
 ```
-usage: vault.py [-h] [-t [CLIPBOARD_TTL]] [-a [AUTO_LOCK_TTL]]
-                [-v VAULT_LOCATION] [-c CONFIG_LOCATION] [-k]
-                [-i IMPORT_ITEMS] [-x EXPORT] [-e]
+usage: vault.py [-h] [-t [CLIPBOARD_TTL]] [-p [HIDE_SECRET_TTL]]
+                [-a [AUTO_LOCK_TTL]] [-v VAULT_LOCATION] [-c CONFIG_LOCATION]
+                [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
   -t [CLIPBOARD_TTL], --clipboard_TTL [CLIPBOARD_TTL]
                         Set clipboard TTL (in seconds, default: 15)
+  -p [HIDE_SECRET_TTL], --hide_secret_TTL [HIDE_SECRET_TTL]
+                        Set delay before hiding a printed password (in
+                        seconds, default: 15)
   -a [AUTO_LOCK_TTL], --auto_lock_TTL [AUTO_LOCK_TTL]
                         Set auto lock TTL (in seconds, default: 900)
   -v VAULT_LOCATION, --vault_location VAULT_LOCATION

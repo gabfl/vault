@@ -37,6 +37,7 @@ class Config:
             'keyVersion': '1', # Will be used to support legacy key versions if the algorithm changes
             'salt': self.generateRandomSalt(),
             'clipboardTTL': '15',
+            'hideSecretTTL': '5',
             'autoLockTTL': '900'
         }
 

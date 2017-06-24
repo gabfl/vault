@@ -12,6 +12,7 @@ from lib.Misc import *
 # Parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--clipboard_TTL", type=int, help="Set clipboard TTL (in seconds, default: 15)", nargs='?', const = 15)
+parser.add_argument("-p", "--hide_secret_TTL", type=int, help="Set delay before hiding a printed password (in seconds, default: 15)", nargs='?', const = 5)
 parser.add_argument("-a", "--auto_lock_TTL", type=int, help="Set auto lock TTL (in seconds, default: 900)", nargs='?', const = 900)
 parser.add_argument("-v", "--vault_location", type=str, help="Set vault path")
 parser.add_argument("-c", "--config_location", type=str, help="Set config path")
@@ -67,6 +68,8 @@ if __name__ == '__main__':
         c.update('clipboardTTL', args.clipboard_TTL)
     elif args.auto_lock_TTL:
         c.update('autoLockTTL', args.auto_lock_TTL)
+    elif args.hide_secret_TTL:
+        c.update('hideSecretTTL', args.hide_secret_TTL)
 
     # Init Vault
     v = Vault(config, getVaultPath())
