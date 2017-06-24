@@ -271,7 +271,10 @@ class Vault:
             results = []
             for i, item in enumerate(self.vault['secrets']):
                 # Search in name, login and notes
-                if search.upper() in item['name'].upper() or search.upper() in item['login'].upper() or search.upper() in item['notes'].upper():
+                if search.upper() in item['name'].upper() or \
+                    search.upper() in item['login'].upper() or \
+                    search.upper() in item['notes'].upper() or \
+                    search.upper() in self.categoryName(item['category']).upper():
                     # Add item to search results
                     results.append([
                         i,
