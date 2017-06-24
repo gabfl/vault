@@ -12,6 +12,24 @@ def logo():
     print("        \\/ \\__,_|\\__,_|_|\\__|    |            |")
     print("                                 '.__________.'")
 
+def createFolderIfMissing(folderPath):
+    """
+        Create the vault and configuration file storage folder if it does not exist
+    """
+
+    import os
+
+    try:
+        if not os.path.exists(folderPath):
+            os.makedirs(folderPath)
+    except Exception as e:
+        import sys
+
+        print()
+        print('We were unable to create the folder `%s` to store the vault and configuration file.' % (folderPath))
+        print('Please check the permissions or run `./vault.py --help` to find out how to specify an alternative path for both files.')
+        print()
+        sys.exit()
 
 def assessIntegrity(vaultPath, configPath):
     """

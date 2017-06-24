@@ -1,5 +1,6 @@
 [
 	{
+		"category": "0",
 		"categoryName": "Perso",
 		"name": "some item",
 		"login": "gab@notarealemail.com",
@@ -7,6 +8,7 @@
 		"notes": "my notes\nmore notes"
 	},
 	{
+		"category": "1",
 		"categoryName": "Pro",
 		"name": "some other item",
 		"login": "one@notarealemail.com",
@@ -14,6 +16,7 @@
 		"notes": "notes"
 	},
 	{
+		"category": "3",
 		"categoryName": "new category for import",
 		"name": "another kind of item",
 		"login": "two@notarealemail.com",
@@ -21,6 +24,7 @@
 		"notes": "sdasd"
 	},
 	{
+		"category": "0",
 		"categoryName": "Perso",
 		"name": "my stuff",
 		"login": "three@notarealemail.com",
@@ -28,6 +32,7 @@
 		"notes": ""
 	},
 	{
+		"category": "",
 		"categoryName": "n/a",
 		"name": "multi line item",
 		"login": "foor@notarealemail.com",

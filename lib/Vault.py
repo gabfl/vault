@@ -25,8 +25,14 @@ class Vault:
 
         print('Welcome to Vault. Please choose a secure secret key.');
         print()
-        masterKey = getpass.getpass('Please choose a master key:');
-        masterKeyRepeat = getpass.getpass('Please confirm your master key:');
+        try:
+            masterKey = getpass.getpass('Please choose a master key:');
+            masterKeyRepeat = getpass.getpass('Please confirm your master key:');
+        except KeyboardInterrupt as e:
+            # If the user presses `Ctrl`+`c`, exit the program
+            import sys
+            print()
+            sys.exit()
 
         if len(masterKey) < 8:
             print()
