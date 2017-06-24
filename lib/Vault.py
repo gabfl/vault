@@ -59,7 +59,13 @@ class Vault:
         global masterKey
 
         # Get master key
-        masterKey = getpass.getpass('Please enter your master key:');
+        try:
+            masterKey = getpass.getpass('Please enter your master key:');
+        except KeyboardInterrupt as e:
+            # If the user presses `Ctrl`+`c`, exit the program
+            import sys
+            print()
+            sys.exit()
 
         try:
             self.openVault() # Unlock vault
@@ -141,7 +147,13 @@ class Vault:
         print()
 
         # Category ID
-        categoryId = input('* Choose a category number (or leave empty for none): ')
+        try:
+            categoryId = input('* Choose a category number (or leave empty for none): ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
+
         if categoryId != '':
             if not self.categoryCheckId(categoryId):
                 print('Invalid category. Please try again.')
@@ -200,7 +212,12 @@ class Vault:
         self.setAutoLockTimer()
 
         print()
-        command = input('Choose a command [(g)et / (s)earch / show (all) / (a)dd / (d)elete / (cat)egories / (l)ock / (q)uit]: ')
+        try:
+            command = input('Choose a command [(g)et / (s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         # Check auto lock timer
         if command != 'l' and command != 'q': # Except if the user wants to lock the vault or quit the application
@@ -215,8 +232,6 @@ class Vault:
              self.all()
         elif command == 'a': # Add an item
              self.addItemInput()
-        elif command == 'd': # Delete an item
-             self.delete()
         elif command == 'cat': # Manage categories
              self.categoriesMenu()
         elif command == 'l': # Lock the vault and ask for the master key
@@ -234,25 +249,200 @@ class Vault:
         from lib.Misc import confirm
 
         print()
-        id = input('Enter item number: ')
+        try:
+            id = input('Enter item number: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         try:
             # Get item
             item = self.vault['secrets'][int(id)]
 
-            # Show item
-            print ('* Category: %s' % (self.categoryName(item['category'])))
-            print ('* Name / URL: %s' % (item['name']))
-            print ('* Login: %s' % (item['login']))
-            print ('* Notes: %s' % (item['notes']))
+            # Show item in a table
+            results = [[
+                    self.categoryName(item['category']),
+                    item['name'],
+                    item['login']
+            ]]
+            from tabulate import tabulate
             print()
-            if confirm('Copy password to clipboard instead of displaying it?', True):
-                # Copy to clipboard
-                self.clipboard(item['password'])
-                print ('* The password has been copied to the clipboard.')
-                self.waitAndEraseClipboard()
+            print (tabulate(results, headers=['Category', 'Name / URL', 'Login']))
+
+            # Show eventual notes
+            if item['notes'] != '':
+                print()
+                print ('Notes:')
+                print(item['notes'])
+
+            # Show item menu
+            self.itemMenu(int(id), item)
+        except Exception as e:
+            print(e)
+            print('Item does not exist.');
+
+        self.menu()
+
+    def itemMenu(self, itemKey, item):
+        """
+            Item menu
+        """
+
+        print()
+        try:
+            command = input('Choose a command [(c)opy secret to clipboard / show (p)assword / (e)dit / (d)elete / (b)ack to Vault]: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
+
+        # Action based on command
+        if command == 'c': # Copy a secret to the clipboard
+             self.itemCopyToClipboard(item['password'])
+        elif command == 'p': # Show a secret
+             self.itemShowSecret(item['password'])
+        elif command == 'e': # Edit an item
+             self.itemEdit(itemKey, item)
+        elif command == 'd': # Delete an item
+             self.itemDelete(itemKey)
+        elif command == 'b': # Back to vault menu
+             self.menu()
+        else: # Back to menu
+            self.itemMenu(itemKey, item)
+
+    def itemCopyToClipboard(self, password):
+        """
+            Copy a secret to the clipboard
+        """
+
+        # Copy to clipboard
+        self.clipboard(password)
+        print ('* The password has been copied to the clipboard.')
+        self.waitAndEraseClipboard()
+
+        # Back to Vault menu
+        self.menu()
+
+    def itemShowSecret(self, password):
+        """
+            Show a secret for X seconds and erase it from the screen
+        """
+
+        print ("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
+        print ('The password is: %s' % (password), end="\r")
+        time.sleep(int(self.config['hideSecretTTL']))
+        print('The password is: ' + '*' * len(password));
+
+        # Back to Vault menu
+        self.menu()
+
+    def itemEdit(self, itemKey, item):
+        """
+            Edit an item
+        """
+
+        print()
+        try:
+            command = input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
+
+        # Action based on command
+        if command == 'c': # Edit category
+             self.editItemInput(itemKey, 'category', self.categoryName(item['category']))
+        elif command == 'n': # Edit name
+             self.editItemInput(itemKey, 'name', item['name'])
+        elif command == 'l': # Edit login
+             self.editItemInput(itemKey, 'login', item['login'])
+        elif command == 'p': # Edit password
+             self.editItemInput(itemKey, 'password', '')
+        elif command == 'o': # Edit notes
+             self.editItemInput(itemKey, 'notes', item['notes'])
+        elif command == 'b': # Back to vault menu
+             self.menu()
+        else: # Back to menu
+            self.itemEdit(itemKey, item)
+
+    def editItemInput(self, itemKey, fieldName, fieldCurrentValue):
+        """
+            Edit a field for an item
+        """
+
+        # Show current value
+        if fieldName != 'password':
+            print("* Current value: %s" % (fieldCurrentValue))
+
+        try:
+            # Get new value
+            if fieldName == 'password':
+                fieldNewValue = getpass.getpass('* New password: ');
+            elif fieldName == 'category':
+                # Show categories
+                print()
+                print ("* Available categories:")
+                self.categoriesList()
+                print()
+
+                # Category ID
+                fieldNewValue = input('* Choose a category number (or leave empty for none): ')
+
+                if fieldNewValue != '':
+                    if not self.categoryCheckId(fieldNewValue):
+                        print('Invalid category. Please try again.')
+                        self.editItemInput(itemKey, fieldName, fieldCurrentValue)
+            elif fieldName == 'notes':
+                print('* Notes: (press [ENTER] twice to complete)')
+                notes = []
+                while True:
+                    input_str = input("> ")
+                    if input_str == "":
+                        break
+                    else:
+                        notes.append(input_str)
+                fieldNewValue = "\n".join(notes)
             else:
-                print ('* Password: %s' % (item['password']))
+                fieldNewValue = input('* New %s: ' % (fieldName))
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
+
+        # Update item
+        item = self.vault['secrets'][itemKey][fieldName] = fieldNewValue
+
+        # Debug
+        #print(self.vault['secrets'][itemKey])
+
+        # Save the vault
+        self.saveVault()
+
+        print('The item has been updated.');
+
+        # Back to Vault menu
+        self.menu()
+
+    def itemDelete(self, itemKey):
+        """
+            Delete an item
+        """
+
+        from lib.Misc import confirm
+
+        try:
+            # Get item
+            item = self.vault['secrets'][itemKey]
+
+            # Show item
+            print()
+            if confirm('Confirm deletion?', False):
+                # Remove item
+                self.vault['secrets'].pop(itemKey)
+
+                # Save the vault
+                self.saveVault()
         except Exception as e:
             print('Item does not exist.');
 
@@ -264,7 +454,12 @@ class Vault:
         """
 
         print()
-        search = input('Enter search: ')
+        try:
+            search = input('Enter search: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         if self.vault.get('secrets'):
             # Iterate thru the items
@@ -319,35 +514,6 @@ class Vault:
             print (tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
         else:
             print("There are no secrets saved yet.");
-
-        self.menu()
-
-    def delete(self):
-        """
-            Quickly delete an item from the vault with its ID
-        """
-
-        from lib.Misc import confirm
-
-        print()
-        id = input('Enter item number: ')
-
-        try:
-            # Get item
-            item = self.vault['secrets'][int(id)]
-
-            # Show item
-            print ('* Name / URL: %s' % (item['name']))
-            print ('* Login: %s' % (item['login']))
-            print()
-            if confirm('Confirm deletion?', False):
-                # Remove item
-                self.vault['secrets'].pop(int(id))
-
-                # Save the vault
-                self.saveVault()
-        except Exception as e:
-            print('Item does not exist.');
 
         self.menu()
 
@@ -416,7 +582,12 @@ class Vault:
         self.categoriesList()
 
         print()
-        command = input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)back to Vault]: ')
+        try:
+            command = input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         # Action based on command
         if command == 'a': # Add a category
@@ -464,7 +635,12 @@ class Vault:
         """
 
         # Basic input
-        name = input('Category name: ')
+        try:
+            name = input('Category name: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         # Create `categories` item if necessary
         if not self.vault.get('categories'):
@@ -492,7 +668,12 @@ class Vault:
         from lib.Misc import confirm
 
         print()
-        id = input('Enter category number: ')
+        try:
+            id = input('Enter category number: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         try:
             # Get item
@@ -541,7 +722,12 @@ class Vault:
         from lib.Misc import confirm
 
         print()
-        id = input('Enter category number: ')
+        try:
+            id = input('Enter category number: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
         try:
             # Get item
