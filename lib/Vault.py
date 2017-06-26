@@ -3,6 +3,7 @@ import getpass, json, base64, time
 
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
+from Crypto.Random import get_random_bytes
 import pyperclip
 
 class Vault:
@@ -11,6 +12,8 @@ class Vault:
     vaultPath = None # Vault file location
     vault = None # Vault content once decrypted
     timer = None # Set a timer to autolock the vault
+    initializationVector = None # Will be filled with a random initialization vector when encrypting the file
+    metaLength = 500 # Fixed size of the meta information prepended to the encrypted file
 
     def __init__(self, config, vaultPath):
         self.config = config;
@@ -103,13 +106,20 @@ class Vault:
             Save vault
         """
 
-        cipher = AES.new(self.getHash(masterKey), AES.MODE_EAX)
+        # Generate meta
+        meta = self.generateMeta()
+
+        # Generate vault key
+        maserKeyHash = self.getMaserKeyHash(masterKey)
+        key = self.getHashWithInitializationVector(maserKeyHash, self.initializationVector)
+
+        cipher = AES.new(key, AES.MODE_EAX)
         data = str.encode(json.dumps(self.vault));
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
         f = open(self.vaultPath, "wb")
         try:
-            [ f.write(x) for x in (cipher.nonce, tag, ciphertext) ]
+            [ f.write(x) for x in (meta, cipher.nonce, tag, ciphertext) ]
         finally:
             f.close()
 
@@ -120,18 +130,27 @@ class Vault:
 
         f = open(self.vaultPath, "rb")
         try:
-            nonce, tag, ciphertext = [ f.read(x) for x in (16, 16, -1) ]
+            meta, nonce, tag, ciphertext = [ f.read(x) for x in (self.metaLength, 16, 16, -1) ]
+            #nonce, tag, ciphertext = [ f.read(x) for x in (16, 16, -1) ] # Legacy
         finally:
             f.close()
 
+        # Decode meta
+        meta = self.decodeMeta(meta)
+
+        # Generate vault key
+        maserKeyHash = self.getMaserKeyHash(masterKey)
+        key = self.getHashWithInitializationVector(maserKeyHash, meta['initializationVector'])
+
         # Unlock valt with key
-        cipher = AES.new(self.getHash(masterKey), AES.MODE_EAX, nonce)
+        #cipher = AES.new(maserKeyHash, AES.MODE_EAX, nonce) # Legacy
+        cipher = AES.new(key, AES.MODE_EAX, nonce)
         data = cipher.decrypt_and_verify(ciphertext, tag)
 
         # Set vault content to class level var
         self.vault = json.loads(data.decode("utf-8") )
 
-    def getHash(self, masterKey):
+    def getMaserKeyHash(self, masterKey):
         """
             Returns a 32 bytes hash for a given master key
         """
@@ -140,6 +159,64 @@ class Vault:
         for i in range(1, 10000):
             h.update(str.encode(str(i) + self.config['salt'] + masterKey))
         return base64.b64decode(str.encode(h.hexdigest()[:32]))
+
+    def getHashWithInitializationVector(self, masterKeyHash, initializationVector):
+        """
+            Returns a final hash of the master key hash hashed with the initialization vector
+        """
+
+        h = SHA256.new()
+        h.update(masterKeyHash + initializationVector)
+        return base64.b64decode(str.encode(h.hexdigest()[:32]))
+
+    def generateMeta(self):
+        """
+            Generate meta information prepended to encrypted vault.
+            The meta information will have a fixed size of `self.metaLength`
+
+            The meta will consist of 4 items:
+            [header size][initialization vector size][headers][initialization vector]
+
+            The meta will be prepended with zeroes to obtain the `self.metaLength` size
+
+            Here is an output example:
+            b"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000[00020][00032]['vault.bb'][000100]\x03\x0e\xbf\xfb\xed\xbe\x9cI\xcck\xf9\xf6\x8b\x80\x02\xd2\xa4hD\xa2`\xc8\xd8v\xdb\xd0:+.\x94\x01q"
+        """
+
+        header = str.encode("['vault.db'][000100]") # Header + encrypted database version, example: b"['vault.bb'][000100]"
+        self.initializationVector = self.generateInitializationVector() # Example: b')\x13-\xec\xba\x12y\x1e\x04\xba\xf1H\x0c\xcaM\xe5\xe3\x00\xa7\xb8}\x1f\x8cSO\xda\xd4\x14\xf2\xcc\xcbL'
+        headerLength = str.encode('[' + str('{0:05d}'.format(len(header))) + ']') # example: b'[00020]' (20 = 20 bytes)
+        initializationVectorLength = str.encode('[' + str('{0:05d}'.format(len(self.initializationVector))) + ']') # example: b'[00032]' (32 = 32 bytes)
+
+        return (headerLength + initializationVectorLength + header + self.initializationVector).zfill(self.metaLength)
+
+    def decodeMeta(self, meta):
+        """
+            Analyze a meta block preprended to the encrypted vault (as shown in `generateMeta()`)
+            and decoded it to retrieve the `header` and `initialization vector` blocks
+        """
+
+        # Vars
+        headerSizeBlockLength = 7
+        initializationVectorBlockSizeLength = 7
+
+        meta = meta.lstrip(b'0') # Remove leading zeros
+        headerLength = int(meta[:headerSizeBlockLength].lstrip(b'[').rstrip(b']')); # b'[00020]' -> b'00020]' -> b'00020' -> 20
+        initializationVectorLength = int(meta[headerSizeBlockLength : headerSizeBlockLength + initializationVectorBlockSizeLength].lstrip(b'[').rstrip(b']')); # b'[00032]' -> b'00032]' -> b'00020' -> 32
+        header = meta[headerSizeBlockLength + initializationVectorBlockSizeLength : headerSizeBlockLength + initializationVectorBlockSizeLength + headerLength]
+        initializationVector = meta[headerSizeBlockLength + initializationVectorBlockSizeLength + headerLength : headerSizeBlockLength + initializationVectorBlockSizeLength + headerLength + initializationVectorLength]
+
+        return {
+            'header': header,
+            'initializationVector' : initializationVector
+        }
+
+    def generateInitializationVector(self, size = 32):
+        """
+            Generate an initialization vector
+        """
+
+        return get_random_bytes(size);
 
     def addItemInput(self):
         """
