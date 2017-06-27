@@ -1,6 +1,22 @@
 
 import os, sys, json
 
+"""
+    Adding import or export formats:
+
+    To add import format, you need to add a file format name to `self.importItems()`
+    or `self.export()` and create an associated method called `importFrom[SomeFormat]()`
+    or `exportTo[SomeFormat]()`.
+
+    The format name must also be added to `../vault.py` in argparse choices.
+
+    The easiest solution to create the import and/or export method would be to duplicate
+    `self.importFromJson()` or `self.exportToJson()` as they are fairly standard.
+
+    If you create a format that can be usefull to others, please fork the project first and
+    submit a merge request!
+"""
+
 class ImportExport:
 
     vault = None # Vault instance
@@ -19,6 +35,8 @@ class ImportExport:
 
         if self.fileFormat == 'json':
             self.importFromJson()
+        elif self.fileFormat == 'native':
+            self.importFromNative()
         else:
             raise ValueError('%s is not a supported file format' % (self.fileFormat))
 
@@ -29,18 +47,21 @@ class ImportExport:
 
         if self.fileFormat == 'json':
             self.exportToJson()
+        elif self.fileFormat == 'native':
+            self.exportToNative()
         else:
             raise ValueError('%s is not a supported file format' % (self.fileFormat))
 
     def importFromJson(self):
         """
+            Format: json
             Import items to the vault
         """
 
         from lib.Misc import confirm
 
         # Unlock the vault with the existing key
-        self.vault.unlock(False) # `False` = don't load menu after unlocking
+        self.unlockVault()
         print()
 
         # Read import file
@@ -91,43 +112,94 @@ class ImportExport:
 
         sys.exit()
 
-    def exportToJson(self):
+    def importFromNative(self):
         """
-            Export the vault content to a specific file
+            Format: native
+            Replace the vault content with a native format import file
         """
+
+        import pickle
+
+        from lib.Misc import confirm
 
         # Unlock the vault with the existing key
-        self.vault.unlock(False) # `False` = don't load menu after unlocking
+        self.unlockVault()
 
-        # If we have a valid vault
-        if self.vault.vault.get('secrets'):
-            # Iterate thru the items
-            output = []
-            for item in self.vault.vault['secrets']:
-                # Add to output
-                output.append({
-                    'category': item['category'],
-                    'categoryName': self.vault.categoryName(item['category']),
-                    'name': item['name'],
-                    'login': item['login'],
-                    'password': item['password'],
-                    'notes': item['notes']
-                });
+        # Get import file content
+        content = self.readFile('rb')
 
-            self.saveFile(json.dumps(output))
-        else:
-            print("There are no secrets in the vault.")
+        # Unpickle the content
+        content = pickle.loads(content)
+
+        print()
+        if confirm('Importing from a native format will erase and replace the vault content. Continue?', False):
+            # Replace and save vault content
+            self.vault.vault = content
+            self.vault.saveVault()
+
+            print("The vault has been imported.")
 
         sys.exit()
 
-    def readFile(self):
+    def exportToJson(self):
+        """
+            Format: json
+            Export the vault content to a file
+        """
+
+        # Unlock the vault with the existing key
+        self.unlockVault()
+
+        # Check if the vault has some content
+        self.checkEmptyVault()
+
+        # Iterate thru the items
+        output = []
+        for item in self.vault.getVault()['secrets']:
+            # Add to output
+            output.append({
+                'category': item['category'],
+                'categoryName': self.vault.categoryName(item['category']),
+                'name': item['name'],
+                'login': item['login'],
+                'password': item['password'],
+                'notes': item['notes']
+            });
+
+        self.saveFile(json.dumps(output))
+
+        sys.exit()
+
+    def exportToNative(self):
+        """
+            Format: native
+            Export the vault content to a file
+        """
+
+        import pickle
+
+        # Unlock the vault with the existing key
+        self.unlockVault()
+
+        # Check if the vault has some content
+        self.checkEmptyVault()
+
+        # Pickle the vault using the highest protocol available.
+        output = pickle.dumps(self.vault.getVault(), pickle.HIGHEST_PROTOCOL)
+
+        # Save to file
+        self.saveFile(output, 'wb')
+
+        sys.exit()
+
+    def readFile(self, mode = 'r'):
         """
             Read an import file and return its content
         """
 
         # Read import file
         try:
-            file = open(self.path)
+            file = open(self.path, mode = mode)
             fileContent = file.read()
             file.close()
 
@@ -137,18 +209,33 @@ class ImportExport:
             print(e)
             sys.exit()
 
-    def saveFile(self, content):
+    def saveFile(self, content, mode = 'w'):
         """
             Save exported items to a file
         """
 
         # Save to file
         try:
-            print("The vault has been exported to the file `%s`." % (self.path))
-
-            file = open(self.path, 'w')
+            file = open(self.path, mode)
             file.write(content)
             file.close()
+
+            print("The vault has been exported to the file `%s`." % (self.path))
         except Exception as e:
             print("The vault could not be exported to the file `%s`." % (self.path))
             print(e)
+
+    def unlockVault(self):
+        """
+            Ask user to unlock the vault
+        """
+
+        self.vault.unlock(False) # `False` = don't load menu after unlocking
+
+    def checkEmptyVault(self):
+        """
+            Will raise an error if the user tries to export an empty vault
+        """
+
+        if not self.vault.getVault().get('secrets'):
+            raise ValueError('There are no secrets in the vault stored at `%s`.' % (self.path))

@@ -37,7 +37,7 @@ python3 vault.py
 ```
 usage: vault.py [-h] [-t [CLIPBOARD_TTL]] [-p [HIDE_SECRET_TTL]]
                 [-a [AUTO_LOCK_TTL]] [-v VAULT_LOCATION] [-c CONFIG_LOCATION]
-                [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-e]
+                [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-f {json,native}] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -57,5 +57,7 @@ optional arguments:
                         File to import credentials from
   -x EXPORT, --export EXPORT
                         File to export credentials to
+  -f {json,native}, --file_format {json,native}
+                        Import/export file format (default: 'json')
   -e, --erase_vault     Erase the vault and config file
 ```

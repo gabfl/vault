@@ -851,3 +851,10 @@ class Vault:
             print()
             # Try again
             self.changeKey();
+
+    def getVault(self):
+        """
+            Returns the vault content
+        """
+
+        return self.vault;
