@@ -3,12 +3,36 @@ import os, sys, json
 
 class ImportExport:
 
-    vault = None; # Vault instance
+    vault = None # Vault instance
+    fileFormat = None # File format (default: 'json')
+    path = None # Import of export path
 
-    def __init__(self, vault):
+    def __init__(self, vault, path, fileFormat = 'json'):
         self.vault = vault
+        self.path = path
+        self.fileFormat = fileFormat
 
-    def importItems(self, path):
+    def importItems(self):
+        """
+            Routing to format specific import methods
+        """
+
+        if self.fileFormat == 'json':
+            self.importFromJson()
+        else:
+            raise ValueError('%s is not a supported file format' % (self.fileFormat))
+
+    def export(self):
+        """
+            Routing to format specific export methods
+        """
+
+        if self.fileFormat == 'json':
+            self.exportToJson()
+        else:
+            raise ValueError('%s is not a supported file format' % (self.fileFormat))
+
+    def importFromJson(self):
         """
             Import items to the vault
         """
@@ -20,14 +44,7 @@ class ImportExport:
         print()
 
         # Read import file
-        try:
-            file = open(path)
-            fileContent = file.read()
-            file.close()
-        except Exception as e:
-            print("The file `%s` could not be opened." % (path));
-            print(e)
-            sys.exit()
+        fileContent = self.readFile()
 
         # Decode json
         items = json.loads(fileContent)
@@ -74,7 +91,7 @@ class ImportExport:
 
         sys.exit()
 
-    def export(self, path):
+    def exportToJson(self):
         """
             Export the vault content to a specific file
         """
@@ -97,17 +114,41 @@ class ImportExport:
                     'notes': item['notes']
                 });
 
-            # Save to file
-            try:
-                print("The vault has been exported to the file `%s`." % (path));
-
-                file = open(path, 'w')
-                file.write(json.dumps(output))
-                file.close()
-            except Exception as e:
-                print("The vault could not be exported to the file `%s`." % (path));
-                print(e)
+            self.saveFile(json.dumps(output))
         else:
-            print("There are no secrets in the vault.");
+            print("There are no secrets in the vault.")
 
         sys.exit()
+
+    def readFile(self):
+        """
+            Read an import file and return its content
+        """
+
+        # Read import file
+        try:
+            file = open(self.path)
+            fileContent = file.read()
+            file.close()
+
+            return fileContent
+        except Exception as e:
+            print("The file `%s` could not be opened." % (self.path));
+            print(e)
+            sys.exit()
+
+    def saveFile(self, content):
+        """
+            Save exported items to a file
+        """
+
+        # Save to file
+        try:
+            print("The vault has been exported to the file `%s`." % (self.path))
+
+            file = open(self.path, 'w')
+            file.write(content)
+            file.close()
+        except Exception as e:
+            print("The vault could not be exported to the file `%s`." % (self.path))
+            print(e)

@@ -88,13 +88,13 @@ if __name__ == '__main__':
         print()
         print("Please consider backing up your vault located at `%s` before proceeding." % (getVaultPath()));
         print()
-        ie = ImportExport(v)
-        ie.importItems(args.import_items)
+        ie = ImportExport(v, args.import_items)
+        ie.importItems()
 
     # Export vault
     if args.export:
-        ie = ImportExport(v)
-        ie.export(args.export)
+        ie = ImportExport(v, args.export)
+        ie.export()
 
     # Check if the vault exists
     if not os.path.isfile(getVaultPath()):
