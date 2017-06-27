@@ -254,7 +254,7 @@ class Vault:
 
         from lib.Misc import confirm
 
-        if id is None: # If the user did not pre-selected an item
+        if id is None: # If the user did not pre-select an item
             print()
             try:
                 id = input('Enter item number: ')
@@ -479,10 +479,10 @@ class Vault:
                     search.upper() in item['login'].upper() or \
                     search.upper() in item['notes'].upper() or \
                     search.upper() in self.categoryName(item['category']).upper():
-                    # Increment quickKey
+                    # Increment search result item number
                     searchResultItemNumber += 1
 
-                    # Set quickKey value
+                    # Set search result value
                     searchResultItems[searchResultItemNumber] = i
 
                     # Add item to search results
@@ -522,7 +522,7 @@ class Vault:
             print()
             self.menu()
 
-        # Try getting an item of send back to the main mane
+        # Try getting an item or send user back to the main menu
         try:
             # Get item ID
             id = searchResultItems[int(resultItem)]

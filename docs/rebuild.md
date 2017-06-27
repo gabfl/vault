@@ -2,7 +2,7 @@
 
 If for some reason you wanted to completely rebuild your vault, here is how to proceed.
 
-## Why rebuilt the vault?
+## Why rebuild the vault?
 
 Here are some use cases tor rebuild the vault:
 
@@ -19,7 +19,7 @@ Process to rebuild the vault:
 ## Security notice
 
 For obvious reasons, **export files are not encrypted**, all the vault secrets will be stored in clear.
-Make sure to safely store the export file and securely dispose it after its use.
+Make sure to safely store the export file and securely dispose of it after its use.
 
 ## How to proceed
 

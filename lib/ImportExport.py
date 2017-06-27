@@ -4,24 +4,24 @@ import os, sys, json
 """
     Adding import or export formats:
 
-    To add import format, you need to add a file format name to `self.importItems()`
-    or `self.export()` and create an associated method called `importFrom[SomeFormat]()`
-    or `exportTo[SomeFormat]()`.
+    To add an import or export format, you need to add a file format name to
+    `self.importItems()` or `self.export()` and create an associated method
+    called `importFrom[SomeFormat]()` or `exportTo[SomeFormat]()`.
 
     The format name must also be added to `../vault.py` in argparse choices.
 
     The easiest solution to create the import and/or export method would be to duplicate
     `self.importFromJson()` or `self.exportToJson()` as they are fairly standard.
 
-    If you create a format that can be usefull to others, please fork the project first and
-    submit a merge request!
+    If you create a format that can be useful to others, please fork the project
+    first and submit a merge request!
 """
 
 class ImportExport:
 
     vault = None # Vault instance
     fileFormat = None # File format (default: 'json')
-    path = None # Import of export path
+    path = None # Import or export path
 
     def __init__(self, vault, path, fileFormat = 'json'):
         self.vault = vault
