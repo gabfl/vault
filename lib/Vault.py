@@ -247,20 +247,21 @@ class Vault:
         else: # Back to menu
             self.menu()
 
-    def get(self):
+    def get(self, id = None):
         """
             Quickly retrieve an item from the vault with its ID
         """
 
         from lib.Misc import confirm
 
-        print()
-        try:
-            id = input('Enter item number: ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
+        if id is None: # If the user did not pre-selected an item
             print()
-            self.menu()
+            try:
+                id = input('Enter item number: ')
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                self.menu()
 
         try:
             # Get item
@@ -470,14 +471,23 @@ class Vault:
         if self.vault.get('secrets'):
             # Iterate thru the items
             results = []
+            searchResultItems = {}
+            searchResultItemNumber = 0
             for i, item in enumerate(self.vault['secrets']):
                 # Search in name, login and notes
                 if search.upper() in item['name'].upper() or \
                     search.upper() in item['login'].upper() or \
                     search.upper() in item['notes'].upper() or \
                     search.upper() in self.categoryName(item['category']).upper():
+                    # Increment quickKey
+                    searchResultItemNumber += 1
+
+                    # Set quickKey value
+                    searchResultItems[searchResultItemNumber] = i
+
                     # Add item to search results
                     results.append([
+                        searchResultItemNumber,
                         i,
                         self.categoryName(item['category']),
                         item['name'],
@@ -489,13 +499,39 @@ class Vault:
                 # Show results table
                 from tabulate import tabulate
                 print()
-                print (tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
+                print (tabulate(results, headers=['#', 'Item', 'Category', 'Name / URL', 'Login']))
+
+                self.searchResultSelection(searchResultItems)
             else:
                 print('No results!')
         else:
             print("There are no secrets saved yet.")
 
         self.menu()
+
+    def searchResultSelection(self, searchResultItems):
+        """
+            Allow the user to select a search result or to go back to the main menu
+        """
+
+        print()
+        try:
+            resultItem = input('Select a result # or type any key to go back to the main menu: ')
+        except KeyboardInterrupt as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
+
+        # Try getting an item of send back to the main mane
+        try:
+            # Get item ID
+            id = searchResultItems[int(resultItem)]
+
+            self.get(id)
+        except Exception as e:
+            # Back to menu if user cancels
+            print()
+            self.menu()
 
     def all(self):
         """
