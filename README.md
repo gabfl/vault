@@ -15,18 +15,15 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ![Demo](img/demo.gif)
 
-## Install dependencies
-
-```
-pip3 install pycryptodome pyperclip tabulate argparse
-```
-
 ## Installation and setup
 
 ```
 # Clone project
 git clone https://github.com/gabfl/vault
 cd vault
+
+# Installation
+python3 setup.py install
 
 # Run setup
 python3 vault.py
