@@ -4,10 +4,10 @@ import os
 
 import argparse
 
-from lib.Vault import Vault
-from lib.Config import Config
-from lib.ImportExport import ImportExport
-from lib.Misc import *
+from .lib.Vault import Vault
+from .lib.Config import Config
+from .lib.ImportExport import ImportExport
+from .lib.Misc import *
 
 # Parse arguments
 parser = argparse.ArgumentParser()

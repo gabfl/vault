@@ -1,6 +1,6 @@
 from setuptools import setup
 
-setup(
+setup (
     name = 'Vault',
     version = '1.3',
     description = 'Python password manager',
@@ -9,9 +9,9 @@ setup(
     license = 'MIT',
     packages = ['vault'],
     install_requires = ['pycryptodome', 'pyperclip', 'tabulate', 'argparse'], # external dependencies
-    entry_points={
+    entry_points = {
         'console_scripts': [
-            'vault=vault:main',
+            'vault = vault.vault:main',
         ],
     },
 )
