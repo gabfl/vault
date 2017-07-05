@@ -17,24 +17,34 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Installation and setup
 
+### Using PyPI
+
+```
+pip3 install pyvault
+
+# Run setup
+vault
+```
+
+### Cloning the project
+
 ```
 # Clone project
-git clone https://github.com/gabfl/vault
-cd vault
+git clone https://github.com/gabfl/vault && cd vault
 
 # Installation
 python3 setup.py install
 
 # Run setup
-python3 vault.py
+vault
 ```
 
 ## Advanced settings:
 
 ```
-usage: vault.py [-h] [-t [CLIPBOARD_TTL]] [-p [HIDE_SECRET_TTL]]
-                [-a [AUTO_LOCK_TTL]] [-v VAULT_LOCATION] [-c CONFIG_LOCATION]
-                [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-f {json,native}] [-e]
+usage: vault [-h] [-t [CLIPBOARD_TTL]] [-p [HIDE_SECRET_TTL]]
+             [-a [AUTO_LOCK_TTL]] [-v VAULT_LOCATION] [-c CONFIG_LOCATION]
+             [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-f [{json,native}]] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -54,7 +64,7 @@ optional arguments:
                         File to import credentials from
   -x EXPORT, --export EXPORT
                         File to export credentials to
-  -f {json,native}, --file_format {json,native}
+  -f [{json,native}], --file_format [{json,native}]
                         Import/export file format (default: 'json')
   -e, --erase_vault     Erase the vault and config file
 ```
