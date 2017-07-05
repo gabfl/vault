@@ -7,7 +7,7 @@ setup (
     author = 'Gabriel Bordeaux',
     url = 'https://github.com/gabfl/vault',
     license = 'MIT',
-    packages = ['vault'],
+    packages = ['vault', 'vault.lib'],
     install_requires = ['pycryptodome', 'pyperclip', 'tabulate', 'argparse'], # external dependencies
     entry_points = {
         'console_scripts': [
