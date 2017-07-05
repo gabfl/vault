@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 .Python
+Vault.egg-info/
+pyvault.egg-info/
+build/
+dist/
 
 # Mac
 .DS_Store

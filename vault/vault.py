@@ -4,10 +4,10 @@ import os
 
 import argparse
 
-from lib.Vault import Vault
-from lib.Config import Config
-from lib.ImportExport import ImportExport
-from lib.Misc import *
+from .lib.Vault import Vault
+from .lib.Config import Config
+from .lib.ImportExport import ImportExport
+from .lib.Misc import *
 
 # Parse arguments
 parser = argparse.ArgumentParser()
@@ -50,7 +50,7 @@ def getConfigPath():
         return args.config_location;
     return ConfigPathDefault;
 
-if __name__ == '__main__':
+def main():
     # Some nice ascii art
     logo()
 
@@ -103,3 +103,6 @@ if __name__ == '__main__':
     # Offer to unlock the vault
     else:
         v.unlock()
+
+if __name__ == '__main__':
+    main()
