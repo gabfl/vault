@@ -13,7 +13,7 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Basic usage
 
-![Demo](img/demo.gif)
+![Demo](https://github.com/gabfl/vault/blob/master/img/demo.gif?raw=true)
 
 ## Installation and setup
 
