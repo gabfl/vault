@@ -1,4 +1,3 @@
-# Facilitate relative import
 
 import os, sys, json
 
