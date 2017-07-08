@@ -387,8 +387,14 @@ class Vault:
 
         print ("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
         print ('The password is: %s' % (password), end="\r")
-        time.sleep(int(self.config['hideSecretTTL']))
-        print('The password is: ' + '*' * len(password));
+
+        try:
+            time.sleep(int(self.config['hideSecretTTL']))
+        except KeyboardInterrupt as e:
+            # Will catch `^-c` and immediately hide the password
+            pass
+
+        print('The password is: ' + '*' * len(password))
 
         # Back to Vault menu
         self.menu()
@@ -879,10 +885,17 @@ class Vault:
         """
 
         print("* Clipboard will be erased in %s seconds" % (self.config['clipboardTTL']))
-        for i in range(0, int(self.config['clipboardTTL'])):
-            print('.', end='', flush=True)
-            time.sleep(1) # Sleep 1 sec
-        print();
+
+        try:
+            # Loop until the delay is elapsed
+            for i in range(0, int(self.config['clipboardTTL'])):
+                print('.', end='', flush=True)
+                time.sleep(1) # Sleep 1 sec
+        except KeyboardInterrupt as e:
+            # Will catch `^-c` and immediately erase the clipboard
+            pass
+
+        print()
         self.clipboard('') # Empty clipboard
 
     def changeKey(self):
