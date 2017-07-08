@@ -1,8 +1,6 @@
 import configparser, os
 from uuid import uuid4
 
-import configparser
-
 class Config:
 
     # Config file location
