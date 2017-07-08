@@ -1,5 +1,10 @@
+# Facilitate relative import
+import os, sys
+path = os.path.dirname(sys.modules[__name__].__file__)
+path = os.path.join(path, '..')
+sys.path.insert(0, path)
 
-import os, sys, json
+import json
 
 """
     Adding import or export formats:
@@ -58,7 +63,7 @@ class ImportExport:
             Import items to the vault
         """
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         # Unlock the vault with the existing key
         self.unlockVault()
@@ -120,7 +125,7 @@ class ImportExport:
 
         import pickle
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         # Unlock the vault with the existing key
         self.unlockVault()
