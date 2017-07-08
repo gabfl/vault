@@ -58,7 +58,7 @@ class ImportExport:
             Import items to the vault
         """
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         # Unlock the vault with the existing key
         self.unlockVault()
@@ -120,7 +120,7 @@ class ImportExport:
 
         import pickle
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         # Unlock the vault with the existing key
         self.unlockVault()

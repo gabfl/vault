@@ -300,7 +300,7 @@ class Vault:
             Quickly retrieve an item from the vault with its ID
         """
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         if id is None: # If the user did not pre-select an item
             print()
@@ -487,7 +487,7 @@ class Vault:
             Delete an item
         """
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         try:
             # Get item
@@ -745,7 +745,7 @@ class Vault:
             Quickly delete a category from the vault with its ID
         """
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         print()
         try:
@@ -800,7 +800,7 @@ class Vault:
             Quickly rename a category from the vault with its ID
         """
 
-        from lib.Misc import confirm
+        from .Misc import confirm
 
         print()
         try:
