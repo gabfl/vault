@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 try:
     import pypandoc
@@ -8,18 +8,19 @@ except(IOError, ImportError):
 
 setup (
     name = 'pyvault',
-    version = '1.4.3',
+    version = '1.4.4',
     description = 'Python password manager',
     long_description = long_description,
     author = 'Gabriel Bordeaux',
     author_email = 'pypi@gab.lc',
     url = 'https://github.com/gabfl/vault',
     license = 'MIT',
-    packages = find_packages(),
-    install_requires = ['pycryptodome', 'pyperclip', 'tabulate', 'argparse'], # external dependencies
+    packages = ['vault', 'vault.lib'],
+    package_dir = { 'vault': 'src' },
+    install_requires = ['pycryptodome', 'pyperclip', 'tabulate', 'argparse', 'passwordgenerator'], # external dependencies
     entry_points = {
         'console_scripts': [
-            'vault = src.vault:main',
+            'vault = vault.vault:main',
         ],
     },
 )

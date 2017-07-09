@@ -4,6 +4,7 @@ import getpass, json, base64, time, sys
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 import pyperclip
+from passwordgenerator import pwgenerator
 
 class Vault:
 
@@ -223,6 +224,7 @@ class Vault:
         try:
             name = self.input('* Name / URL: ')
             login = self.input('* Login: ')
+            print('* Password suggestion: %s' % (pwgenerator.generate()))
             password = getpass.getpass('* Password: ');
 
             # Notes
@@ -447,6 +449,7 @@ class Vault:
         try:
             # Get new value
             if fieldName == 'password':
+                print('* Suggestion: %s' % (pwgenerator.generate()))
                 fieldNewValue = getpass.getpass('* New password: ');
             elif fieldName == 'category':
                 # Show categories
