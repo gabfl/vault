@@ -86,7 +86,6 @@ def main():
     if args.import_items:
         print()
         print("Please consider backing up your vault located at `%s` before proceeding." % (getVaultPath()));
-        print()
         ie = ImportExport(v, args.import_items, args.file_format)
         ie.importItems()
 
