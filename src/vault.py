@@ -1,13 +1,11 @@
-#!/usr/bin/env python3
-
 import os
 
 import argparse
 
-from src.lib.Vault import Vault
-from src.lib.Config import Config
-from src.lib.ImportExport import ImportExport
-from src.lib.Misc import *
+from vault.lib.Vault import Vault
+from vault.lib.Config import Config
+from vault.lib.ImportExport import ImportExport
+from vault.lib.Misc import *
 
 # Parse arguments
 parser = argparse.ArgumentParser()
@@ -88,7 +86,6 @@ def main():
     if args.import_items:
         print()
         print("Please consider backing up your vault located at `%s` before proceeding." % (getVaultPath()));
-        print()
         ie = ImportExport(v, args.import_items, args.file_format)
         ie.importItems()
 

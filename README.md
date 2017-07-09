@@ -9,6 +9,7 @@ Vault is a simple Python password manager. It allows you to securely save secret
  - Possibility to create an unlimited number of vaults
  - Clipboard cleared automatically
  - Automatic vault locking after inactivity
+ - Password suggestions with [password-generator-py](https://github.com/gabfl/password-generator-py)
  - Import / Export in Json
 
 ## Basic usage
@@ -19,7 +20,7 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ### Using PyPI
 
-```
+```bash
 pip3 install pyvault
 
 # Run setup
@@ -28,7 +29,7 @@ vault
 
 ### Cloning the project
 
-```
+```bash
 # Clone project
 git clone https://github.com/gabfl/vault && cd vault
 

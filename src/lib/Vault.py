@@ -4,6 +4,7 @@ import getpass, json, base64, time, sys
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 import pyperclip
+from passwordgenerator import pwgenerator
 
 class Vault:
 
@@ -195,39 +196,48 @@ class Vault:
             Add a new secret based on user input
         """
 
-        # Show categories
-        print()
-        print ("* Available categories:")
-        self.categoriesList()
-        print()
-
-        # Category ID
-        try:
-            categoryId = self.input('* Choose a category number (or leave empty for none): ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
+        if self.vault.get('categories'):
+            # Show categories
             print()
-            self.menu()
+            print ("* Available categories:")
+            self.categoriesList()
+            print()
 
-        if categoryId != '':
-            if not self.categoryCheckId(categoryId):
-                print('Invalid category. Please try again.')
-                self.addItemInput()
+            # Category ID
+            try:
+                categoryId = self.input('* Choose a category number (or leave empty for none): ')
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                self.menu()
+
+            if categoryId != '':
+                if not self.categoryCheckId(categoryId):
+                    print('Invalid category. Please try again.')
+                    self.addItemInput()
+        else:
+            print()
+            categoryId = ''
+            print("* Category: you did not create a category yet. Create one from the main menu to use this feature!")
 
         # Basic settings
-        name = self.input('* Name / URL: ')
-        login = self.input('* Login: ')
-        password = getpass.getpass('* Password: ');
+        try:
+            name = self.input('* Name / URL: ')
+            login = self.input('* Login: ')
+            print('* Password suggestion: %s' % (pwgenerator.generate()))
+            password = getpass.getpass('* Password: ');
 
-        # Notes
-        print('* Notes: (press [ENTER] twice to complete)')
-        notes = []
-        while True:
-            input_str = self.input("> ")
-            if input_str == "":
-                break
-            else:
-                notes.append(input_str)
+            # Notes
+            print('* Notes: (press [ENTER] twice to complete)')
+            notes = []
+            while True:
+                input_str = self.input("> ")
+                if input_str == "":
+                    break
+                else:
+                    notes.append(input_str)
+        except KeyboardInterrupt as e:
+            self.menu()
 
         # Save item
         self.addItem(categoryId, name, login, password, "\n".join(notes))
@@ -439,6 +449,7 @@ class Vault:
         try:
             # Get new value
             if fieldName == 'password':
+                print('* Suggestion: %s' % (pwgenerator.generate()))
                 fieldNewValue = getpass.getpass('* New password: ');
             elif fieldName == 'category':
                 # Show categories
