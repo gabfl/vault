@@ -10,7 +10,7 @@ Make sure to safely store the export file and securely dispose of it after its u
 ## Usage
 
 ```
-./vault.py --export path/to/file.json
+vault --export path/to/file.json
 ```
 
 ## Export sample

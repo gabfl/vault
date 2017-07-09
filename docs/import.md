@@ -14,12 +14,12 @@ Items can be imported with a Json array in the following format:
 ]
 ```
 
-You can easily adapt [the import script](../lib/ImportExport.py) to any format.
+You can easily adapt [the import script](../src/lib/ImportExport.py) to any format.
 
 ## Usage
 
 ```
-./vault.py --import_items path/to/file.json
+vault --import_items path/to/file.json
 ```
 
 ## Sample import file

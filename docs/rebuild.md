@@ -30,14 +30,14 @@ Importing and exporting is experimental, please backup the vault and configurati
 ### Export the vault
 
 ```
-./vault.py --export vault.native --file_format native
+vault --export vault.native --file_format native
 # ...type master key
 ```
 
 ### Import the vault
 
 ```
-./vault.py --import_items vault.native --file_format native
+vault --import_items vault.native --file_format native
 # ...type master key
 # ...confirm
 ```
