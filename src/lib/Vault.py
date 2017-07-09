@@ -1,5 +1,5 @@
 
-import getpass, json, base64, time
+import getpass, json, base64, time, sys
 
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
@@ -26,11 +26,10 @@ class Vault:
         print('Welcome to Vault. Please choose a secure secret key.');
         print()
         try:
-            masterKey = getpass.getpass('Please choose a master key:');
-            masterKeyRepeat = getpass.getpass('Please confirm your master key:');
+            masterKey = getpass.getpass(self.lockPrefix() + 'Please choose a master key:');
+            masterKeyRepeat = getpass.getpass(self.lockPrefix() + 'Please confirm your master key:');
         except KeyboardInterrupt as e:
             # If the user presses `Ctrl`+`c`, exit the program
-            import sys
             print()
             sys.exit()
 
@@ -116,10 +115,10 @@ class Vault:
 
         # Get master key
         try:
-            masterKey = getpass.getpass('Please enter your master key:');
+            print()
+            masterKey = getpass.getpass(self.lockPrefix() + 'Please enter your master key:');
         except KeyboardInterrupt as e:
             # If the user presses `Ctrl`+`c`, exit the program
-            import sys
             print()
             sys.exit()
 
@@ -127,8 +126,6 @@ class Vault:
             self.openVault() # Unlock vault
         except Exception as e:
             if tentative >= 3:
-                import sys
-
                 # Stop trying after 3 attempts
                 print('Vault cannot be opened.');
                 print()
@@ -634,8 +631,6 @@ class Vault:
             Lock the vault and exit the program
         """
 
-        import sys
-
         # Lock the vault
         self.vault = None
 
@@ -913,8 +908,8 @@ class Vault:
 
         # Choose a new key
         print()
-        newMasterKey = getpass.getpass('Please choose a new master key:');
-        newMasterKeyRepeat = getpass.getpass('Please confirm your new master key:');
+        newMasterKey = getpass.getpass(self.lockPrefix() + 'Please choose a new master key:');
+        newMasterKeyRepeat = getpass.getpass(self.lockPrefix() + 'Please confirm your new master key:');
 
         if len(newMasterKey) < 8:
             print()
@@ -946,3 +941,21 @@ class Vault:
         """
 
         return self.vault;
+
+    def isUnicodeSupported(self):
+        """
+            Returns `True` if stdout supports unicode
+        """
+
+        return sys.stdout.encoding.lower().startswith('utf-')
+
+    def lockPrefix(self):
+        """
+            Will prefix locks with a Unicode Character 'KEY' (U+1F511)
+            if the user's stdout supports it
+        """
+
+        if self.isUnicodeSupported():
+            return u'\U0001F511  ' # Extra spaces are intentional
+
+        return ''
