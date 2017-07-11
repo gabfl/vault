@@ -2,10 +2,10 @@ import os
 
 import argparse
 
-from vault.lib.Vault import Vault
-from vault.lib.Config import Config
-from vault.lib.ImportExport import ImportExport
-from vault.lib.Misc import *
+from .lib.Vault import Vault
+from .lib.Config import Config
+from .lib.ImportExport import ImportExport
+from .lib.Misc import *
 
 # Parse arguments
 parser = argparse.ArgumentParser()
