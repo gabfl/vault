@@ -1,5 +1,5 @@
 
-import os, sys, json
+import sys, json
 
 """
     Adding import or export formats:

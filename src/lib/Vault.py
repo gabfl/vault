@@ -1,5 +1,5 @@
 
-import getpass, json, base64, time, sys
+import getpass, json, base64, time, sys, os
 
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
@@ -157,6 +157,7 @@ class Vault:
             [ f.write(x) for x in (cipher.nonce, tag, ciphertext) ]
         finally:
             f.close()
+        os.chmod(self.vaultPath, 0o600)
 
     @setAutoLockTimer # Set auto lock timer (to prevent immediate re-locking)
     def openVault(self):

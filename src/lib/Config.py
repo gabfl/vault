@@ -64,6 +64,7 @@ class Config:
 
         with open(self.configPath, 'w') as configfile:
            self.config.write(configfile)
+        os.chmod(self.configPath, 0o600)
 
     def generateRandomSalt(self):
         """
