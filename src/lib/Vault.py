@@ -48,7 +48,6 @@ class Vault:
             print("Your vault has been created and encrypted with your master key.")
             print("Your unique salt is: %s " % (self.config['salt']))
             print("Write it down. If you lose your config file you will need it to unlock your vault.")
-            print()
             self.unlock()
         else:
             print()
@@ -77,7 +76,6 @@ class Vault:
         if self.timer and int(time.time()) > self.timer + int(self.config['autoLockTTL']):
             print()
             print("The vault has been locked due to inactivity.")
-            print()
             self.lock()
 
     def checkAutoLockTimerDecorator(func):
@@ -134,7 +132,6 @@ class Vault:
             else:
                 # Try again
                 print('Master key is incorrect. Please try again!');
-                print()
                 self.unlock(showMenu, tentative + 1)
 
         if showMenu:
@@ -937,7 +934,6 @@ class Vault:
 
             print()
             print("Your master key has been updated.")
-            print()
             self.unlock()
         else:
             print()
