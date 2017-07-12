@@ -1,5 +1,7 @@
-import configparser, os
+import configparser
+import os
 from uuid import uuid4
+
 
 class Config:
 
@@ -32,7 +34,7 @@ class Config:
 
         self.config['MAIN'] = {
             'version': '1.00',
-            'keyVersion': '1', # Will be used to support legacy key versions if the algorithm changes
+            'keyVersion': '1',  # Will be used to support legacy key versions if the algorithm changes
             'salt': self.generateRandomSalt(),
             'clipboardTTL': '15',
             'hideSecretTTL': '5',
@@ -63,7 +65,7 @@ class Config:
         """
 
         with open(self.configPath, 'w') as configfile:
-           self.config.write(configfile)
+            self.config.write(configfile)
         os.chmod(self.configPath, 0o600)
 
     def generateRandomSalt(self):
