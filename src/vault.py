@@ -103,7 +103,3 @@ def main():
     # Offer to unlock the vault
     else:
         v.unlock()
-
-
-if __name__ == '__main__':
-    main()
