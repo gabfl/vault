@@ -1,21 +1,27 @@
 
-import getpass, json, base64, time, sys, os
+import getpass
+import json
+import base64
+import time
+import sys
+import os
 
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 import pyperclip
 from passwordgenerator import pwgenerator
 
+
 class Vault:
 
-    config = None # Will hold user configuration
-    vaultPath = None # Vault file location
-    vault = None # Vault content once decrypted
-    timer = None # Set a timer to autolock the vault
+    config = None  # Will hold user configuration
+    vaultPath = None  # Vault file location
+    vault = None  # Vault content once decrypted
+    timer = None  # Set a timer to autolock the vault
 
     def __init__(self, config, vaultPath):
-        self.config = config;
-        self.vaultPath = vaultPath;
+        self.config = config
+        self.vaultPath = vaultPath
 
     def setup(self):
         """
@@ -24,7 +30,7 @@ class Vault:
 
         global masterKey
 
-        print('Welcome to Vault. Please choose a secure secret key.');
+        print('Welcome to Vault. Please choose a secure secret key.')
         print()
         try:
             masterKey = getpass.getpass(self.lockPrefix() + 'Please choose a master key:');
@@ -36,10 +42,10 @@ class Vault:
 
         if len(masterKey) < 8:
             print()
-            print('The master key should be at least 8 characters. Please try again!');
+            print('The master key should be at least 8 characters. Please try again!')
             print()
             # Try again
-            self.setup();
+            self.setup()
         elif masterKey == masterKeyRepeat:
             # Create empty vault
             self.vault = {}
@@ -51,10 +57,10 @@ class Vault:
             self.unlock()
         else:
             print()
-            print('The master key does not match its confirmation. Please try again!');
+            print('The master key does not match its confirmation. Please try again!')
             print()
             # Try again
-            self.setup();
+            self.setup()
 
     def setAutoLockTimer(func):
         """
@@ -90,7 +96,7 @@ class Vault:
             func(*args)
         return wrapper
 
-    def input(self, string, nonLockingValues = []):
+    def input(self, string, nonLockingValues=[]):
         """
             Ask for user input and check auto lock timer before returning the value
         """
@@ -99,13 +105,13 @@ class Vault:
         i = input(string)
 
         # Check the timer
-        if not i in nonLockingValues: # Except if the user input is non elligible for vault locking
+        if not i in nonLockingValues:  # Except if the user input is non elligible for vault locking
             self.checkAutoLockTimer()
 
         # Return input
         return i
 
-    def unlock(self, showMenu = True, tentative = 1):
+    def unlock(self, showMenu=True, tentative=1):
         """
             Asking the user for his master key and trying to unlock the vault
         """
@@ -122,16 +128,16 @@ class Vault:
             sys.exit()
 
         try:
-            self.openVault() # Unlock vault
+            self.openVault()  # Unlock vault
         except Exception as e:
             if tentative >= 3:
                 # Stop trying after 3 attempts
-                print('Vault cannot be opened.');
+                print('Vault cannot be opened.')
                 print()
                 sys.exit()
             else:
                 # Try again
-                print('Master key is incorrect. Please try again!');
+                print('Master key is incorrect. Please try again!')
                 self.unlock(showMenu, tentative + 1)
 
         if showMenu:
@@ -149,17 +155,17 @@ class Vault:
         """
 
         cipher = AES.new(self.getHash(masterKey), AES.MODE_EAX)
-        data = str.encode(json.dumps(self.vault));
+        data = str.encode(json.dumps(self.vault))
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
         f = open(self.vaultPath, "wb")
         try:
-            [ f.write(x) for x in (cipher.nonce, tag, ciphertext) ]
+            [f.write(x) for x in (cipher.nonce, tag, ciphertext)]
         finally:
             f.close()
         os.chmod(self.vaultPath, 0o600)
 
-    @setAutoLockTimer # Set auto lock timer (to prevent immediate re-locking)
+    @setAutoLockTimer  # Set auto lock timer (to prevent immediate re-locking)
     def openVault(self):
         """"
             Open the vault with the master key
@@ -167,7 +173,7 @@ class Vault:
 
         f = open(self.vaultPath, "rb")
         try:
-            nonce, tag, ciphertext = [ f.read(x) for x in (16, 16, -1) ]
+            nonce, tag, ciphertext = [f.read(x) for x in (16, 16, -1)]
         finally:
             f.close()
 
@@ -176,7 +182,7 @@ class Vault:
         data = cipher.decrypt_and_verify(ciphertext, tag)
 
         # Set vault content to class level var
-        self.vault = json.loads(data.decode("utf-8") )
+        self.vault = json.loads(data.decode("utf-8"))
 
     def getHash(self, masterKey):
         """
@@ -188,7 +194,7 @@ class Vault:
             h.update(str.encode(str(i) + self.config['salt'] + masterKey))
         return base64.b64decode(str.encode(h.hexdigest()[:32]))
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def addItemInput(self):
         """
             Add a new secret based on user input
@@ -266,8 +272,8 @@ class Vault:
 
         self.saveVault()
 
-    @checkAutoLockTimerDecorator # Check auto lock timer
-    @setAutoLockTimer # Set auto lock timer
+    @checkAutoLockTimerDecorator  # Check auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def menu(self):
         """
             Display user menu
@@ -282,32 +288,32 @@ class Vault:
             self.menu()
 
         # Action based on command
-        if command == 'g': # Get an item
-             self.get()
-        elif command == 's': # Search an item
-             self.search()
-        elif command == 'all': # Show all items
-             self.all()
-        elif command == 'a': # Add an item
-             self.addItemInput()
-        elif command == 'cat': # Manage categories
-             self.categoriesMenu()
-        elif command == 'l': # Lock the vault and ask for the master key
-             self.lock()
-        elif command == 'q': # Lock the vault and quit
-             self.quit()
-        else: # Back to menu
+        if command == 'g':  # Get an item
+            self.get()
+        elif command == 's':  # Search an item
+            self.search()
+        elif command == 'all':  # Show all items
+            self.all()
+        elif command == 'a':  # Add an item
+            self.addItemInput()
+        elif command == 'cat':  # Manage categories
+            self.categoriesMenu()
+        elif command == 'l':  # Lock the vault and ask for the master key
+            self.lock()
+        elif command == 'q':  # Lock the vault and quit
+            self.quit()
+        else:  # Back to menu
             self.menu()
 
-    @setAutoLockTimer # Set auto lock timer
-    def get(self, id = None):
+    @setAutoLockTimer  # Set auto lock timer
+    def get(self, id=None):
         """
             Quickly retrieve an item from the vault with its ID
         """
 
         from .Misc import confirm
 
-        if id is None: # If the user did not pre-select an item
+        if id is None:  # If the user did not pre-select an item
             print()
             try:
                 id = self.input('Enter item number: ')
@@ -322,9 +328,9 @@ class Vault:
 
             # Show item in a table
             results = [[
-                    self.categoryName(item['category']),
-                    item['name'],
-                    item['login']
+                self.categoryName(item['category']),
+                item['name'],
+                item['login']
             ]]
             from tabulate import tabulate
             print()
@@ -340,11 +346,11 @@ class Vault:
             self.itemMenu(int(id), item)
         except Exception as e:
             print(e)
-            print('Item does not exist.');
+            print('Item does not exist.')
 
         self.menu()
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def itemMenu(self, itemKey, item):
         """
             Item menu
@@ -359,17 +365,17 @@ class Vault:
             self.menu()
 
         # Action based on command
-        if command == 'c': # Copy a secret to the clipboard
-             self.itemCopyToClipboard(item['password'])
-        elif command == 'p': # Show a secret
-             self.itemShowSecret(item['password'])
-        elif command == 'e': # Edit an item
-             self.itemEdit(itemKey, item)
-        elif command == 'd': # Delete an item
-             self.itemDelete(itemKey)
-        elif command == 'b': # Back to vault menu
-             self.menu()
-        else: # Back to menu
+        if command == 'c':  # Copy a secret to the clipboard
+            self.itemCopyToClipboard(item['password'])
+        elif command == 'p':  # Show a secret
+            self.itemShowSecret(item['password'])
+        elif command == 'e':  # Edit an item
+            self.itemEdit(itemKey, item)
+        elif command == 'd':  # Delete an item
+            self.itemDelete(itemKey)
+        elif command == 'b':  # Back to vault menu
+            self.menu()
+        else:  # Back to menu
             self.itemMenu(itemKey, item)
 
     def itemCopyToClipboard(self, password):
@@ -404,7 +410,7 @@ class Vault:
         # Back to Vault menu
         self.menu()
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def itemEdit(self, itemKey, item):
         """
             Edit an item
@@ -419,22 +425,22 @@ class Vault:
             self.menu()
 
         # Action based on command
-        if command == 'c': # Edit category
-             self.editItemInput(itemKey, 'category', self.categoryName(item['category']))
-        elif command == 'n': # Edit name
-             self.editItemInput(itemKey, 'name', item['name'])
-        elif command == 'l': # Edit login
-             self.editItemInput(itemKey, 'login', item['login'])
-        elif command == 'p': # Edit password
-             self.editItemInput(itemKey, 'password', '')
-        elif command == 'o': # Edit notes
-             self.editItemInput(itemKey, 'notes', item['notes'])
-        elif command == 'b': # Back to vault menu
-             self.menu()
-        else: # Back to menu
+        if command == 'c':  # Edit category
+            self.editItemInput(itemKey, 'category', self.categoryName(item['category']))
+        elif command == 'n':  # Edit name
+            self.editItemInput(itemKey, 'name', item['name'])
+        elif command == 'l':  # Edit login
+            self.editItemInput(itemKey, 'login', item['login'])
+        elif command == 'p':  # Edit password
+            self.editItemInput(itemKey, 'password', '')
+        elif command == 'o':  # Edit notes
+            self.editItemInput(itemKey, 'notes', item['notes'])
+        elif command == 'b':  # Back to vault menu
+            self.menu()
+        else:  # Back to menu
             self.itemEdit(itemKey, item)
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def editItemInput(self, itemKey, fieldName, fieldCurrentValue):
         """
             Edit a field for an item
@@ -484,12 +490,12 @@ class Vault:
         item = self.vault['secrets'][itemKey][fieldName] = fieldNewValue
 
         # Debug
-        #print(self.vault['secrets'][itemKey])
+        # print(self.vault['secrets'][itemKey])
 
         # Save the vault
         self.saveVault()
 
-        print('The item has been updated.');
+        print('The item has been updated.')
 
         # Back to Vault menu
         self.menu()
@@ -514,11 +520,11 @@ class Vault:
                 # Save the vault
                 self.saveVault()
         except Exception as e:
-            print('Item does not exist.');
+            print('Item does not exist.')
 
         self.menu()
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def search(self):
         """
             Search items
@@ -540,9 +546,9 @@ class Vault:
             for i, item in enumerate(self.vault['secrets']):
                 # Search in name, login and notes
                 if search.upper() in item['name'].upper() or \
-                    search.upper() in item['login'].upper() or \
-                    search.upper() in item['notes'].upper() or \
-                    search.upper() in self.categoryName(item['category']).upper():
+                        search.upper() in item['login'].upper() or \
+                        search.upper() in item['notes'].upper() or \
+                        search.upper() in self.categoryName(item['category']).upper():
                     # Increment search result item number
                     searchResultItemNumber += 1
 
@@ -556,7 +562,7 @@ class Vault:
                         self.categoryName(item['category']),
                         item['name'],
                         item['login']
-                    ]);
+                    ])
 
             # If we have search results
             if len(results) > 0:
@@ -573,7 +579,7 @@ class Vault:
 
         self.menu()
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def searchResultSelection(self, searchResultItems):
         """
             Allow the user to select a search result or to go back to the main menu
@@ -613,14 +619,14 @@ class Vault:
                     self.categoryName(item['category']),
                     item['name'],
                     item['login']
-                ]);
+                ])
 
             # Show results table
             from tabulate import tabulate
             print()
             print (tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
         else:
-            print("There are no secrets saved yet.");
+            print("There are no secrets saved yet.")
 
         self.menu()
 
@@ -660,7 +666,7 @@ class Vault:
             else:
                 print("%s item is saved in the vault" % (count))
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def categoriesMenu(self):
         """
             Categories menu
@@ -678,15 +684,15 @@ class Vault:
             self.menu()
 
         # Action based on command
-        if command == 'a': # Add a category
-             self.categoryAdd()
-        elif command == 'r': # Rename a category
-             self.categoryRename()
-        elif command == 'd': # Delete a category
-             self.categoryDelete()
-        elif command == 'b': # Back to vault menu
-             self.menu()
-        else: # Back to menu
+        if command == 'a':  # Add a category
+            self.categoryAdd()
+        elif command == 'r':  # Rename a category
+            self.categoryRename()
+        elif command == 'd':  # Delete a category
+            self.categoryDelete()
+        elif command == 'b':  # Back to vault menu
+            self.menu()
+        else:  # Back to menu
             self.categoriesMenu()
 
     def categoriesList(self):
@@ -703,7 +709,7 @@ class Vault:
                     results.append([
                         i,
                         item['name']
-                    ]);
+                    ])
 
             # If we have active categories
             if len(results) > 0:
@@ -715,9 +721,9 @@ class Vault:
                 print('There are no categories yet.')
         else:
             print()
-            print("There are no categories yet.");
+            print("There are no categories yet.")
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def categoryAdd(self):
         """
             Create a new category
@@ -749,7 +755,7 @@ class Vault:
 
         self.categoriesMenu()
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def categoryDelete(self):
         """
             Quickly delete a category from the vault with its ID
@@ -781,11 +787,11 @@ class Vault:
                         # Save the vault
                         self.saveVault()
 
-                        print('The category has been deleted.');
+                        print('The category has been deleted.')
             else:
-                print('The category cannot be deleted because it is currently used by some secrets.');
+                print('The category cannot be deleted because it is currently used by some secrets.')
         except Exception as e:
-            print('Category does not exist.');
+            print('Category does not exist.')
 
         self.categoriesMenu()
 
@@ -797,14 +803,14 @@ class Vault:
         if self.vault.get('secrets'):
             # Iterate thru the items
             for item in self.vault['secrets']:
-                if categoryId and item['category'] == categoryId: # If the item has a category and it is the category searched
+                if categoryId and item['category'] == categoryId:  # If the item has a category and it is the category searched
                     return True
         else:
             return False
 
         return False
 
-    @setAutoLockTimer # Set auto lock timer
+    @setAutoLockTimer  # Set auto lock timer
     def categoryRename(self):
         """
             Quickly rename a category from the vault with its ID
@@ -836,9 +842,9 @@ class Vault:
             # Save the vault
             self.saveVault()
 
-            print('The category has been renamed.');
+            print('The category has been renamed.')
         except Exception as e:
-            print('Category does not exist.');
+            print('Category does not exist.')
 
         self.categoriesMenu()
 
@@ -851,7 +857,7 @@ class Vault:
             # Get item
             item = self.vault['categories'][int(categoryId)]
 
-            if item['active'] == True: # Return `true` if the category is active
+            if item['active'] == True:  # Return `true` if the category is active
                 return True
         except Exception as e:
             return False
@@ -868,7 +874,7 @@ class Vault:
             # Get item
             item = self.vault['categories'][int(categoryId)]
 
-            if item['active'] == True: # Return category name if the category is active
+            if item['active'] == True:  # Return category name if the category is active
                 return item['name']
         except Exception as e:
             return 'n/a'
@@ -894,13 +900,13 @@ class Vault:
             # Loop until the delay is elapsed
             for i in range(0, int(self.config['clipboardTTL'])):
                 print('.', end='', flush=True)
-                time.sleep(1) # Sleep 1 sec
+                time.sleep(1)  # Sleep 1 sec
         except KeyboardInterrupt as e:
             # Will catch `^-c` and immediately erase the clipboard
             pass
 
         print()
-        self.clipboard('') # Empty clipboard
+        self.clipboard('')  # Empty clipboard
 
     def changeKey(self):
         """
@@ -912,8 +918,8 @@ class Vault:
         global masterKey
 
         # Unlock the vault with the existing key
-        if self.vault is None: # Except if it's already unlocked
-            self.unlock(False) # `False` = don't load menu after unlocking
+        if self.vault is None:  # Except if it's already unlocked
+            self.unlock(False)  # `False` = don't load menu after unlocking
 
         # Choose a new key
         print()
@@ -922,10 +928,10 @@ class Vault:
 
         if len(newMasterKey) < 8:
             print()
-            print('The master key should be at least 8 characters. Please try again!');
+            print('The master key should be at least 8 characters. Please try again!')
             print()
             # Try again
-            self.changeKey();
+            self.changeKey()
         elif newMasterKey == newMasterKeyRepeat:
             # Override master key
             masterKey = newMasterKey
@@ -938,17 +944,17 @@ class Vault:
             self.unlock()
         else:
             print()
-            print('The master key does not match its confirmation. Please try again!');
+            print('The master key does not match its confirmation. Please try again!')
             print()
             # Try again
-            self.changeKey();
+            self.changeKey()
 
     def getVault(self):
         """
             Returns the vault content
         """
 
-        return self.vault;
+        return self.vault
 
     def isUnicodeSupported(self):
         """
@@ -964,6 +970,6 @@ class Vault:
         """
 
         if self.isUnicodeSupported():
-            return u'\U0001F511  ' # Extra spaces are intentional
+            return u'\U0001F511  '  # Extra spaces are intentional
 
         return ''

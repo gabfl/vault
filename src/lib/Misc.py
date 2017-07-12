@@ -12,6 +12,7 @@ def logo():
     print("        \\/ \\__,_|\\__,_|_|\\__|    |            |")
     print("                                 '.__________.'")
 
+
 def createFolderIfMissing(folderPath):
     """
         Create the vault and configuration file storage folder if it does not exist
@@ -31,6 +32,7 @@ def createFolderIfMissing(folderPath):
         print()
         sys.exit()
 
+
 def assessIntegrity(vaultPath, configPath):
     """
         The vault config file contains a salt. The salt is used to unlock the vault along with the master key.
@@ -38,7 +40,8 @@ def assessIntegrity(vaultPath, configPath):
         We are ensuring here that a config file exists if a vault exists.
     """
 
-    import os, sys
+    import os
+    import sys
 
     if not os.path.isfile(configPath) and os.path.isfile(vaultPath):
         print()
@@ -48,15 +51,17 @@ def assessIntegrity(vaultPath, configPath):
         print()
         sys.exit()
 
+
 def eraseVault(vaultPath, configPath):
     """
         Will erase the vault and config file after asking user for confirmation
     """
 
-    import os, sys
+    import os
+    import sys
 
     print()
-    if confirm(prompt='Do you want to permanently erase your vault? All your data will be lost!', resp = False):
+    if confirm(prompt='Do you want to permanently erase your vault? All your data will be lost!', resp=False):
         # Delte files
         if os.path.isfile(vaultPath):
             os.remove(vaultPath)
@@ -70,7 +75,8 @@ def eraseVault(vaultPath, configPath):
     else:
         sys.exit()
 
-def confirm(prompt = None, resp = False):
+
+def confirm(prompt=None, resp=False):
     """
         Source: http://code.activestate.com/recipes/541096-prompt-the-user-for-confirmation/
 
