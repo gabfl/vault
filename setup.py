@@ -8,7 +8,7 @@ except(IOError, ImportError):
 
 setup(
     name='pyvault',
-    version='1.4.4.4',
+    version='1.4.4.5',
     description='Python password manager',
     long_description=long_description,
     author='Gabriel Bordeaux',
@@ -23,4 +23,17 @@ setup(
             'vault = vault.vault:main',
         ],
     },
+    classifiers=[  # see https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'Topic :: Security',
+        'Topic :: Security :: Cryptography',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: MacOS',
+        'Operating System :: POSIX :: Linux',
+        'Natural Language :: English',
+        #'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python',
+        'Development Status :: 4 - Beta',
+        #'Development Status :: 5 - Production/Stable',
+    ],
 )
