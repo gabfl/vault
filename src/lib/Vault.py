@@ -203,7 +203,7 @@ class Vault:
         if self.vault.get('categories'):
             # Show categories
             print()
-            print ("* Available categories:")
+            print("* Available categories:")
             self.categoriesList()
             print()
 
@@ -334,12 +334,12 @@ class Vault:
             ]]
             from tabulate import tabulate
             print()
-            print (tabulate(results, headers=['Category', 'Name / URL', 'Login']))
+            print(tabulate(results, headers=['Category', 'Name / URL', 'Login']))
 
             # Show eventual notes
             if item['notes'] != '':
                 print()
-                print ('Notes:')
+                print('Notes:')
                 print(item['notes'])
 
             # Show item menu
@@ -385,7 +385,7 @@ class Vault:
 
         # Copy to clipboard
         self.clipboard(password)
-        print ('* The password has been copied to the clipboard.')
+        print('* The password has been copied to the clipboard.')
         self.waitAndEraseClipboard()
 
         # Back to Vault menu
@@ -396,8 +396,8 @@ class Vault:
             Show a secret for X seconds and erase it from the screen
         """
 
-        print ("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
-        print ('The password is: %s' % (password), end="\r")
+        print("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
+        print('The password is: %s' % (password), end="\r")
 
         try:
             time.sleep(int(self.config['hideSecretTTL']))
@@ -458,7 +458,7 @@ class Vault:
             elif fieldName == 'category':
                 # Show categories
                 print()
-                print ("* Available categories:")
+                print("* Available categories:")
                 self.categoriesList()
                 print()
 
@@ -565,11 +565,17 @@ class Vault:
                     ])
 
             # If we have search results
-            if len(results) > 0:
+            if len(results) == 1:  # Exactly one result
+                # Get ID
+                id = searchResultItems[1]
+
+                # Load item
+                self.get(id)
+            elif len(results) > 0:  # More than one result
                 # Show results table
                 from tabulate import tabulate
                 print()
-                print (tabulate(results, headers=['#', 'Item', 'Category', 'Name / URL', 'Login']))
+                print(tabulate(results, headers=['#', 'Item', 'Category', 'Name / URL', 'Login']))
 
                 self.searchResultSelection(searchResultItems)
             else:
@@ -624,7 +630,7 @@ class Vault:
             # Show results table
             from tabulate import tabulate
             print()
-            print (tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
+            print(tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
         else:
             print("There are no secrets saved yet.")
 
@@ -716,7 +722,7 @@ class Vault:
                 # Show results table
                 from tabulate import tabulate
                 print()
-                print (tabulate(results, headers=['Item', 'Category name']))
+                print(tabulate(results, headers=['Item', 'Category name']))
             else:
                 print('There are no categories yet.')
         else:
@@ -776,7 +782,7 @@ class Vault:
             item = self.vault['categories'][int(id)]
 
             # Show item
-            print ('* Category: %s' % (item['name']))
+            print('* Category: %s' % (item['name']))
             print()
             if self.categoryIsUsed(id) == False:
                 if confirm('Confirm deletion?', False):
@@ -831,7 +837,7 @@ class Vault:
             item = self.vault['categories'][int(id)]
 
             # Show item
-            print ('* Category: %s' % (item['name']))
+            print('* Category: %s' % (item['name']))
 
             # Basic input
             name = input('* New category name: ')
