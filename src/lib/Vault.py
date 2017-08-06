@@ -571,7 +571,7 @@ class Vault:
 
                 # Load item
                 self.get(id)
-            elif len(results) > 0:  # More than one result
+            elif len(results) > 1:  # More than one result
                 # Show results table
                 from tabulate import tabulate
                 print()
