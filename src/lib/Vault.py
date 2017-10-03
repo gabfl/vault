@@ -287,6 +287,9 @@ class Vault:
                 print()
                 continue
 
+            # Ensure the input is lowercased
+            command = command.lower()
+
             # Action based on command
             if command == 's':  # Search an item
                 self.search()
@@ -348,6 +351,9 @@ class Vault:
                 print()
                 return
 
+            # Ensure the input is lowercased
+            command = command.lower()
+
             # Action based on command
             if command == 'l':  # Copy login to the clipboard
                 self.itemCopyToClipboard(item['login'], 'login')
@@ -405,6 +411,9 @@ class Vault:
                 # Back to menu if user cancels
                 print()
                 return
+
+            # Ensure the input is lowercased
+            command = command.lower()
 
             # Action based on command
             if command == 'c':  # Edit category
@@ -682,6 +691,9 @@ class Vault:
                 # Back to menu if user cancels
                 print()
                 return
+
+            # Ensure the input is lowercased
+            command = command.lower()
 
             # Action based on command
             if command == 'a':  # Add a category
