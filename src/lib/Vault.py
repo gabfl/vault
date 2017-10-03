@@ -213,7 +213,7 @@ class Vault:
             except KeyboardInterrupt as e:
                 # Back to menu if user cancels
                 print()
-                self.menu()
+                return
 
             if categoryId != '':
                 if not self.categoryCheckId(categoryId):
@@ -241,7 +241,7 @@ class Vault:
                 else:
                     notes.append(input_str)
         except KeyboardInterrupt as e:
-            self.menu()
+            return
 
         # Save item
         self.addItem(categoryId, name, login, password, "\n".join(notes))
@@ -250,7 +250,6 @@ class Vault:
         print()
         print('The new item has been saved to your vault.')
         print()
-        self.menu()
 
     def addItem(self, categoryId, name, login, password, notes):
         """
@@ -279,29 +278,28 @@ class Vault:
             Display user menu
         """
 
-        print()
-        try:
-            command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
+        while (True):
             print()
-            self.menu()
+            try:
+                command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                continue
 
-        # Action based on command
-        if command == 's':  # Search an item
-            self.search()
-        elif command == 'all':  # Show all items
-            self.all()
-        elif command == 'a':  # Add an item
-            self.addItemInput()
-        elif command == 'cat':  # Manage categories
-            self.categoriesMenu()
-        elif command == 'l':  # Lock the vault and ask for the master key
-            self.lock()
-        elif command == 'q':  # Lock the vault and quit
-            self.quit()
-        else:  # Back to menu
-            self.menu()
+            # Action based on command
+            if command == 's':  # Search an item
+                self.search()
+            elif command == 'all':  # Show all items
+                self.all()
+            elif command == 'a':  # Add an item
+                self.addItemInput()
+            elif command == 'cat':  # Manage categories
+                self.categoriesMenu()
+            elif command == 'l':  # Lock the vault and ask for the master key
+                self.lock()
+            elif command == 'q':  # Lock the vault and quit
+                self.quit()
 
     @setAutoLockTimer  # Set auto lock timer
     def get(self, id):
@@ -335,35 +333,36 @@ class Vault:
             print(e)
             print('Item does not exist.')
 
-        self.menu()
-
     @setAutoLockTimer  # Set auto lock timer
     def itemMenu(self, itemKey, item):
         """
             Item menu
         """
 
-        print()
-        try:
-            command = self.input('Choose a command [(c)opy secret to clipboard / show (p)assword / (e)dit / (d)elete / (b)ack to Vault]: ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
+        while (True):
             print()
-            self.menu()
+            try:
+                command = self.input('Choose a command [(c)opy secret to clipboard / show (p)assword / (e)dit / (d)elete / (b)ack to Vault]: ')
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                return
 
-        # Action based on command
-        if command == 'c':  # Copy a secret to the clipboard
-            self.itemCopyToClipboard(item['password'])
-        elif command == 'p':  # Show a secret
-            self.itemShowSecret(item['password'])
-        elif command == 'e':  # Edit an item
-            self.itemEdit(itemKey, item)
-        elif command == 'd':  # Delete an item
-            self.itemDelete(itemKey)
-        elif command == 'b':  # Back to vault menu
-            self.menu()
-        else:  # Back to menu
-            self.itemMenu(itemKey, item)
+            # Action based on command
+            if command == 'c':  # Copy a secret to the clipboard
+                self.itemCopyToClipboard(item['password'])
+                return
+            elif command == 'p':  # Show a secret
+                self.itemShowSecret(item['password'])
+                return
+            elif command == 'e':  # Edit an item
+                self.itemEdit(itemKey, item)
+                return
+            elif command == 'd':  # Delete an item
+                self.itemDelete(itemKey)
+                return
+            elif command == 'b':  # Back to vault menu
+                return
 
     def itemCopyToClipboard(self, password):
         """
@@ -374,9 +373,6 @@ class Vault:
         self.clipboard(password)
         print('* The password has been copied to the clipboard.')
         self.waitAndEraseClipboard()
-
-        # Back to Vault menu
-        self.menu()
 
     def itemShowSecret(self, password):
         """
@@ -394,38 +390,39 @@ class Vault:
 
         print('The password is: ' + '*' * len(password))
 
-        # Back to Vault menu
-        self.menu()
-
     @setAutoLockTimer  # Set auto lock timer
     def itemEdit(self, itemKey, item):
         """
             Edit an item
         """
 
-        print()
-        try:
-            command = self.input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
+        while (True):
             print()
-            self.menu()
+            try:
+                command = self.input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                return
 
-        # Action based on command
-        if command == 'c':  # Edit category
-            self.editItemInput(itemKey, 'category', self.categoryName(item['category']))
-        elif command == 'n':  # Edit name
-            self.editItemInput(itemKey, 'name', item['name'])
-        elif command == 'l':  # Edit login
-            self.editItemInput(itemKey, 'login', item['login'])
-        elif command == 'p':  # Edit password
-            self.editItemInput(itemKey, 'password', '')
-        elif command == 'o':  # Edit notes
-            self.editItemInput(itemKey, 'notes', item['notes'])
-        elif command == 'b':  # Back to vault menu
-            self.menu()
-        else:  # Back to menu
-            self.itemEdit(itemKey, item)
+            # Action based on command
+            if command == 'c':  # Edit category
+                self.editItemInput(itemKey, 'category', self.categoryName(item['category']))
+                return
+            elif command == 'n':  # Edit name
+                self.editItemInput(itemKey, 'name', item['name'])
+                return
+            elif command == 'l':  # Edit login
+                self.editItemInput(itemKey, 'login', item['login'])
+                return
+            elif command == 'p':  # Edit password
+                self.editItemInput(itemKey, 'password', '')
+                return
+            elif command == 'o':  # Edit notes
+                self.editItemInput(itemKey, 'notes', item['notes'])
+                return
+            elif command == 'b':  # Back to vault menu
+                return
 
     @setAutoLockTimer  # Set auto lock timer
     def editItemInput(self, itemKey, fieldName, fieldCurrentValue):
@@ -471,7 +468,7 @@ class Vault:
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
         # Update item
         item = self.vault['secrets'][itemKey][fieldName] = fieldNewValue
@@ -483,9 +480,6 @@ class Vault:
         self.saveVault()
 
         print('The item has been updated.')
-
-        # Back to Vault menu
-        self.menu()
 
     def itemDelete(self, itemKey):
         """
@@ -509,8 +503,6 @@ class Vault:
         except Exception as e:
             print('Item does not exist.')
 
-        self.menu()
-
     @setAutoLockTimer  # Set auto lock timer
     def search(self):
         """
@@ -523,14 +515,14 @@ class Vault:
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
         # Return to menu if search is empty
         if search == '':
             # Back to menu if user cancels
             print()
             print('Empty search!')
-            self.menu()
+            return
 
         if self.vault.get('secrets'):
             # Check if the user inputed an item number
@@ -539,6 +531,7 @@ class Vault:
                 try:
                     self.vault['secrets'][int(search)]  # Will return an IndexError if the item does not exists
                     self.get(int(search))
+                    return
                 except IndexError:
                     pass
 
@@ -586,8 +579,6 @@ class Vault:
         else:
             print("There are no secrets saved yet.")
 
-        self.menu()
-
     @setAutoLockTimer  # Set auto lock timer
     def searchResultSelection(self, searchResultItems):
         """
@@ -600,7 +591,7 @@ class Vault:
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
         # Try getting an item or send user back to the main menu
         try:
@@ -611,7 +602,7 @@ class Vault:
         except Exception as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
     def all(self):
         """
@@ -637,8 +628,6 @@ class Vault:
         else:
             print("There are no secrets saved yet.")
 
-        self.menu()
-
     def lock(self):
         """
             Lock the vault and ask the user to login again
@@ -648,7 +637,7 @@ class Vault:
         self.vault = None
 
         # Unlock form
-        self.unlock()
+        self.unlock(False)
 
     def quit(self):
         """
@@ -681,28 +670,30 @@ class Vault:
             Categories menu
         """
 
-        # List categories
-        self.categoriesList()
+        while (True):
+            # List categories
+            self.categoriesList()
 
-        print()
-        try:
-            command = self.input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
             print()
-            self.menu()
+            try:
+                command = self.input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                return
 
-        # Action based on command
-        if command == 'a':  # Add a category
-            self.categoryAdd()
-        elif command == 'r':  # Rename a category
-            self.categoryRename()
-        elif command == 'd':  # Delete a category
-            self.categoryDelete()
-        elif command == 'b':  # Back to vault menu
-            self.menu()
-        else:  # Back to menu
-            self.categoriesMenu()
+            # Action based on command
+            if command == 'a':  # Add a category
+                self.categoryAdd()
+                return
+            elif command == 'r':  # Rename a category
+                self.categoryRename()
+                return
+            elif command == 'd':  # Delete a category
+                self.categoryDelete()
+                return
+            elif command == 'b':  # Back to vault menu
+                return
 
     def categoriesList(self):
         """
@@ -744,7 +735,7 @@ class Vault:
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
         # Create `categories` item if necessary
         if not self.vault.get('categories'):
@@ -762,8 +753,6 @@ class Vault:
         print()
         print('The category has been created.')
 
-        self.categoriesMenu()
-
     @setAutoLockTimer  # Set auto lock timer
     def categoryDelete(self):
         """
@@ -778,7 +767,7 @@ class Vault:
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
         try:
             # Get item
@@ -801,8 +790,6 @@ class Vault:
                 print('The category cannot be deleted because it is currently used by some secrets.')
         except Exception as e:
             print('Category does not exist.')
-
-        self.categoriesMenu()
 
     def categoryIsUsed(self, categoryId):
         """
@@ -833,7 +820,7 @@ class Vault:
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
-            self.menu()
+            return
 
         try:
             # Get item
@@ -854,8 +841,6 @@ class Vault:
             print('The category has been renamed.')
         except Exception as e:
             print('Category does not exist.')
-
-        self.categoriesMenu()
 
     def categoryCheckId(self, categoryId):
         """
@@ -950,7 +935,7 @@ class Vault:
 
             print()
             print("Your master key has been updated.")
-            self.unlock()
+            self.unlock(False)
         else:
             print()
             print('The master key does not match its confirmation. Please try again!')
