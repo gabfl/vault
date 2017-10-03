@@ -281,16 +281,14 @@ class Vault:
 
         print()
         try:
-            command = self.input('Choose a command [(g)et / (s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
+            command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
         except KeyboardInterrupt as e:
             # Back to menu if user cancels
             print()
             self.menu()
 
         # Action based on command
-        if command == 'g':  # Get an item
-            self.get()
-        elif command == 's':  # Search an item
+        if command == 's':  # Search an item
             self.search()
         elif command == 'all':  # Show all items
             self.all()
@@ -306,21 +304,10 @@ class Vault:
             self.menu()
 
     @setAutoLockTimer  # Set auto lock timer
-    def get(self, id=None):
+    def get(self, id):
         """
             Quickly retrieve an item from the vault with its ID
         """
-
-        from .Misc import confirm
-
-        if id is None:  # If the user did not pre-select an item
-            print()
-            try:
-                id = self.input('Enter item number: ')
-            except KeyboardInterrupt as e:
-                # Back to menu if user cancels
-                print()
-                self.menu()
 
         try:
             # Get item
@@ -538,7 +525,23 @@ class Vault:
             print()
             self.menu()
 
+        # Return to menu if search is empty
+        if search == '':
+            # Back to menu if user cancels
+            print()
+            print('Empty search!')
+            self.menu()
+
         if self.vault.get('secrets'):
+            # Check if the user inputed an item number
+            if self.isNumeric(search):
+                # Get item
+                try:
+                    self.vault['secrets'][int(search)]  # Will return an IndexError if the item does not exists
+                    self.get(int(search))
+                except IndexError:
+                    pass
+
             # Iterate thru the items
             results = []
             searchResultItems = {}
@@ -979,3 +982,17 @@ class Vault:
             return u'\U0001F511  '  # Extra spaces are intentional
 
         return ''
+
+    def isNumeric(self, item):
+        """
+            Check if a string contains numbers only
+            `123` -> `True`
+            `test` -> `False`
+            `test123` -> `False`
+        """
+
+        try:
+            float(item)
+            return True
+        except ValueError:
+            return False
