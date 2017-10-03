@@ -287,6 +287,9 @@ class Vault:
                 print()
                 continue
 
+            # Ensure the input is lowercased
+            command = command.lower()
+
             # Action based on command
             if command == 's':  # Search an item
                 self.search()
@@ -342,17 +345,21 @@ class Vault:
         while (True):
             print()
             try:
-                command = self.input('Choose a command [(c)opy secret to clipboard / show (p)assword / (e)dit / (d)elete / (b)ack to Vault]: ')
+                command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / (s)how password / (e)dit / (d)elete / (b)ack to Vault]: ')
             except KeyboardInterrupt as e:
                 # Back to menu if user cancels
                 print()
                 return
 
+            # Ensure the input is lowercased
+            command = command.lower()
+
             # Action based on command
-            if command == 'c':  # Copy a secret to the clipboard
+            if command == 'l':  # Copy login to the clipboard
+                self.itemCopyToClipboard(item['login'], 'login')
+            elif command == 'p':  # Copy a secret to the clipboard
                 self.itemCopyToClipboard(item['password'])
-                return
-            elif command == 'p':  # Show a secret
+            elif command == 's':  # Show a secret
                 self.itemShowSecret(item['password'])
                 return
             elif command == 'e':  # Edit an item
@@ -364,14 +371,14 @@ class Vault:
             elif command == 'b':  # Back to vault menu
                 return
 
-    def itemCopyToClipboard(self, password):
+    def itemCopyToClipboard(self, item, name='password'):
         """
-            Copy a secret to the clipboard
+            Copy an item to the clipboard
         """
 
         # Copy to clipboard
-        self.clipboard(password)
-        print('* The password has been copied to the clipboard.')
+        self.clipboard(item)
+        print('* The %s has been copied to the clipboard.' % (name))
         self.waitAndEraseClipboard()
 
     def itemShowSecret(self, password):
@@ -404,6 +411,9 @@ class Vault:
                 # Back to menu if user cancels
                 print()
                 return
+
+            # Ensure the input is lowercased
+            command = command.lower()
 
             # Action based on command
             if command == 'c':  # Edit category
@@ -681,6 +691,9 @@ class Vault:
                 # Back to menu if user cancels
                 print()
                 return
+
+            # Ensure the input is lowercased
+            command = command.lower()
 
             # Action based on command
             if command == 'a':  # Add a category
