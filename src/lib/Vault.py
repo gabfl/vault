@@ -62,17 +62,12 @@ class Vault:
             # Try again
             self.setup()
 
-    def setAutoLockTimer(func):
+    def setAutoLockTimer(self):
         """
             Set auto lock timer
         """
 
-        def wrapper(*args):
-            # print("setAutoLockTimer")
-            self = args[0]
-            self.timer = int(time.time())
-            func(*args)
-        return wrapper
+        self.timer = int(time.time())
 
     def checkAutoLockTimer(self):
         """
@@ -84,17 +79,13 @@ class Vault:
             print("The vault has been locked due to inactivity.")
             self.lock()
 
-    def checkAutoLockTimerDecorator(func):
+    def checkThenSetAutoLockTimer(self):
         """
-            Set auto lock timer (as part of a decorator)
+            Check auto lock timer and lock the vault if necessary, then set it again
         """
 
-        def wrapper(*args):
-            # print("checkAutoLockTimerDecorator")
-            self = args[0]
-            self.checkAutoLockTimer()
-            func(*args)
-        return wrapper
+        self.checkAutoLockTimer()
+        self.setAutoLockTimer()
 
     def input(self, string, nonLockingValues=[]):
         """
@@ -165,11 +156,13 @@ class Vault:
             f.close()
         os.chmod(self.vaultPath, 0o600)
 
-    @setAutoLockTimer  # Set auto lock timer (to prevent immediate re-locking)
     def openVault(self):
         """"
             Open the vault with the master key
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         f = open(self.vaultPath, "rb")
         try:
@@ -194,11 +187,13 @@ class Vault:
             h.update(str.encode(str(i) + self.config['salt'] + masterKey))
         return base64.b64decode(str.encode(h.hexdigest()[:32]))
 
-    @setAutoLockTimer  # Set auto lock timer
     def addItemInput(self):
         """
             Add a new secret based on user input
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         if self.vault.get('categories'):
             # Show categories
@@ -271,14 +266,15 @@ class Vault:
 
         self.saveVault()
 
-    @checkAutoLockTimerDecorator  # Check auto lock timer
-    @setAutoLockTimer  # Set auto lock timer
     def menu(self):
         """
             Display user menu
         """
 
         while (True):
+            # Check then set auto lock timer
+            self.checkThenSetAutoLockTimer
+
             print()
             try:
                 command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
@@ -304,11 +300,13 @@ class Vault:
             elif command == 'q':  # Lock the vault and quit
                 self.quit()
 
-    @setAutoLockTimer  # Set auto lock timer
     def get(self, id):
         """
             Quickly retrieve an item from the vault with its ID
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         try:
             # Get item
@@ -336,13 +334,15 @@ class Vault:
             print(e)
             print('Item does not exist.')
 
-    @setAutoLockTimer  # Set auto lock timer
     def itemMenu(self, itemKey, item):
         """
             Item menu
         """
 
         while (True):
+            # Check then set auto lock timer
+            self.checkThenSetAutoLockTimer
+
             print()
             try:
                 command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / (s)how password / (e)dit / (d)elete / (b)ack to Vault]: ')
@@ -397,13 +397,15 @@ class Vault:
 
         print('The password is: ' + '*' * len(password))
 
-    @setAutoLockTimer  # Set auto lock timer
     def itemEdit(self, itemKey, item):
         """
             Edit an item
         """
 
         while (True):
+            # Check then set auto lock timer
+            self.checkThenSetAutoLockTimer
+
             print()
             try:
                 command = self.input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
@@ -434,11 +436,13 @@ class Vault:
             elif command == 'b':  # Back to vault menu
                 return
 
-    @setAutoLockTimer  # Set auto lock timer
     def editItemInput(self, itemKey, fieldName, fieldCurrentValue):
         """
             Edit a field for an item
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         # Show current value
         if fieldName != 'password':
@@ -513,11 +517,13 @@ class Vault:
         except Exception as e:
             print('Item does not exist.')
 
-    @setAutoLockTimer  # Set auto lock timer
     def search(self):
         """
             Search items
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         print()
         try:
@@ -589,11 +595,13 @@ class Vault:
         else:
             print("There are no secrets saved yet.")
 
-    @setAutoLockTimer  # Set auto lock timer
     def searchResultSelection(self, searchResultItems):
         """
             Allow the user to select a search result or to go back to the main menu
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         print()
         try:
@@ -674,13 +682,15 @@ class Vault:
             else:
                 print("%s item is saved in the vault" % (count))
 
-    @setAutoLockTimer  # Set auto lock timer
     def categoriesMenu(self):
         """
             Categories menu
         """
 
         while (True):
+            # Check then set auto lock timer
+            self.checkThenSetAutoLockTimer
+
             # List categories
             self.categoriesList()
 
@@ -736,11 +746,13 @@ class Vault:
             print()
             print("There are no categories yet.")
 
-    @setAutoLockTimer  # Set auto lock timer
     def categoryAdd(self):
         """
             Create a new category
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         # Basic input
         try:
@@ -766,11 +778,13 @@ class Vault:
         print()
         print('The category has been created.')
 
-    @setAutoLockTimer  # Set auto lock timer
     def categoryDelete(self):
         """
             Quickly delete a category from the vault with its ID
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         from .Misc import confirm
 
@@ -819,11 +833,13 @@ class Vault:
 
         return False
 
-    @setAutoLockTimer  # Set auto lock timer
     def categoryRename(self):
         """
             Quickly rename a category from the vault with its ID
         """
+
+        # Set auto lock timer (to prevent immediate re-locking)
+        self.setAutoLockTimer()
 
         from .Misc import confirm
 
