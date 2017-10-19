@@ -345,7 +345,7 @@ class Vault:
 
             print()
             try:
-                command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / (s)how password / (e)dit / (d)elete / (b)ack to Vault]: ')
+                command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ')
             except KeyboardInterrupt as e:
                 # Back to menu if user cancels
                 print()
@@ -359,7 +359,7 @@ class Vault:
                 self.itemCopyToClipboard(item['login'], 'login')
             elif command == 'p':  # Copy a secret to the clipboard
                 self.itemCopyToClipboard(item['password'])
-            elif command == 's':  # Show a secret
+            elif command == 'o':  # Show a secret
                 self.itemShowSecret(item['password'])
                 return
             elif command == 'e':  # Edit an item
@@ -368,6 +368,8 @@ class Vault:
             elif command == 'd':  # Delete an item
                 self.itemDelete(itemKey)
                 return
+            elif command == 's':  # Search an item
+                self.search()
             elif command == 'b':  # Back to vault menu
                 return
 
