@@ -271,24 +271,31 @@ class Vault:
             Display user menu
         """
 
+        # Initial value
+        nextCommand = None
+
         while (True):
             # Check then set auto lock timer
             self.checkThenSetAutoLockTimer
 
-            print()
-            try:
-                command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
-            except KeyboardInterrupt as e:
-                # Back to menu if user cancels
+            if nextCommand:  # If we already know the next command
+                command = nextCommand
+                nextCommand = None  # reset
+            else:  # otherwise, ask for user input
                 print()
-                continue
+                try:
+                    command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
+                except KeyboardInterrupt as e:
+                    # Back to menu if user cancels
+                    print()
+                    continue
 
             # Ensure the input is lowercased
             command = command.lower()
 
             # Action based on command
             if command == 's':  # Search an item
-                self.search()
+                nextCommand = self.search()
             elif command == 'all':  # Show all items
                 self.all()
             elif command == 'a':  # Add an item
@@ -329,7 +336,7 @@ class Vault:
                 print(item['notes'])
 
             # Show item menu
-            self.itemMenu(int(id), item)
+            return self.itemMenu(int(id), item)
         except Exception as e:
             print(e)
             print('Item does not exist.')
@@ -369,9 +376,11 @@ class Vault:
                 self.itemDelete(itemKey)
                 return
             elif command == 's':  # Search an item
-                self.search()
+                return 's'
             elif command == 'b':  # Back to vault menu
-                return
+                return 'b'
+            elif command == 'q':  # Lock the vault and quit (hidden command)
+                self.quit()
 
     def itemCopyToClipboard(self, item, name='password'):
         """
@@ -548,8 +557,7 @@ class Vault:
                 # Get item
                 try:
                     self.vault['secrets'][int(search)]  # Will return an IndexError if the item does not exists
-                    self.get(int(search))
-                    return
+                    return self.get(int(search))
                 except IndexError:
                     pass
 
@@ -584,14 +592,14 @@ class Vault:
                 id = searchResultItems[1]
 
                 # Load item
-                self.get(id)
+                return self.get(id)
             elif len(results) > 1:  # More than one result
                 # Show results table
                 from tabulate import tabulate
                 print()
                 print(tabulate(results, headers=['#', 'Item', 'Category', 'Name / URL', 'Login']))
 
-                self.searchResultSelection(searchResultItems)
+                return self.searchResultSelection(searchResultItems)
             else:
                 print('No results!')
         else:
@@ -618,7 +626,7 @@ class Vault:
             # Get item ID
             id = searchResultItems[int(resultItem)]
 
-            self.get(id)
+            return self.get(id)
         except Exception as e:
             # Back to menu if user cancels
             print()
