@@ -553,7 +553,7 @@ class Vault:
 
         if self.vault.get('secrets'):
             # Check if the user inputed an item number
-            if self.isNumeric(search):
+            if search.isdigit():
                 # Get item
                 try:
                     self.vault['secrets'][int(search)]  # Will return an IndexError if the item does not exists
@@ -1006,17 +1006,3 @@ class Vault:
             return u'\U0001F511  '  # Extra spaces are intentional
 
         return ''
-
-    def isNumeric(self, item):
-        """
-            Check if a string contains numbers only
-            `123` -> `True`
-            `test` -> `False`
-            `test123` -> `False`
-        """
-
-        try:
-            float(item)
-            return True
-        except ValueError:
-            return False
