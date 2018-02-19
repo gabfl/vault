@@ -548,7 +548,7 @@ class Vault:
             return
 
         # To prevent fat-finger errors, the search meny will also respond to common commands
-        if search in ['s', 'all', 'a', 'cat', 'l', 'q']:  # Common commands
+        if search in ['s', 'a', 'l', 'q']:  # Common commands
             return search
         elif search == 'b':  # Return to previous menu
             return
