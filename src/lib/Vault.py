@@ -18,6 +18,7 @@ class Vault:
     vaultPath = None  # Vault file location
     vault = None  # Vault content once decrypted
     timer = None  # Set a timer to autolock the vault
+    clipboardSignature = None  # Hash of clipboard item
 
     def __init__(self, config, vaultPath):
         self.config = config
@@ -136,7 +137,7 @@ class Vault:
             self.showSecretCount()
 
             # Print vault content (for debug purpose)
-            #print(json.dumps(self.vault, sort_keys=True, indent=4, separators=(',', ': ')))
+            # print(json.dumps(self.vault, sort_keys=True, indent=4, separators=(',', ': ')))
 
             self.menu()
 
@@ -922,6 +923,25 @@ class Vault:
 
         pyperclip.copy(toCopy)
 
+        # Save signature
+        self.clipboardSignature = self.getSignature(toCopy)
+
+    def isClipboardChanged(self):
+        """
+            Returns `True` if the clipboard content has changed
+        """
+
+        return self.clipboardSignature != self.getSignature(pyperclip.paste())
+
+    def getSignature(self, item):
+        """
+            Returns the sha256 hash of a string
+        """
+
+        h = SHA256.new()
+        h.update(str.encode(item))
+        return h.hexdigest()
+
     def waitAndEraseClipboard(self):
         """
             Wait X seconds and erase the clipboard
@@ -934,12 +954,18 @@ class Vault:
             for i in range(0, int(self.config['clipboardTTL'])):
                 print('.', end='', flush=True)
                 time.sleep(1)  # Sleep 1 sec
+
+                # Stop timer if clipboard content has changed
+                if self.isClipboardChanged():
+                    break
         except KeyboardInterrupt as e:
             # Will catch `^-c` and immediately erase the clipboard
             pass
 
         print()
-        self.clipboard('')  # Empty clipboard
+        if not self.isClipboardChanged():  # We will not empty the clipboard if its content has changed
+            self.clipboard('')  # Empty clipboard
+        self.clipboardSignature = ''  # Reset clipboard signature
 
     def changeKey(self):
         """
