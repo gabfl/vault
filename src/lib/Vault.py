@@ -369,19 +369,14 @@ class Vault:
                 self.itemCopyToClipboard(item['password'])
             elif command == 'o':  # Show a secret
                 self.itemShowSecret(item['password'])
-                return
             elif command == 'e':  # Edit an item
                 self.itemEdit(itemKey, item)
                 return
             elif command == 'd':  # Delete an item
                 self.itemDelete(itemKey)
                 return
-            elif command == 's':  # Search an item
-                return 's'
-            elif command == 'b':  # Back to vault menu
-                return 'b'
-            elif command == 'q':  # Lock the vault and quit (hidden command)
-                self.quit()
+            elif command in ['s', 'b', 'q']:  # Common commands
+                return command
 
     def itemCopyToClipboard(self, item, name='password'):
         """
@@ -550,6 +545,12 @@ class Vault:
             # Back to menu if user cancels
             print()
             print('Empty search!')
+            return
+
+        # To prevent fat-finger errors, the search meny will also respond to common commands
+        if search in ['s', 'all', 'a', 'cat', 'l', 'q']:  # Common commands
+            return search
+        elif search == 'b':  # Return to previous menu
             return
 
         if self.vault.get('secrets'):
