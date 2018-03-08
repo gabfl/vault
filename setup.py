@@ -8,7 +8,7 @@ except(IOError, ImportError):
 
 setup(
     name='pyvault',
-    version='1.8.5',
+    version='1.8.6',
     description='Python password manager',
     long_description=long_description,
     author='Gabriel Bordeaux',
@@ -17,7 +17,7 @@ setup(
     license='MIT',
     packages=['vault', 'vault.lib'],
     package_dir={'vault': 'src'},
-    install_requires=['pycryptodome', 'pyperclip', 'tabulate', 'argparse', 'passwordgenerator'],  # external dependencies
+    install_requires=['pycryptodome==3.4.11', 'pyperclip', 'tabulate', 'argparse', 'passwordgenerator'],  # external dependencies
     entry_points={
         'console_scripts': [
             'vault = vault.vault:main',
