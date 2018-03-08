@@ -33,13 +33,18 @@ class Vault:
 
         print('Welcome to Vault. Please choose a secure secret key.')
         print()
-        try:
-            masterKey = getpass.getpass(self.lockPrefix() + 'Please choose a master key:');
-            masterKeyRepeat = getpass.getpass(self.lockPrefix() + 'Please confirm your master key:');
-        except KeyboardInterrupt as e:
-            # If the user presses `Ctrl`+`c`, exit the program
-            print()
-            sys.exit()
+        while True:
+            try:
+                masterKey = getpass.getpass(self.lockPrefix() + 'Please choose a master key:');
+                masterKeyRepeat = getpass.getpass(self.lockPrefix() + 'Please confirm your master key:');
+                break
+            except KeyboardInterrupt as e:
+                # If the user presses `Ctrl`+`c`, exit the program
+                print()
+                sys.exit()
+            except Exception as e:  # Other Exception
+                print()
+                pass
 
         if len(masterKey) < 8:
             print()
@@ -111,13 +116,17 @@ class Vault:
         global masterKey
 
         # Get master key
-        try:
-            print()
-            masterKey = getpass.getpass(self.lockPrefix() + 'Please enter your master key:');
-        except KeyboardInterrupt as e:
-            # If the user presses `Ctrl`+`c`, exit the program
-            print()
-            sys.exit()
+        while True:
+            try:
+                print()
+                masterKey = getpass.getpass(self.lockPrefix() + 'Please enter your master key:');
+                break
+            except KeyboardInterrupt as e:
+                # If the user presses `Ctrl`+`c`, exit the program
+                print()
+                sys.exit()
+            except Exception as e:  # Other Exception
+                pass
 
         try:
             self.openVault()  # Unlock vault
@@ -204,12 +213,17 @@ class Vault:
             print()
 
             # Category ID
-            try:
-                categoryId = self.input('* Choose a category number (or leave empty for none): ')
-            except KeyboardInterrupt as e:
-                # Back to menu if user cancels
-                print()
-                return
+            while True:
+                try:
+                    categoryId = self.input('* Choose a category number (or leave empty for none): ')
+                    break
+                except KeyboardInterrupt as e:
+                    # Back to menu if user cancels
+                    print()
+                    return
+                except Exception as e:  # Other Exception
+                    print()
+                    pass
 
             if categoryId != '':
                 if not self.categoryCheckId(categoryId):
@@ -284,12 +298,17 @@ class Vault:
                 nextCommand = None  # reset
             else:  # otherwise, ask for user input
                 print()
-                try:
-                    command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
-                except KeyboardInterrupt as e:
-                    # Back to menu if user cancels
-                    print()
-                    continue
+                while True:
+                    try:
+                        command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
+                        break
+                    except KeyboardInterrupt as e:
+                        # Back to menu if user cancels
+                        print()
+                        continue
+                    except Exception as e:  # Other Exception
+                        print()
+                        pass
 
             # Ensure the input is lowercased
             command = command.lower()
@@ -352,12 +371,17 @@ class Vault:
             self.checkThenSetAutoLockTimer
 
             print()
-            try:
-                command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ')
-            except KeyboardInterrupt as e:
-                # Back to menu if user cancels
-                print()
-                return
+            while True:
+                try:
+                    command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ')
+                    break
+                except KeyboardInterrupt as e:
+                    # Back to menu if user cancels
+                    print()
+                    return
+                except Exception as e:  # Other Exception
+                    print()
+                    pass
 
             # Ensure the input is lowercased
             command = command.lower()
@@ -398,7 +422,7 @@ class Vault:
 
         try:
             time.sleep(int(self.config['hideSecretTTL']))
-        except KeyboardInterrupt as e:
+        except Exception as e:
             # Will catch `^-c` and immediately hide the password
             pass
 
@@ -414,12 +438,17 @@ class Vault:
             self.checkThenSetAutoLockTimer
 
             print()
-            try:
-                command = self.input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
-            except KeyboardInterrupt as e:
-                # Back to menu if user cancels
-                print()
-                return
+            while True:
+                try:
+                    command = self.input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
+                    break
+                except KeyboardInterrupt as e:
+                    # Back to menu if user cancels
+                    print()
+                    return
+                except Exception as e:  # Other Exception
+                    print()
+                    pass
 
             # Ensure the input is lowercased
             command = command.lower()
@@ -533,12 +562,17 @@ class Vault:
         self.setAutoLockTimer()
 
         print()
-        try:
-            search = self.input('Enter search: ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
-            print()
-            return
+        while True:
+            try:
+                search = self.input('Enter search: ')
+                break
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                return
+            except Exception as e:  # Other Exception
+                print()
+                pass
 
         # Return to menu if search is empty
         if search == '':
@@ -616,12 +650,17 @@ class Vault:
         self.setAutoLockTimer()
 
         print()
-        try:
-            resultItem = self.input('Select a result # or type any key to go back to the main menu: ')
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
-            print()
-            return
+        while True:
+            try:
+                resultItem = self.input('Select a result # or type any key to go back to the main menu: ')
+                break
+            except KeyboardInterrupt as e:
+                # Back to menu if user cancels
+                print()
+                return
+            except Exception as e:  # Other Exception
+                print()
+                pass
 
         # Try getting an item or send user back to the main menu
         try:
@@ -707,12 +746,17 @@ class Vault:
             self.categoriesList()
 
             print()
-            try:
-                command = self.input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
-            except KeyboardInterrupt as e:
-                # Back to menu if user cancels
-                print()
-                return
+            while True:
+                try:
+                    command = self.input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
+                    break
+                except KeyboardInterrupt as e:
+                    # Back to menu if user cancels
+                    print()
+                    return
+                except Exception as e:  # Other Exception
+                    print()
+                    pass
 
             # Ensure the input is lowercased
             command = command.lower()
