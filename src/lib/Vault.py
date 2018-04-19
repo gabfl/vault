@@ -35,8 +35,10 @@ class Vault:
         print()
         while True:
             try:
-                masterKey = getpass.getpass(self.lockPrefix() + 'Please choose a master key:');
-                masterKeyRepeat = getpass.getpass(self.lockPrefix() + 'Please confirm your master key:');
+                masterKey = getpass.getpass(
+                    self.lockPrefix() + 'Please choose a master key:')
+                masterKeyRepeat = getpass.getpass(
+                    self.lockPrefix() + 'Please confirm your master key:')
                 break
             except KeyboardInterrupt as e:
                 # If the user presses `Ctrl`+`c`, exit the program
@@ -59,7 +61,8 @@ class Vault:
             print()
             print("Your vault has been created and encrypted with your master key.")
             print("Your unique salt is: %s " % (self.config['salt']))
-            print("Write it down. If you lose your config file you will need it to unlock your vault.")
+            print(
+                "Write it down. If you lose your config file you will need it to unlock your vault.")
             self.unlock()
         else:
             print()
@@ -102,7 +105,7 @@ class Vault:
         i = input(string)
 
         # Check the timer
-        if not i in nonLockingValues:  # Except if the user input is non elligible for vault locking
+        if i not in nonLockingValues:  # Except if the user input is non eligible for vault locking
             self.checkAutoLockTimer()
 
         # Return input
@@ -119,7 +122,8 @@ class Vault:
         while True:
             try:
                 print()
-                masterKey = getpass.getpass(self.lockPrefix() + 'Please enter your master key:');
+                masterKey = getpass.getpass(
+                    self.lockPrefix() + 'Please enter your master key:')
                 break
             except KeyboardInterrupt as e:
                 # If the user presses `Ctrl`+`c`, exit the program
@@ -215,7 +219,8 @@ class Vault:
             # Category ID
             while True:
                 try:
-                    categoryId = self.input('* Choose a category number (or leave empty for none): ')
+                    categoryId = self.input(
+                        '* Choose a category number (or leave empty for none): ')
                     break
                 except KeyboardInterrupt as e:
                     # Back to menu if user cancels
@@ -239,7 +244,7 @@ class Vault:
             name = self.input('* Name / URL: ')
             login = self.input('* Login: ')
             print('* Password suggestion: %s' % (pwgenerator.generate()))
-            password = getpass.getpass('* Password: ');
+            password = getpass.getpass('* Password: ')
 
             # Notes
             print('* Notes: (press [ENTER] twice to complete)')
@@ -277,7 +282,7 @@ class Vault:
             'login': login,
             'password': password,
             'notes': notes
-        });
+        })
 
         self.saveVault()
 
@@ -300,7 +305,8 @@ class Vault:
                 print()
                 while True:
                     try:
-                        command = self.input('Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
+                        command = self.input(
+                            'Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ', ['l', 'q'])
                         break
                     except KeyboardInterrupt as e:
                         # Back to menu if user cancels
@@ -347,7 +353,8 @@ class Vault:
             ]]
             from tabulate import tabulate
             print()
-            print(tabulate(results, headers=['Category', 'Name / URL', 'Login']))
+            print(tabulate(results, headers=[
+                  'Category', 'Name / URL', 'Login']))
 
             # Show eventual notes
             if item['notes'] != '':
@@ -373,7 +380,8 @@ class Vault:
             print()
             while True:
                 try:
-                    command = self.input('Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ')
+                    command = self.input(
+                        'Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ')
                     break
                 except KeyboardInterrupt as e:
                     # Back to menu if user cancels
@@ -417,7 +425,8 @@ class Vault:
             Show a secret for X seconds and erase it from the screen
         """
 
-        print("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
+        print("The password will be hidden after %s seconds." %
+              (self.config['hideSecretTTL']))
         print('The password is: %s' % (password), end="\r")
 
         try:
@@ -440,7 +449,8 @@ class Vault:
             print()
             while True:
                 try:
-                    command = self.input('Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
+                    command = self.input(
+                        'Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ')
                     break
                 except KeyboardInterrupt as e:
                     # Back to menu if user cancels
@@ -455,7 +465,8 @@ class Vault:
 
             # Action based on command
             if command == 'c':  # Edit category
-                self.editItemInput(itemKey, 'category', self.categoryName(item['category']))
+                self.editItemInput(itemKey, 'category',
+                                   self.categoryName(item['category']))
                 return
             elif command == 'n':  # Edit name
                 self.editItemInput(itemKey, 'name', item['name'])
@@ -488,7 +499,7 @@ class Vault:
             # Get new value
             if fieldName == 'password':
                 print('* Suggestion: %s' % (pwgenerator.generate()))
-                fieldNewValue = getpass.getpass('* New password: ');
+                fieldNewValue = getpass.getpass('* New password: ')
             elif fieldName == 'category':
                 # Show categories
                 print()
@@ -497,12 +508,14 @@ class Vault:
                 print()
 
                 # Category ID
-                fieldNewValue = self.input('* Choose a category number (or leave empty for none): ')
+                fieldNewValue = self.input(
+                    '* Choose a category number (or leave empty for none): ')
 
                 if fieldNewValue != '':
                     if not self.categoryCheckId(fieldNewValue):
                         print('Invalid category. Please try again.')
-                        self.editItemInput(itemKey, fieldName, fieldCurrentValue)
+                        self.editItemInput(
+                            itemKey, fieldName, fieldCurrentValue)
             elif fieldName == 'notes':
                 print('* Notes: (press [ENTER] twice to complete)')
                 notes = []
@@ -592,7 +605,8 @@ class Vault:
             if search.isdigit():
                 # Get item
                 try:
-                    self.vault['secrets'][int(search)]  # Will return an IndexError if the item does not exists
+                    # Will return an IndexError if the item does not exists
+                    self.vault['secrets'][int(search)]
                     return self.get(int(search))
                 except IndexError:
                     pass
@@ -633,7 +647,8 @@ class Vault:
                 # Show results table
                 from tabulate import tabulate
                 print()
-                print(tabulate(results, headers=['#', 'Item', 'Category', 'Name / URL', 'Login']))
+                print(tabulate(results, headers=[
+                      '#', 'Item', 'Category', 'Name / URL', 'Login']))
 
                 return self.searchResultSelection(searchResultItems)
             else:
@@ -652,7 +667,8 @@ class Vault:
         print()
         while True:
             try:
-                resultItem = self.input('Select a result # or type any key to go back to the main menu: ')
+                resultItem = self.input(
+                    'Select a result # or type any key to go back to the main menu: ')
                 break
             except KeyboardInterrupt as e:
                 # Back to menu if user cancels
@@ -693,7 +709,8 @@ class Vault:
             # Show results table
             from tabulate import tabulate
             print()
-            print(tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
+            print(tabulate(results, headers=[
+                  'Item', 'Category', 'Name / URL', 'Login']))
         else:
             print("There are no secrets saved yet.")
 
@@ -748,7 +765,8 @@ class Vault:
             print()
             while True:
                 try:
-                    command = self.input('Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
+                    command = self.input(
+                        'Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ')
                     break
                 except KeyboardInterrupt as e:
                     # Back to menu if user cancels
@@ -784,7 +802,7 @@ class Vault:
             results = []
             for i, item in enumerate(self.vault['categories']):
                 # Add item to results
-                if item['active'] == True:
+                if item['active'] is True:
                     results.append([
                         i,
                         item['name']
@@ -826,7 +844,7 @@ class Vault:
         self.vault['categories'].append({
             'name': name,
             'active': True
-        });
+        })
 
         self.saveVault()
 
@@ -859,9 +877,9 @@ class Vault:
             # Show item
             print('* Category: %s' % (item['name']))
             print()
-            if self.categoryIsUsed(id) == False:
+            if self.categoryIsUsed(id) is False:
                 if confirm('Confirm deletion?', False):
-                    if self.categoryIsUsed(id) == False:
+                    if self.categoryIsUsed(id) is False:
                         # Deactivate item
                         self.vault['categories'][int(id)]['active'] = False
 
@@ -870,7 +888,8 @@ class Vault:
 
                         print('The category has been deleted.')
             else:
-                print('The category cannot be deleted because it is currently used by some secrets.')
+                print(
+                    'The category cannot be deleted because it is currently used by some secrets.')
         except Exception as e:
             print('Category does not exist.')
 
@@ -882,7 +901,8 @@ class Vault:
         if self.vault.get('secrets'):
             # Iterate thru the items
             for item in self.vault['secrets']:
-                if categoryId and item['category'] == categoryId:  # If the item has a category and it is the category searched
+                # If the item has a category and it is the category searched
+                if categoryId and item['category'] == categoryId:
                     return True
         else:
             return False
@@ -936,7 +956,7 @@ class Vault:
             # Get item
             item = self.vault['categories'][int(categoryId)]
 
-            if item['active'] == True:  # Return `true` if the category is active
+            if item['active'] is True:  # Return `true` if the category is active
                 return True
         except Exception as e:
             return False
@@ -953,7 +973,7 @@ class Vault:
             # Get item
             item = self.vault['categories'][int(categoryId)]
 
-            if item['active'] == True:  # Return category name if the category is active
+            if item['active'] is True:  # Return category name if the category is active
                 return item['name']
         except Exception as e:
             return 'n/a'
@@ -992,7 +1012,8 @@ class Vault:
             Wait X seconds and erase the clipboard
         """
 
-        print("* Clipboard will be erased in %s seconds" % (self.config['clipboardTTL']))
+        print("* Clipboard will be erased in %s seconds" %
+              (self.config['clipboardTTL']))
 
         try:
             # Loop until the delay is elapsed
@@ -1027,8 +1048,10 @@ class Vault:
 
         # Choose a new key
         print()
-        newMasterKey = getpass.getpass(self.lockPrefix() + 'Please choose a new master key:');
-        newMasterKeyRepeat = getpass.getpass(self.lockPrefix() + 'Please confirm your new master key:');
+        newMasterKey = getpass.getpass(
+            self.lockPrefix() + 'Please choose a new master key:')
+        newMasterKeyRepeat = getpass.getpass(
+            self.lockPrefix() + 'Please confirm your new master key:')
 
         if len(newMasterKey) < 8:
             print()

@@ -40,7 +40,8 @@ class ImportExport:
         elif self.fileFormat == 'native':
             self.importFromNative()
         else:
-            raise ValueError('%s is not a supported file format' % (self.fileFormat))
+            raise ValueError('%s is not a supported file format' %
+                             (self.fileFormat))
 
     def export(self):
         """
@@ -52,7 +53,8 @@ class ImportExport:
         elif self.fileFormat == 'native':
             self.exportToNative()
         else:
-            raise ValueError('%s is not a supported file format' % (self.fileFormat))
+            raise ValueError('%s is not a supported file format' %
+                             (self.fileFormat))
 
     def importFromJson(self):
         """
@@ -78,8 +80,9 @@ class ImportExport:
         for i, item in enumerate(items):
             # Throw an error if the category is invalid
             if item['category'] and not self.vault.categoryCheckId(item['category']):
-                print ("Category `%s` for item `%s`/`%s` is invalid" % (item['category'], item['name'], item['login']))
-                print ("Please correct this error before proceeding.")
+                print("Category `%s` for item `%s`/`%s` is invalid" %
+                      (item['category'], item['name'], item['login']))
+                print("Please correct this error before proceeding.")
                 sys.exit()
 
             # Add to import list
@@ -92,12 +95,13 @@ class ImportExport:
 
         # If we have items
         if len(results) > 0:
-            print("The following items will be imported:");
+            print("The following items will be imported:")
 
             # Show results table
             from tabulate import tabulate
             print()
-            print (tabulate(results, headers=['Item', 'Category', 'Name / URL', 'Login']))
+            print(tabulate(results, headers=[
+                  'Item', 'Category', 'Name / URL', 'Login']))
 
             # Request confirmation
             print()
@@ -105,10 +109,12 @@ class ImportExport:
                 # Loop thru items
                 for item in items:
                     # Import item
-                    self.vault.addItem(str(item['category']), item['name'], item['login'], item['password'], item['notes'])
+                    self.vault.addItem(str(
+                        item['category']), item['name'], item['login'], item['password'], item['notes'])
 
                     # Confirmation message
-                    print ("* Item `%s`/`%s` has been imported" % (item['name'], item['login']))
+                    print("* Item `%s`/`%s` has been imported" %
+                          (item['name'], item['login']))
         else:
             print("No items where found in the import file.")
 
@@ -166,7 +172,7 @@ class ImportExport:
                 'login': item['login'],
                 'password': item['password'],
                 'notes': item['notes']
-            });
+            })
 
         self.saveFile(json.dumps(output))
 
@@ -224,7 +230,8 @@ class ImportExport:
 
             print("The vault has been exported to the file `%s`." % (self.path))
         except Exception as e:
-            print("The vault could not be exported to the file `%s`." % (self.path))
+            print("The vault could not be exported to the file `%s`." %
+                  (self.path))
             print(e)
 
     def unlockVault(self):
@@ -240,4 +247,5 @@ class ImportExport:
         """
 
         if not self.vault.getVault().get('secrets'):
-            raise ValueError('There are no secrets in the vault stored at `%s`.' % (self.path))
+            raise ValueError(
+                'There are no secrets in the vault stored at `%s`.' % (self.path))
