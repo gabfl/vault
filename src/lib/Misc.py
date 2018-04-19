@@ -27,7 +27,8 @@ def createFolderIfMissing(folderPath):
         import sys
 
         print()
-        print('We were unable to create the folder `%s` to store the vault and configuration file.' % (folderPath))
+        print('We were unable to create the folder `%s` to store the vault and configuration file.' % (
+            folderPath))
         print('Please check the permissions or run `./vault.py --help` to find out how to specify an alternative path for both files.')
         print()
         sys.exit()
@@ -45,9 +46,9 @@ def assessIntegrity(vaultPath, configPath):
 
     if not os.path.isfile(configPath) and os.path.isfile(vaultPath):
         print()
-        print ("It looks like you have a vault setup but your config file is missing.")
-        print ("The vault cannot be unlocked without a critical piece of information from the config file (the salt).")
-        print ("Please restore the config file before proceeding.")
+        print("It looks like you have a vault setup but your config file is missing.")
+        print("The vault cannot be unlocked without a critical piece of information from the config file (the salt).")
+        print("Please restore the config file before proceeding.")
         print()
         sys.exit()
 
@@ -104,7 +105,7 @@ def confirm(prompt=None, resp=False):
         if not ans:
             return resp
         if ans not in ['y', 'Y', 'n', 'N']:
-            print ('please enter y or n.')
+            print('please enter y or n.')
             continue
         if ans == 'y' or ans == 'Y':
             return True
