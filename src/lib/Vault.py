@@ -802,7 +802,7 @@ class Vault:
             results = []
             for i, item in enumerate(self.vault['categories']):
                 # Add item to results
-                if item['active'] == True:
+                if item['active'] is True:
                     results.append([
                         i,
                         item['name']
@@ -877,9 +877,9 @@ class Vault:
             # Show item
             print('* Category: %s' % (item['name']))
             print()
-            if self.categoryIsUsed(id) == False:
+            if self.categoryIsUsed(id) is False:
                 if confirm('Confirm deletion?', False):
-                    if self.categoryIsUsed(id) == False:
+                    if self.categoryIsUsed(id) is False:
                         # Deactivate item
                         self.vault['categories'][int(id)]['active'] = False
 
@@ -956,7 +956,7 @@ class Vault:
             # Get item
             item = self.vault['categories'][int(categoryId)]
 
-            if item['active'] == True:  # Return `true` if the category is active
+            if item['active'] is True:  # Return `true` if the category is active
                 return True
         except Exception as e:
             return False
@@ -973,7 +973,7 @@ class Vault:
             # Get item
             item = self.vault['categories'][int(categoryId)]
 
-            if item['active'] == True:  # Return category name if the category is active
+            if item['active'] is True:  # Return category name if the category is active
                 return item['name']
         except Exception as e:
             return 'n/a'
