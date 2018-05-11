@@ -426,8 +426,7 @@ class Vault:
         """
 
         try:
-            print("The password will be hidden after %s seconds." %
-                (self.config['hideSecretTTL']))
+            print("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
             print('The password is: %s' % (password), end="\r")
 
             time.sleep(int(self.config['hideSecretTTL']))
