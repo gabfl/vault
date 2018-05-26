@@ -1084,7 +1084,7 @@ class Vault:
         """
         if sys.stdout.encoding:
             return sys.stdout.encoding.lower().startswith('utf-')
-        
+
         return False
 
     def lockPrefix(self):

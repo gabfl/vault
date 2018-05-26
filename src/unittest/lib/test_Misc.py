@@ -18,7 +18,7 @@ class Test(unittest.TestCase):
 
     def test_assessIntegrity(self):
         with tempfile.NamedTemporaryFile() as file_:
-            self.assertRaises(SystemExit,  Misc.assessIntegrity,
+            self.assertRaises(SystemExit, Misc.assessIntegrity,
                               file_.name, 'non_existent')
 
     def test_eraseVault(self):
@@ -33,11 +33,11 @@ class Test(unittest.TestCase):
         file_b.close()
 
         with unittest.mock.patch('src.lib.Misc.confirm', return_value=True):
-            self.assertRaises(SystemExit,  Misc.eraseVault,
+            self.assertRaises(SystemExit, Misc.eraseVault,
                               file_a.name, file_b.name)
 
         with unittest.mock.patch('src.lib.Misc.confirm', return_value=False):
-            self.assertRaises(SystemExit,  Misc.eraseVault,
+            self.assertRaises(SystemExit, Misc.eraseVault,
                               file_a.name, file_b.name)
 
     def test_confirm(self):
