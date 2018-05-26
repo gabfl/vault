@@ -2,6 +2,8 @@
 import sys
 import json
 
+from tabulate import tabulate
+
 """
     Adding import or export formats:
 
@@ -98,10 +100,9 @@ class ImportExport:
             print("The following items will be imported:")
 
             # Show results table
-            from tabulate import tabulate
             print()
-            print(tabulate(results, headers=[
-                  'Item', 'Category', 'Name / URL', 'Login']))
+            print(tabulate(results,
+                           headers=['Item', 'Category', 'Name / URL', 'Login']))
 
             # Request confirmation
             print()

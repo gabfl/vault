@@ -6,12 +6,13 @@ import configparser
 
 from ...lib.Vault import Vault
 from ...lib.Config import Config
+from ...lib import Misc
 
 
 class Test(unittest.TestCase):
 
     def setUp(self):
-        # Use a temporary file to test the config
+        # Set temporary files
         file_config = tempfile.NamedTemporaryFile()
         file_vault = tempfile.NamedTemporaryFile()
 
@@ -26,30 +27,42 @@ class Test(unittest.TestCase):
         self.vault.masterKey = str(uuid.uuid4())
 
         # Create empty vault
-        self.vault.vault = {}
+        self.vault.vault = {'secrets': []}
         self.vault.saveVault()
 
-    # def test_setup(self):
-    #     with unittest.mock.patch('getpass.getpass', return_value=str(uuid.uuid4())):
-    #         with unittest.mock.patch('src.lib.Vault.Vault.unlock', return_value=None):
-    #             self.assertIsNone(self.vault.setup())
+    @patch.object(Vault, 'unlock')
+    def test_setup(self, patched):
+        patched.return_value = None
+        with unittest.mock.patch('getpass.getpass', return_value=str(uuid.uuid4())):
+            self.assertIsNone(self.vault.setup())
 
     def test_setAutoLockTimer(self):
         self.vault.setAutoLockTimer()
         self.assertIsInstance(self.vault.timer, int)
 
+    def test_checkAutoLockTimer(self):
+        self.vault.setAutoLockTimer()
+        self.assertIsNone(self.vault.checkAutoLockTimer())
+
+    def test_checkThenSetAutoLockTimer(self):
+        self.vault.setAutoLockTimer()
+        self.assertIsNone(self.vault.checkThenSetAutoLockTimer())
+
     def test_input(self):
         with unittest.mock.patch('builtins.input', return_value='my input'):
             self.assertEqual(self.vault.input('your input?'), 'my input')
 
-    # def test_unlock(self):
-    #     # Ensure that the vault is correctly saved first
-    #     self.vault.saveVault()
+    def test_unlock(self):
+        # Ensure that the vault is correctly saved first
+        self.vault.saveVault()
 
-    #     # Try to unlock with the master key previously choosen
-    #     with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
-    #         with unittest.mock.patch('src.lib.Vault.Vault.menu', return_value=None):
-    #             self.assertIsNone(self.vault.unlock())
+        # Try to unlock with the master key previously chosen
+        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+            # False = don't load menu after unlocking
+            self.assertIsNone(self.vault.unlock(False))
+
+    def test_saveVault(self):
+        self.assertTrue(self.vault.saveVault())
 
     def test_openVault(self):
         # Ensure that the vault is correctly saved first
@@ -69,13 +82,118 @@ class Test(unittest.TestCase):
         self.assertEqual(
             self.vault.vault['secrets'][0]['name'], 'my name')
 
+    def test_menu(self):
+        with unittest.mock.patch('builtins.input', return_value='q'):
+            self.assertRaises(SystemExit, self.vault.menu)
+
+    @patch.object(Vault, 'itemMenu')
+    def test_get(self, patched):
+        patched.return_value = None
+
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append({
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        })
+        self.vault.saveVault()
+
+        self.assertIsNone(self.vault.get(0))
+
+    def test_itemMenu(self):
+        # Set item
+        item = {
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        }
+
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append(item)
+        self.vault.saveVault()
+
+        for command in ['s', 'b', 'q']:
+            with unittest.mock.patch('builtins.input', return_value=command):
+                self.assertEqual(self.vault.itemMenu(0, item), command)
+
+    def test_itemShowSecret(self):
+        self.vault.config['hideSecretTTL'] = '1'
+        self.assertIsNone(self.vault.itemShowSecret('some secret'))
+
+    def test_itemEdit(self):
+        # Set item
+        item = {
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        }
+
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append(item)
+        self.vault.saveVault()
+
+        with unittest.mock.patch('builtins.input', return_value='b'):
+            self.assertIsNone(self.vault.itemEdit(0, item))
+
+    @patch.object(Misc, 'confirm')
+    def test_itemDelete(self, patched):
+        patched.return_value = True
+
+        # Set item
+        item = {
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        }
+
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append(item)
+        self.vault.saveVault()
+
+        self.assertIsNone(self.vault.itemDelete(0))
+
+    def test_search(self):
+        for command in ['s', 'a', 'l', 'q']:
+            with unittest.mock.patch('builtins.input', return_value=command):
+                self.assertEqual(self.vault.search(), command)
+
+    def test_search_2(self):
+        with unittest.mock.patch('builtins.input', return_value='b'):
+            self.assertIsNone(self.vault.search())
+
+    @patch.object(Vault, 'itemMenu')
+    def test_searchResultSelection(self, patched):
+        patched.return_value = None
+
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append({
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        })
+        self.vault.saveVault()
+
+        with unittest.mock.patch('builtins.input', return_value='0'):
+            self.assertIsNone(self.vault.searchResultSelection({1: 0}))
+
     def test_all(self):
         self.vault.vault = {'secrets': {}}
         self.assertIsNone(self.vault.all())
 
-    # def test_lock(self):
-    #     with unittest.mock.patch('src.lib.Vault.Vault.unlock', return_value=None):
-    #         self.assertIsNone(self.vault.lock())
+    @patch.object(Vault, 'unlock')
+    def test_lock(self, patched):
+        patched.return_value = None
+        self.assertIsNone(self.vault.lock())
 
     def test_quit(self):
         self.assertRaises(SystemExit, self.vault.quit)
@@ -84,6 +202,13 @@ class Test(unittest.TestCase):
         self.vault.vault = {'secrets': {}}
         self.assertIsNone(self.vault.showSecretCount())
 
+    def test_categoriesMenu(self):
+        with unittest.mock.patch('builtins.input', return_value='b'):
+            self.assertIsNone(self.vault.categoriesMenu())
+
+    def test_categoriesList(self):
+        self.assertIsNone(self.vault.categoriesList())
+
     def test_categoryAdd(self):
         with unittest.mock.patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
@@ -91,11 +216,38 @@ class Test(unittest.TestCase):
             self.assertEqual(
                 self.vault.vault['categories'][0]['name'], 'my category')
 
-    def test_categoriesList(self):
-        self.assertIsNone(self.vault.categoriesList())
+    @patch.object(Misc, 'confirm')
+    def test_categoryDelete(self, patched):
+        patched.return_value = True
+
+        with unittest.mock.patch('builtins.input', return_value='my category'):
+            self.vault.categoryAdd()
+
+        with unittest.mock.patch('builtins.input', return_value='0'):
+            self.assertIsNone(self.vault.categoryDelete())
+
+    @patch.object(Misc, 'confirm')
+    def test_categoryDelete_2(self, patched):
+        patched.return_value = True
+
+        with unittest.mock.patch('builtins.input', return_value='my category'):
+            self.vault.categoryAdd()
+
+        with unittest.mock.patch('builtins.input', return_value='12'):
+            self.assertIsNone(self.vault.categoryDelete())
 
     def test_categoryIsUsed(self):
         self.assertFalse(self.vault.categoryIsUsed(12))
+
+    @patch.object(Misc, 'confirm')
+    def test_categoryRename(self, patched):
+        patched.return_value = True
+
+        with unittest.mock.patch('builtins.input', return_value='my category'):
+            self.vault.categoryAdd()
+
+        with unittest.mock.patch('builtins.input', return_value='new name for my category'):
+            self.assertIsNone(self.vault.categoryRename())
 
     def test_categoryCheckId(self):
         with unittest.mock.patch('builtins.input', return_value='my category'):
@@ -105,9 +257,34 @@ class Test(unittest.TestCase):
         self.assertTrue(self.vault.categoryCheckId(0))
         self.assertFalse(self.vault.categoryCheckId(12))
 
+    def test_categoryName(self):
+        with unittest.mock.patch('builtins.input', return_value='my category'):
+            self.vault.categoryAdd()
+
+        self.assertEqual(self.vault.categoryName(0), 'my category')
+
+    def test_categoryName_2(self):
+        with unittest.mock.patch('builtins.input', return_value='my category'):
+            self.vault.categoryAdd()
+
+        self.assertEqual(self.vault.categoryName(12), 'n/a')
+
     def test_getSignature(self):
         self.assertEqual(self.vault.getSignature(
             'some string'), '61d034473102d7dac305902770471fd50f4c5b26f6831a56dd90b5184b3c30fc')
+
+    @patch.object(Vault, 'clipboard')
+    @patch.object(Vault, 'isClipboardChanged')
+    def test_waitAndEraseClipboard(self, patched, patched2):
+        patched.return_value = None
+        patched.return_value = False
+
+        self.vault.config['clipboardTTL'] = '1'
+        self.assertIsNone(self.vault.waitAndEraseClipboard())
+
+    def test_changeKey(self):
+        with unittest.mock.patch('getpass.getpass', return_value=str(uuid.uuid4())):
+            self.assertIsNone(self.vault.changeKey())
 
     def test_getVault(self):
         self.vault.vault = {'secrets': {}}
