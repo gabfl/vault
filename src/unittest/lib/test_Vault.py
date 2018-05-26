@@ -275,8 +275,10 @@ class Test(unittest.TestCase):
             'some string'), '61d034473102d7dac305902770471fd50f4c5b26f6831a56dd90b5184b3c30fc')
 
     @patch.object(Vault, 'clipboard')
-    def test_waitAndEraseClipboard(self, patched):
+    @patch.object(Vault, 'isClipboardChanged')
+    def test_waitAndEraseClipboard(self, patched, patched2):
         patched.return_value = None
+        patched.return_value = False
 
         self.vault.config['clipboardTTL'] = '1'
         self.assertIsNone(self.vault.waitAndEraseClipboard())
