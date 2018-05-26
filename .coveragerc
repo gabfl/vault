@@ -1,0 +1,12 @@
+[run]
+source=vault
+
+[report]
+omit =
+  setup.py
+  src/__main__.py
+  src/unittest/*
+  venv/*
+exclude_lines =
+  if __name__ == "__main__":
+  main()

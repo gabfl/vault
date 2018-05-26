@@ -5,7 +5,12 @@ __pycache__/
 *.egg-info
 build/
 dist/
+.pytest_cache
 venv/
+
+# Codecov
+.coverage
+coverage.xml
 
 # Mac
 .DS_Store

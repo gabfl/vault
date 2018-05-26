@@ -19,6 +19,7 @@ class Vault:
     vault = None  # Vault content once decrypted
     timer = None  # Set a timer to autolock the vault
     clipboardSignature = None  # Hash of clipboard item
+    masterKey = None  # Master key
 
     def __init__(self, config, vaultPath):
         self.config = config
@@ -29,13 +30,11 @@ class Vault:
             Master key setup
         """
 
-        global masterKey
-
         print('Welcome to Vault. Please choose a secure secret key.')
         print()
         while True:
             try:
-                masterKey = getpass.getpass(
+                self.masterKey = getpass.getpass(
                     self.lockPrefix() + 'Please choose a master key:')
                 masterKeyRepeat = getpass.getpass(
                     self.lockPrefix() + 'Please confirm your master key:')
@@ -48,13 +47,13 @@ class Vault:
                 print()
                 pass
 
-        if len(masterKey) < 8:
+        if len(self.masterKey) < 8:
             print()
             print('The master key should be at least 8 characters. Please try again!')
             print()
             # Try again
             self.setup()
-        elif masterKey == masterKeyRepeat:
+        elif self.masterKey == masterKeyRepeat:
             # Create empty vault
             self.vault = {}
             self.saveVault()
@@ -116,13 +115,11 @@ class Vault:
             Asking the user for his master key and trying to unlock the vault
         """
 
-        global masterKey
-
         # Get master key
         while True:
             try:
                 print()
-                masterKey = getpass.getpass(
+                self.masterKey = getpass.getpass(
                     self.lockPrefix() + 'Please enter your master key:')
                 break
             except KeyboardInterrupt as e:
@@ -159,7 +156,7 @@ class Vault:
             Save vault
         """
 
-        cipher = AES.new(self.getHash(masterKey), AES.MODE_EAX)
+        cipher = AES.new(self.getHash(), AES.MODE_EAX)
         data = str.encode(json.dumps(self.vault))
         ciphertext, tag = cipher.encrypt_and_digest(data)
 
@@ -185,20 +182,20 @@ class Vault:
             f.close()
 
         # Unlock valt with key
-        cipher = AES.new(self.getHash(masterKey), AES.MODE_EAX, nonce)
+        cipher = AES.new(self.getHash(), AES.MODE_EAX, nonce)
         data = cipher.decrypt_and_verify(ciphertext, tag)
 
         # Set vault content to class level var
         self.vault = json.loads(data.decode("utf-8"))
 
-    def getHash(self, masterKey):
+    def getHash(self):
         """
             Returns a 32 bytes hash for a given master key
         """
 
         h = SHA256.new()
         for i in range(1, 10000):
-            h.update(str.encode(str(i) + self.config['salt'] + masterKey))
+            h.update(str.encode(str(i) + self.config['salt'] + self.masterKey))
         return base64.b64decode(str.encode(h.hexdigest()[:32]))
 
     def addItemInput(self):
@@ -426,7 +423,8 @@ class Vault:
         """
 
         try:
-            print("The password will be hidden after %s seconds." % (self.config['hideSecretTTL']))
+            print("The password will be hidden after %s seconds." %
+                  (self.config['hideSecretTTL']))
             print('The password is: %s' % (password), end="\r")
 
             time.sleep(int(self.config['hideSecretTTL']))
@@ -1039,8 +1037,6 @@ class Vault:
             Then the user will input a new master key and the vault will be saved with the new key
         """
 
-        global masterKey
-
         # Unlock the vault with the existing key
         if self.vault is None:  # Except if it's already unlocked
             self.unlock(False)  # `False` = don't load menu after unlocking
@@ -1060,7 +1056,7 @@ class Vault:
             self.changeKey()
         elif newMasterKey == newMasterKeyRepeat:
             # Override master key
-            masterKey = newMasterKey
+            self.masterKey = newMasterKey
 
             # Save vault with new master key
             self.saveVault()
@@ -1086,8 +1082,10 @@ class Vault:
         """
             Returns `True` if stdout supports unicode
         """
-
-        return sys.stdout.encoding.lower().startswith('utf-')
+        if sys.stdout.encoding:
+            return sys.stdout.encoding.lower().startswith('utf-')
+        
+        return False
 
     def lockPrefix(self):
         """
