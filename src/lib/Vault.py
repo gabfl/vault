@@ -167,6 +167,8 @@ class Vault:
             f.close()
         os.chmod(self.vaultPath, 0o600)
 
+        return True
+
     def openVault(self):
         """"
             Open the vault with the master key
@@ -293,7 +295,7 @@ class Vault:
 
         while (True):
             # Check then set auto lock timer
-            self.checkThenSetAutoLockTimer
+            self.checkThenSetAutoLockTimer()
 
             if nextCommand:  # If we already know the next command
                 command = nextCommand
@@ -372,7 +374,7 @@ class Vault:
 
         while (True):
             # Check then set auto lock timer
-            self.checkThenSetAutoLockTimer
+            self.checkThenSetAutoLockTimer()
 
             print()
             while True:
@@ -441,7 +443,7 @@ class Vault:
 
         while (True):
             # Check then set auto lock timer
-            self.checkThenSetAutoLockTimer
+            self.checkThenSetAutoLockTimer()
 
             print()
             while True:
@@ -591,7 +593,7 @@ class Vault:
             print('Empty search!')
             return
 
-        # To prevent fat-finger errors, the search meny will also respond to common commands
+        # To prevent fat-finger errors, the search menu will also respond to common commands
         if search in ['s', 'a', 'l', 'q']:  # Common commands
             return search
         elif search == 'b':  # Return to previous menu
@@ -754,7 +756,7 @@ class Vault:
 
         while (True):
             # Check then set auto lock timer
-            self.checkThenSetAutoLockTimer
+            self.checkThenSetAutoLockTimer()
 
             # List categories
             self.categoriesList()
@@ -1038,7 +1040,7 @@ class Vault:
         """
 
         # Unlock the vault with the existing key
-        if self.vault is None:  # Except if it's already unlocked
+        if self.vault is None:  # Except if the vault already unlocked
             self.unlock(False)  # `False` = don't load menu after unlocking
 
         # Choose a new key
