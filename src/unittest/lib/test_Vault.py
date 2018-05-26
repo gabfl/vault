@@ -11,7 +11,7 @@ from ...lib.Config import Config
 class Test(unittest.TestCase):
 
     def setUp(self):
-        # Use a temporary file to test the config
+        # Set temporary files
         file_config = tempfile.NamedTemporaryFile()
         file_vault = tempfile.NamedTemporaryFile()
 
