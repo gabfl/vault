@@ -184,8 +184,7 @@ class Test(unittest.TestCase):
         self.vault.saveVault()
 
         with unittest.mock.patch('builtins.input', return_value='0'):
-            self.assertIsNone(self.vault.searchResultSelection(
-                self.vault.vault['secrets']))
+            self.assertIsNone(self.vault.searchResultSelection({1: 0}))
 
     def test_all(self):
         self.vault.vault = {'secrets': {}}

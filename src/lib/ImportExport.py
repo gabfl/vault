@@ -2,6 +2,8 @@
 import sys
 import json
 
+from tabulate import tabulate
+
 """
     Adding import or export formats:
 
