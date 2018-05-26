@@ -274,9 +274,9 @@ class Test(unittest.TestCase):
         self.assertEqual(self.vault.getSignature(
             'some string'), '61d034473102d7dac305902770471fd50f4c5b26f6831a56dd90b5184b3c30fc')
 
-    @patch.object(Misc, 'confirm')
+    @patch.object(Vault, 'clipboard')
     def test_waitAndEraseClipboard(self, patched):
-        patched.return_value = True
+        patched.return_value = None
 
         self.vault.config['clipboardTTL'] = '1'
         self.assertIsNone(self.vault.waitAndEraseClipboard())
