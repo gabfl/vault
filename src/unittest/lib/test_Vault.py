@@ -42,14 +42,14 @@ class Test(unittest.TestCase):
         with unittest.mock.patch('builtins.input', return_value='my input'):
             self.assertEqual(self.vault.input('your input?'), 'my input')
 
-    # def test_unlock(self):
-    #     # Ensure that the vault is correctly saved first
-    #     self.vault.saveVault()
+    def test_unlock(self):
+        # Ensure that the vault is correctly saved first
+        self.vault.saveVault()
 
-    #     # Try to unlock with the master key previously choosen
-    #     with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
-    #         with unittest.mock.patch('src.lib.Vault.Vault.menu', return_value=None):
-    #             self.assertIsNone(self.vault.unlock())
+        # Try to unlock with the master key previously chosen
+        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+            # False = don't load menu after unlocking
+            self.assertIsNone(self.vault.unlock(False))
 
     def test_openVault(self):
         # Ensure that the vault is correctly saved first

@@ -34,6 +34,58 @@ class Test(unittest.TestCase):
         self.ie = ImportExport(
             vault=self.vault, path=file_import_export.name, fileFormat='json')
 
+    def test_importItems(self):
+        self.ie.fileFormat = 'invalid'
+        self.assertRaises(ValueError, self.ie.importItems)
+
+    def test_export(self):
+        self.ie.fileFormat = 'invalid'
+        self.assertRaises(ValueError, self.ie.export)
+
+    def test_importFromJson(self):
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append({
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        })
+        self.vault.saveVault()
+
+        # Try to unlock with the master key previously chosen
+        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+            self.assertRaises(SystemExit, self.ie.exportToJson)
+            # Import
+            with unittest.mock.patch('builtins.input', return_value='y'):
+                self.assertRaises(SystemExit, self.ie.importFromJson)
+
+        # Verify vault content
+        self.assertIsInstance(self.vault.vault['secrets'], list)
+        self.assertEqual(self.vault.vault['secrets'][0]['name'], 'some name')
+
+    def test_importFromNative(self):
+        # Ensure that the vault is correctly saved first
+        self.vault.vault['secrets'].append({
+            'category': 0,
+            'name': 'some name',
+            'login': 'some login',
+            'password': 'my secret',
+            'notes': ''
+        })
+        self.vault.saveVault()
+
+        # Try to unlock with the master key previously chosen
+        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+            self.assertRaises(SystemExit, self.ie.exportToNative)
+            # Import
+            with unittest.mock.patch('builtins.input', return_value='y'):
+                self.assertRaises(SystemExit, self.ie.importFromNative)
+
+        # Verify vault content
+        self.assertIsInstance(self.vault.vault['secrets'], list)
+        self.assertEqual(self.vault.vault['secrets'][0]['name'], 'some name')
+
     def test_exportToJson(self):
         # Ensure that the vault is correctly saved first
         self.vault.vault['secrets'].append({
@@ -45,11 +97,11 @@ class Test(unittest.TestCase):
         })
         self.vault.saveVault()
 
-        # Try to unlock with the master key previously choosen
+        # Try to unlock with the master key previously chosen
         with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertRaises(SystemExit, self.ie.exportToJson)
 
-        # Unpickle and validate the content
+        # Json decode and validate the content
         content = self.ie.readFile()
         content = json.loads(content)
         self.assertIsInstance(content, list)
@@ -66,7 +118,7 @@ class Test(unittest.TestCase):
         })
         self.vault.saveVault()
 
-        # Try to unlock with the master key previously choosen
+        # Try to unlock with the master key previously chosen
         with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertRaises(SystemExit, self.ie.exportToNative)
 
@@ -82,6 +134,14 @@ class Test(unittest.TestCase):
 
     def test_saveFile(self):
         self.assertIsNone(self.ie.saveFile('some content'))
+
+    def test_unlockVault(self):
+        # Ensure that the vault is correctly saved first
+        self.vault.saveVault()
+
+        # Try to unlock with the master key previously chosen
+        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+            self.assertIsNone(self.ie.unlockVault())
 
     def test_checkEmptyVault(self):
         self.assertRaises(ValueError, self.ie.checkEmptyVault)

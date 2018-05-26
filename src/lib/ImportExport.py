@@ -100,8 +100,8 @@ class ImportExport:
             # Show results table
             from tabulate import tabulate
             print()
-            print(tabulate(results, headers=[
-                  'Item', 'Category', 'Name / URL', 'Login']))
+            print(tabulate(results,
+                           headers=['Item', 'Category', 'Name / URL', 'Login']))
 
             # Request confirmation
             print()
