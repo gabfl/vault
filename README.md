@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/gabfl/vault.svg?branch=master)](https://travis-ci.org/gabfl/vault)
 [![codecov](https://codecov.io/gh/gabfl/vault/branch/master/graph/badge.svg)](https://codecov.io/gh/gabfl/vault)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/gabfl/vault/master/LICENSE)
 
 Vault is a simple Python password manager. It allows you to securely save secrets with a simple CLI interface.
 
