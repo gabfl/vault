@@ -23,7 +23,7 @@ def createFolderIfMissing(folderPath):
     try:
         if not os.path.exists(folderPath):
             os.makedirs(folderPath)
-    except Exception as e:
+    except Exception:
         import sys
 
         print()
@@ -63,7 +63,7 @@ def eraseVault(vaultPath, configPath):
 
     print()
     if confirm(prompt='Do you want to permanently erase your vault? All your data will be lost!', resp=False):
-        # Delte files
+        # Delete files
         if os.path.isfile(vaultPath):
             os.remove(vaultPath)
         if os.path.isfile(configPath):

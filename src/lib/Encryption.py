@@ -53,6 +53,10 @@ class Encryption():
             self.salted_key = None
 
     def encrypt(self, secret):
+        """
+            Encrypt a secret
+        """
+
         # generate IV
         IV = CryptoRandom.new().read(AES.block_size)
 
@@ -75,6 +79,10 @@ class Encryption():
         return base64.b64encode(data)
 
     def decrypt(self, enc_secret):
+        """
+            Decrypt a secret
+        """
+
         # Decode base 64
         enc_secret = base64.b64decode(enc_secret)
 
