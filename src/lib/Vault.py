@@ -548,7 +548,7 @@ class Vault:
             Delete an item
         """
 
-        from .Misc import confirm
+        from ..modules.Misc import confirm
 
         try:
             # Get item
@@ -859,7 +859,7 @@ class Vault:
         # Set auto lock timer (to prevent immediate re-locking)
         self.setAutoLockTimer()
 
-        from .Misc import confirm
+        from ..modules.Misc import confirm
 
         print()
         try:
@@ -916,7 +916,7 @@ class Vault:
         # Set auto lock timer (to prevent immediate re-locking)
         self.setAutoLockTimer()
 
-        from .Misc import confirm
+        from ..modules.Misc import confirm
 
         print()
         try:

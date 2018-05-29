@@ -6,7 +6,7 @@ import configparser
 
 from ...lib.Vault import Vault
 from ...lib.Config import Config
-from ...lib import Misc
+from ...modules import Misc
 
 
 class Test(unittest.TestCase):

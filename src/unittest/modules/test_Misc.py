@@ -3,7 +3,7 @@ import unittest
 import tempfile
 from unittest.mock import patch
 
-from ...lib import Misc
+from ...modules import Misc
 
 
 class Test(unittest.TestCase):
@@ -11,29 +11,30 @@ class Test(unittest.TestCase):
     def test_logo(self):
         self.assertIsNone(Misc.logo(), str)
 
-    def test_createFolderIfMissing(self):
+    def test_create_directory_if_missing(self):
         # When the folder exists
         with tempfile.TemporaryDirectory() as dir_:
-            self.assertIsNone(Misc.createFolderIfMissing(
+            self.assertIsNone(Misc.create_directory_if_missing(
                 dir_))
 
-    def test_createFolderIfMissing_2(self):
+    def test_create_directory_if_missing_2(self):
         # When the folder is missing
         with tempfile.TemporaryDirectory() as dir_:
-            self.assertIsNone(Misc.createFolderIfMissing(
+            self.assertIsNone(Misc.create_directory_if_missing(
                 dir_ + '/some/dir'))
 
-    def test_createFolderIfMissing_3(self):
+    def test_create_directory_if_missing_3(self):
         # Test invalid path
         with tempfile.TemporaryDirectory() as dir_:
-            self.assertRaises(SystemExit, Misc.createFolderIfMissing, '\0')
+            self.assertRaises(
+                SystemExit, Misc.create_directory_if_missing, '\0')
 
-    def test_assessIntegrity(self):
+    def test_assess_integrity(self):
         with tempfile.NamedTemporaryFile() as file_:
-            self.assertRaises(SystemExit, Misc.assessIntegrity,
+            self.assertRaises(SystemExit, Misc.assess_integrity,
                               file_.name, 'non_existent')
 
-    def test_eraseVault(self):
+    def test_erase_vault(self):
         # Create fake files
         file_a = tempfile.NamedTemporaryFile()
         file_b = tempfile.NamedTemporaryFile()
@@ -44,27 +45,27 @@ class Test(unittest.TestCase):
         file_b.write(b'Hello world!')
         file_b.close()
 
-        with unittest.mock.patch('src.lib.Misc.confirm', return_value=True):
-            self.assertRaises(SystemExit, Misc.eraseVault,
+        with unittest.mock.patch('src.modules.Misc.confirm', return_value=True):
+            self.assertRaises(SystemExit, Misc.erase_vault,
                               file_a.name, file_b.name)
 
-        with unittest.mock.patch('src.lib.Misc.confirm', return_value=False):
-            self.assertRaises(SystemExit, Misc.eraseVault,
+        with unittest.mock.patch('src.modules.Misc.confirm', return_value=False):
+            self.assertRaises(SystemExit, Misc.erase_vault,
                               file_a.name, file_b.name)
 
-    def test_eraseVault_2(self):
+    def test_erase_vault_2(self):
         # Test with non existent files
 
         # Create fake files
         file_a = tempfile.NamedTemporaryFile()
         file_b = tempfile.NamedTemporaryFile()
 
-        with unittest.mock.patch('src.lib.Misc.confirm', return_value=True):
-            self.assertRaises(SystemExit, Misc.eraseVault,
+        with unittest.mock.patch('src.modules.Misc.confirm', return_value=True):
+            self.assertRaises(SystemExit, Misc.erase_vault,
                               file_a.name, file_b.name)
 
-        with unittest.mock.patch('src.lib.Misc.confirm', return_value=False):
-            self.assertRaises(SystemExit, Misc.eraseVault,
+        with unittest.mock.patch('src.modules.Misc.confirm', return_value=False):
+            self.assertRaises(SystemExit, Misc.erase_vault,
                               file_a.name, file_b.name)
 
     def test_confirm(self):

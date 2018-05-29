@@ -5,12 +5,12 @@ import argparse
 from .lib.Vault import Vault
 from .lib.Config import Config
 from .lib.ImportExport import ImportExport
-from .lib.Misc import *
+from .modules.Misc import logo, create_directory_if_missing, assess_integrity, erase_vault
 
 # Default paths
-folderPath = os.path.expanduser('~') + '/.vault/'
-ConfigPathDefault = folderPath + '.config'
-vaultPathDefault = folderPath + '.secure'
+dir_ = os.path.expanduser('~') + '/.vault/'
+ConfigPathDefault = dir_ + '.config'
+vaultPathDefault = dir_ + '.secure'
 
 
 def getVaultPath(override=None):
@@ -43,16 +43,16 @@ def initialize(vault_location, config_location, erase_vault=None, clipboard_TTL=
 
     # Create the vault folder if it does not exists yet
     if getVaultPath(vault_location) == vaultPathDefault or getConfigPath(config_location) == ConfigPathDefault:
-        createFolderIfMissing(folderPath)
+        create_directory_if_missing(dir_)
 
     # Assess files integrity
-    assessIntegrity(getVaultPath(vault_location),
-                    getConfigPath(config_location))
+    assess_integrity(getVaultPath(vault_location),
+                     getConfigPath(config_location))
 
     # Erase a vault if the user requests it
     if erase_vault:
-        eraseVault(getVaultPath(vault_location),
-                   getConfigPath(config_location))
+        erase_vault(getVaultPath(vault_location),
+                    getConfigPath(config_location))
 
     # Load config
     c = Config(getConfigPath(config_location))

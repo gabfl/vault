@@ -13,7 +13,7 @@ def logo():
     print(r"                                 '.__________.'")
 
 
-def createFolderIfMissing(folderPath):
+def create_directory_if_missing(dir_):
     """
         Create the vault and configuration file storage folder if it does not exist
     """
@@ -21,20 +21,20 @@ def createFolderIfMissing(folderPath):
     import os
 
     try:
-        if not os.path.exists(folderPath):
-            os.makedirs(folderPath)
+        if not os.path.exists(dir_):
+            os.makedirs(dir_)
     except Exception:
         import sys
 
         print()
         print('We were unable to create the folder `%s` to store the vault and configuration file.' % (
-            folderPath))
+            dir_))
         print('Please check the permissions or run `./vault.py --help` to find out how to specify an alternative path for both files.')
         print()
         sys.exit()
 
 
-def assessIntegrity(vaultPath, configPath):
+def assess_integrity(vaultPath, configPath):
     """
         The vault config file contains a salt. The salt is used to unlock the vault along with the master key.
         By default, config files are created automatically. A new config file will not allow to open an existing vault.
@@ -53,7 +53,7 @@ def assessIntegrity(vaultPath, configPath):
         sys.exit()
 
 
-def eraseVault(vaultPath, configPath):
+def erase_vault(vaultPath, configPath):
     """
         Will erase the vault and config file after asking user for confirmation
     """
