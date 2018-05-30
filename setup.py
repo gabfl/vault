@@ -17,8 +17,8 @@ setup(
     license='MIT',
     packages=['vault', 'vault.lib'],
     package_dir={'vault': 'src'},
-    install_requires=['pycryptodome==3.4.11', 'pyperclip', 'tabulate',
-                      'argparse', 'passwordgenerator'],  # external dependencies
+    install_requires=['pycryptodome==3.6.1', 'pyperclip', 'tabulate',
+                      'argparse', 'passwordgenerator', 'SQLAlchemy'],  # external dependencies
     entry_points={
         'console_scripts': [
             'vault = vault.vault:main',

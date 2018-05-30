@@ -5,7 +5,7 @@ import argparse
 from .lib.Vault import Vault
 from .lib.Config import Config
 from .lib.ImportExport import ImportExport
-from .modules.Misc import logo, create_directory_if_missing, assess_integrity, erase_vault
+from .modules.misc import logo, create_directory_if_missing, assess_integrity, erase_vault
 
 # Default paths
 dir_ = os.path.expanduser('~') + '/.vault/'

@@ -2,10 +2,11 @@ import unittest
 import tempfile
 import configparser
 
+from ..base import BaseTest
 from ...lib.Config import Config
 
 
-class Test(unittest.TestCase):
+class Test(BaseTest):
 
     def setUp(self):
         # Use a temporary file to test the config

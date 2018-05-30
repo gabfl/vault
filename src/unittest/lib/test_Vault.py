@@ -4,12 +4,13 @@ from unittest.mock import patch
 import uuid
 import configparser
 
+from ..base import BaseTest
 from ...lib.Vault import Vault
 from ...lib.Config import Config
-from ...modules import Misc
+from ...modules import misc
 
 
-class Test(unittest.TestCase):
+class Test(BaseTest):
 
     def setUp(self):
         # Set temporary files
@@ -141,7 +142,7 @@ class Test(unittest.TestCase):
         with unittest.mock.patch('builtins.input', return_value='b'):
             self.assertIsNone(self.vault.itemEdit(0, item))
 
-    @patch.object(Misc, 'confirm')
+    @patch.object(misc, 'confirm')
     def test_itemDelete(self, patched):
         patched.return_value = True
 
@@ -216,7 +217,7 @@ class Test(unittest.TestCase):
             self.assertEqual(
                 self.vault.vault['categories'][0]['name'], 'my category')
 
-    @patch.object(Misc, 'confirm')
+    @patch.object(misc, 'confirm')
     def test_categoryDelete(self, patched):
         patched.return_value = True
 
@@ -226,7 +227,7 @@ class Test(unittest.TestCase):
         with unittest.mock.patch('builtins.input', return_value='0'):
             self.assertIsNone(self.vault.categoryDelete())
 
-    @patch.object(Misc, 'confirm')
+    @patch.object(misc, 'confirm')
     def test_categoryDelete_2(self, patched):
         patched.return_value = True
 
@@ -239,7 +240,7 @@ class Test(unittest.TestCase):
     def test_categoryIsUsed(self):
         self.assertFalse(self.vault.categoryIsUsed(12))
 
-    @patch.object(Misc, 'confirm')
+    @patch.object(misc, 'confirm')
     def test_categoryRename(self, patched):
         patched.return_value = True
 

@@ -5,12 +5,13 @@ import uuid
 import pickle
 import json
 
+from ..base import BaseTest
 from ...lib.ImportExport import ImportExport
 from ...lib.Vault import Vault
 from ...lib.Config import Config
 
 
-class Test(unittest.TestCase):
+class Test(BaseTest):
 
     def setUp(self):
         # Set temporary files

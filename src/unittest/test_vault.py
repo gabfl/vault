@@ -5,13 +5,14 @@ from unittest.mock import patch
 import os
 import uuid
 
+from .base import BaseTest
 from .. import vault
 from ..lib.ImportExport import ImportExport
 from ..lib.Vault import Vault as VaultClass
 from ..lib.Config import Config
 
 
-class Test(unittest.TestCase):
+class Test(BaseTest):
 
     def test_getVaultPath(self):
         self.assertEqual(vault.getVaultPath('/some/path'), '/some/path')

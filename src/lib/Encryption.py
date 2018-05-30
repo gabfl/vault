@@ -32,7 +32,7 @@ class Encryption():
 
         return AES.new(self.digest_key(), AES.MODE_CBC, IV)
 
-    def gen_salt(self):
+    def gen_salt(self, set_=True):
         """
             Generate a random salt
         """
@@ -40,7 +40,14 @@ class Encryption():
         min_char = 8
         max_char = 12
         allchar = string.ascii_letters + string.punctuation + string.digits
-        return "".join(choice(allchar) for x in range(randint(min_char, max_char))).encode()
+        salt = "".join(choice(allchar)
+                       for x in range(randint(min_char, max_char))).encode()
+
+        # Set the salt in the same instance if required
+        if set_:
+            self.set_salt(salt)
+
+        return salt
 
     def set_salt(self, salt=None):
         """
