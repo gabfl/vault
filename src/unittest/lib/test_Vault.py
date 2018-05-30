@@ -1,4 +1,3 @@
-import unittest
 import tempfile
 from unittest.mock import patch
 import uuid
@@ -34,7 +33,7 @@ class Test(BaseTest):
     @patch.object(Vault, 'unlock')
     def test_setup(self, patched):
         patched.return_value = None
-        with unittest.mock.patch('getpass.getpass', return_value=str(uuid.uuid4())):
+        with patch('getpass.getpass', return_value=str(uuid.uuid4())):
             self.assertIsNone(self.vault.setup())
 
     def test_setAutoLockTimer(self):
@@ -50,7 +49,7 @@ class Test(BaseTest):
         self.assertIsNone(self.vault.checkThenSetAutoLockTimer())
 
     def test_input(self):
-        with unittest.mock.patch('builtins.input', return_value='my input'):
+        with patch('builtins.input', return_value='my input'):
             self.assertEqual(self.vault.input('your input?'), 'my input')
 
     def test_unlock(self):
@@ -58,7 +57,7 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+        with patch('getpass.getpass', return_value=self.vault.masterKey):
             # False = don't load menu after unlocking
             self.assertIsNone(self.vault.unlock(False))
 
@@ -84,7 +83,7 @@ class Test(BaseTest):
             self.vault.vault['secrets'][0]['name'], 'my name')
 
     def test_menu(self):
-        with unittest.mock.patch('builtins.input', return_value='q'):
+        with patch('builtins.input', return_value='q'):
             self.assertRaises(SystemExit, self.vault.menu)
 
     @patch.object(Vault, 'itemMenu')
@@ -118,7 +117,7 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         for command in ['s', 'b', 'q']:
-            with unittest.mock.patch('builtins.input', return_value=command):
+            with patch('builtins.input', return_value=command):
                 self.assertEqual(self.vault.itemMenu(0, item), command)
 
     def test_itemShowSecret(self):
@@ -139,7 +138,7 @@ class Test(BaseTest):
         self.vault.vault['secrets'].append(item)
         self.vault.saveVault()
 
-        with unittest.mock.patch('builtins.input', return_value='b'):
+        with patch('builtins.input', return_value='b'):
             self.assertIsNone(self.vault.itemEdit(0, item))
 
     @patch.object(misc, 'confirm')
@@ -163,11 +162,11 @@ class Test(BaseTest):
 
     def test_search(self):
         for command in ['s', 'a', 'l', 'q']:
-            with unittest.mock.patch('builtins.input', return_value=command):
+            with patch('builtins.input', return_value=command):
                 self.assertEqual(self.vault.search(), command)
 
     def test_search_2(self):
-        with unittest.mock.patch('builtins.input', return_value='b'):
+        with patch('builtins.input', return_value='b'):
             self.assertIsNone(self.vault.search())
 
     @patch.object(Vault, 'itemMenu')
@@ -184,7 +183,7 @@ class Test(BaseTest):
         })
         self.vault.saveVault()
 
-        with unittest.mock.patch('builtins.input', return_value='0'):
+        with patch('builtins.input', return_value='0'):
             self.assertIsNone(self.vault.searchResultSelection({1: 0}))
 
     def test_all(self):
@@ -204,14 +203,14 @@ class Test(BaseTest):
         self.assertIsNone(self.vault.showSecretCount())
 
     def test_categoriesMenu(self):
-        with unittest.mock.patch('builtins.input', return_value='b'):
+        with patch('builtins.input', return_value='b'):
             self.assertIsNone(self.vault.categoriesMenu())
 
     def test_categoriesList(self):
         self.assertIsNone(self.vault.categoriesList())
 
     def test_categoryAdd(self):
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
             self.assertIsInstance(self.vault.vault['categories'], list)
             self.assertEqual(
@@ -221,20 +220,20 @@ class Test(BaseTest):
     def test_categoryDelete(self, patched):
         patched.return_value = True
 
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
 
-        with unittest.mock.patch('builtins.input', return_value='0'):
+        with patch('builtins.input', return_value='0'):
             self.assertIsNone(self.vault.categoryDelete())
 
     @patch.object(misc, 'confirm')
     def test_categoryDelete_2(self, patched):
         patched.return_value = True
 
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
 
-        with unittest.mock.patch('builtins.input', return_value='12'):
+        with patch('builtins.input', return_value='12'):
             self.assertIsNone(self.vault.categoryDelete())
 
     def test_categoryIsUsed(self):
@@ -244,14 +243,14 @@ class Test(BaseTest):
     def test_categoryRename(self, patched):
         patched.return_value = True
 
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
 
-        with unittest.mock.patch('builtins.input', return_value='new name for my category'):
+        with patch('builtins.input', return_value='new name for my category'):
             self.assertIsNone(self.vault.categoryRename())
 
     def test_categoryCheckId(self):
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
             self.assertIsInstance(self.vault.vault['categories'], list)
 
@@ -259,13 +258,13 @@ class Test(BaseTest):
         self.assertFalse(self.vault.categoryCheckId(12))
 
     def test_categoryName(self):
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
 
         self.assertEqual(self.vault.categoryName(0), 'my category')
 
     def test_categoryName_2(self):
-        with unittest.mock.patch('builtins.input', return_value='my category'):
+        with patch('builtins.input', return_value='my category'):
             self.vault.categoryAdd()
 
         self.assertEqual(self.vault.categoryName(12), 'n/a')
@@ -284,7 +283,7 @@ class Test(BaseTest):
         self.assertIsNone(self.vault.waitAndEraseClipboard())
 
     def test_changeKey(self):
-        with unittest.mock.patch('getpass.getpass', return_value=str(uuid.uuid4())):
+        with patch('getpass.getpass', return_value=str(uuid.uuid4())):
             self.assertIsNone(self.vault.changeKey())
 
     def test_getVault(self):

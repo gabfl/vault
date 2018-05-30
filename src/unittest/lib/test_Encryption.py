@@ -1,4 +1,3 @@
-import unittest
 import uuid
 
 from Crypto import Cipher

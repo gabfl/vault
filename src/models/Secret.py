@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, BLOB
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from .base import Base
@@ -13,10 +13,11 @@ class Secret(Base):
     url = Column(String)
     login = Column(String)
     _password = Column(String)
-    _notes = Column(String)
+    _notes = Column(BLOB)
     _salt = Column(String)
+    category_id = Column(Integer)
 
-    def __init__(self, name, url='', login='', password='', notes=''):
+    def __init__(self, name, url='', login='', password='', notes='', category_id=None):
         # Set class level vars
         self.salt = ''  # Will call the setter and set a salt automatically
         self.name = name
@@ -24,13 +25,21 @@ class Secret(Base):
         self.login = login
         self.password = password
         self.notes = notes
+        self.category_id = category_id
 
     def __repr__(self):
         return "<Secret(id='%d', name='%s', login='%s', salt='%s')>" % (
             self.id, self.name, self.login, self._salt)
 
     def get_enc(self):
-        return global_scope[0]
+        """
+            Returns a shared instance of Encryption class
+        """
+
+        if global_scope['enc'] is None:
+            raise RuntimeError('`enc` is not defined in the global scope.')
+
+        return global_scope['enc']
 
     @hybrid_property
     def salt(self):

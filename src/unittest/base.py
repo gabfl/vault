@@ -3,7 +3,7 @@ import uuid
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from ..models.base import Base, get_session
+from ..models.base import Base, get_session, get_engine
 from ..models.User import User
 from ..lib.Encryption import Encryption
 from ..modules.carry import global_scope
@@ -12,8 +12,13 @@ from ..modules.carry import global_scope
 class BaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # Create all loaded models
-        engine = create_engine('sqlite:///:memory:')
+        # Set db location
+        global_scope['db_file'] = ':memory:'
+
+        # Create engine
+        engine = get_engine()
+
+        # Create tables and set database session
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         cls.session = Session()
@@ -29,7 +34,7 @@ class BaseTest(unittest.TestCase):
 
         # Create a user key
         cls.secret_key = str(uuid.uuid4())
-        cls.enc = global_scope[0] = Encryption((cls.secret_key).encode())
+        cls.enc = global_scope['enc'] = Encryption((cls.secret_key).encode())
 
         # Save user
         user = User(key='key_validation',

@@ -1,4 +1,3 @@
-import unittest
 import tempfile
 from unittest.mock import patch
 import uuid
@@ -56,10 +55,10 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+        with patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertRaises(SystemExit, self.ie.exportToJson)
             # Import
-            with unittest.mock.patch('builtins.input', return_value='y'):
+            with patch('builtins.input', return_value='y'):
                 self.assertRaises(SystemExit, self.ie.importFromJson)
 
         # Verify vault content
@@ -78,10 +77,10 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+        with patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertRaises(SystemExit, self.ie.exportToNative)
             # Import
-            with unittest.mock.patch('builtins.input', return_value='y'):
+            with patch('builtins.input', return_value='y'):
                 self.assertRaises(SystemExit, self.ie.importFromNative)
 
         # Verify vault content
@@ -100,7 +99,7 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+        with patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertRaises(SystemExit, self.ie.exportToJson)
 
         # Json decode and validate the content
@@ -121,7 +120,7 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+        with patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertRaises(SystemExit, self.ie.exportToNative)
 
         # Unpickle and validate the content
@@ -142,7 +141,7 @@ class Test(BaseTest):
         self.vault.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=self.vault.masterKey):
+        with patch('getpass.getpass', return_value=self.vault.masterKey):
             self.assertIsNone(self.ie.unlockVault())
 
     def test_checkEmptyVault(self):

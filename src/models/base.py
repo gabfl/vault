@@ -2,6 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import Session
 
+from ..modules.carry import global_scope
+
 
 @as_declarative()
 class Base(object):
@@ -20,9 +22,15 @@ def get_session():
     return Session(bind=get_engine())
 
 
-def get_engine():
+def get_engine(encrypted=True):
     """
         return SQLAlchemy engine
     """
 
-    return create_engine('sqlite:///:memory:', echo=True)
+    if global_scope['db_file'] is None:
+        raise RuntimeError('`db_file` is not defined in the global scope')
+
+    if encrypted and global_scope['db_file'] != ':memory:':
+        return create_engine('sqlite+pysqlcipher://:testing@//' + global_scope['db_file'])
+    else:
+        return create_engine('sqlite:///' + global_scope['db_file'])

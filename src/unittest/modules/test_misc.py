@@ -1,5 +1,3 @@
-
-import unittest
 import tempfile
 from unittest.mock import patch
 
@@ -46,11 +44,11 @@ class Test(BaseTest):
         file_b.write(b'Hello world!')
         file_b.close()
 
-        with unittest.mock.patch('src.modules.misc.confirm', return_value=True):
+        with patch('src.modules.misc.confirm', return_value=True):
             self.assertRaises(SystemExit, misc.erase_vault,
                               file_a.name, file_b.name)
 
-        with unittest.mock.patch('src.modules.misc.confirm', return_value=False):
+        with patch('src.modules.misc.confirm', return_value=False):
             self.assertRaises(SystemExit, misc.erase_vault,
                               file_a.name, file_b.name)
 
@@ -61,25 +59,25 @@ class Test(BaseTest):
         file_a = tempfile.NamedTemporaryFile()
         file_b = tempfile.NamedTemporaryFile()
 
-        with unittest.mock.patch('src.modules.misc.confirm', return_value=True):
+        with patch('src.modules.misc.confirm', return_value=True):
             self.assertRaises(SystemExit, misc.erase_vault,
                               file_a.name, file_b.name)
 
-        with unittest.mock.patch('src.modules.misc.confirm', return_value=False):
+        with patch('src.modules.misc.confirm', return_value=False):
             self.assertRaises(SystemExit, misc.erase_vault,
                               file_a.name, file_b.name)
 
     def test_confirm(self):
-        with unittest.mock.patch('builtins.input', return_value='y'):
+        with patch('builtins.input', return_value='y'):
             self.assertTrue(misc.confirm())
             self.assertTrue(misc.confirm(resp=True))
 
     def test_confirm_2(self):
-        with unittest.mock.patch('builtins.input', return_value='n'):
+        with patch('builtins.input', return_value='n'):
             self.assertFalse(misc.confirm())
             self.assertFalse(misc.confirm(resp=True))
 
     def test_confirm_3(self):
         # Test empty return
-        with unittest.mock.patch('builtins.input', return_value=''):
+        with patch('builtins.input', return_value=''):
             self.assertTrue(misc.confirm(resp=True))

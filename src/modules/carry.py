@@ -3,6 +3,7 @@
     Use  a mutable list to share instances of the same class across multiple modules
 """
 
-global_scope = [
-    None  # Placeholder for Encryption instance
-]
+global_scope = {
+    'enc': None,  # Encryption instance
+    'db_file': None,  # Database path
+}

@@ -1,5 +1,3 @@
-
-import unittest
 import tempfile
 from unittest.mock import patch
 import os
@@ -54,5 +52,5 @@ class Test(BaseTest):
         v.saveVault()
 
         # Try to unlock with the master key previously chosen
-        with unittest.mock.patch('getpass.getpass', return_value=v.masterKey):
+        with patch('getpass.getpass', return_value=v.masterKey):
             vault.initialize(file_vault.name, file_config.name)

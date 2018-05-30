@@ -1,5 +1,3 @@
-import unittest
-
 from ..base import BaseTest
 from ...models.Category import Category
 
