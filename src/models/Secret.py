@@ -28,7 +28,7 @@ class Secret(Base):
         self.category_id = category_id
 
     def __repr__(self):
-        return "<Secret(id='%d', name='%s', login='%s', salt='%s')>" % (
+        return "<Secret(id='%s', name='%s', login='%s', salt='%s')>" % (
             self.id, self.name, self.login, self._salt)
 
     def get_enc(self):

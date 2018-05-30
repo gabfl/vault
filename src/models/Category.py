@@ -11,5 +11,5 @@ class Category(Base):
     active = Column(Integer)
 
     def __repr__(self):
-        return "<Category(id='%d', name='%s', active='%d')>" % (
+        return "<Category(id='%s', name='%s', active='%d')>" % (
             self.id, self.name, self.active)

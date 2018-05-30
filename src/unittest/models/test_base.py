@@ -23,7 +23,7 @@ class Test(BaseTest):
             self.assertRaises(RuntimeError, base.get_engine)
 
     def test_get_engine_3(self):
-        # Test encrypted connection with a temporary file
+        # Test non-encrypted connection with a temporary file
         file_ = tempfile.NamedTemporaryFile()
         with patch.dict(global_scope, {'db_file': file_.name}):
-            self.assertIsInstance(base.get_engine(), engine.base.Engine)
+            self.assertIsInstance(base.get_engine(False), engine.base.Engine)

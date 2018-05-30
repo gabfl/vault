@@ -17,7 +17,7 @@ class Test(BaseTest):
         self.password = 'some_password'
         self.notes = 'some notes'
 
-        # Create category
+        # Create a secret
         secret = Secret(name=self.name,
                         url=self.url,
                         login=self.login,

@@ -11,5 +11,5 @@ class User(Base):
     value = Column(String)
 
     def __repr__(self):
-        return "<User(id='%d', key='%s', value='%s')>" % (
+        return "<User(id='%s', key='%s', value='%s')>" % (
             self.id, self.key, self.value)

@@ -1,4 +1,5 @@
 import unittest
+import tempfile
 import uuid
 
 from sqlalchemy import create_engine
@@ -13,7 +14,8 @@ class BaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Set db location
-        global_scope['db_file'] = ':memory:'
+        file_ = tempfile.NamedTemporaryFile(delete=False)
+        global_scope['db_file'] = file_.name
 
         # Create engine
         engine = get_engine()
