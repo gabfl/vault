@@ -3,7 +3,7 @@ python:
   - "3.6"
 before_install:
   - sudo apt-get update
-  - sudo apt-get install sqlcipher
+  - sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
   - pip install pycodestyle codecov
   - python3 setup.py install
 script:

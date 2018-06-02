@@ -35,7 +35,7 @@ brew install sqlcipher
 On Ubuntu/Debian, you can install it with apt-get:
 ```bash
 sudo apt-get update
-sudo apt-get install sqlcipher
+sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
 ```
 
 ### Using PyPI
