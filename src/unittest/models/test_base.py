@@ -34,7 +34,7 @@ class Test(BaseTest):
             self.assertIsInstance(base.get_engine(False), engine.base.Engine)
 
     def test_get_db_key(self):
-        self.assertIsInstance(self.test_get_db_key(), str)
+        self.assertIsInstance(base.get_db_key(), str)
 
     def test_get_db_key_2(self):
         # Text exception with `enc` is not defined
