@@ -18,6 +18,16 @@ class BaseTest(unittest.TestCase):
         file_ = tempfile.NamedTemporaryFile(delete=False)
         global_scope['db_file'] = file_.name
 
+        # Create a user key
+        cls.secret_key = str(uuid.uuid4())
+        cls.enc = global_scope['enc'] = Encryption((cls.secret_key).encode())
+
+        # Load config
+        cls.conf_path = tempfile.TemporaryDirectory()
+        cls.config = Config(cls.conf_path.name + '/config')
+        cls.config.getConfig()
+        global_scope['conf'] = cls.config
+
         # Create engine
         engine = get_engine()
 
@@ -29,20 +39,11 @@ class BaseTest(unittest.TestCase):
         # Populate db
         cls.populate_base()
 
-        # Load config
-        cls.conf_path = tempfile.TemporaryDirectory()
-        cls.config = Config(cls.conf_path.name + '/config')
-        cls.config.getConfig()
-
     @classmethod
     def populate_base(cls):
         """
             Populate the database
         """
-
-        # Create a user key
-        cls.secret_key = str(uuid.uuid4())
-        cls.enc = global_scope['enc'] = Encryption((cls.secret_key).encode())
 
         # Save user
         user = User(key='key_validation',

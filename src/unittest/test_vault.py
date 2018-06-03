@@ -1,10 +1,12 @@
 import tempfile
+from pathlib import Path
 from unittest.mock import patch
 import os
 import uuid
 
 from .base import BaseTest
 from .. import vault
+from ..modules import misc
 from ..lib.ImportExport import ImportExport
 from ..lib.Vault import Vault as VaultClass
 from ..lib.Config import Config
@@ -39,69 +41,40 @@ class Test(BaseTest):
             file_vault.name, file_config.name))
 
     def test_config_update(self):
-        # Use a temporary dir to test the config
-        dir_ = tempfile.TemporaryDirectory()
-
-        # Load config
-        c = Config(dir_.name + '.config')
-        c.getConfig()
-
-        self.assertTrue(vault.config_update(c, clipboard_TTL='5'))
-
-        # Cleanup temporary directory
-        dir_.cleanup()
+        self.assertTrue(vault.config_update(clipboard_TTL='5'))
 
     def test_config_update_2(self):
-        # Use a temporary dir to test the config
-        dir_ = tempfile.TemporaryDirectory()
-
-        # Load config
-        c = Config(dir_.name + '.config')
-        c.getConfig()
-
-        self.assertTrue(vault.config_update(c, auto_lock_TTL='5'))
-
-        # Cleanup temporary directory
-        dir_.cleanup()
+        self.assertTrue(vault.config_update(auto_lock_TTL='5'))
 
     def test_config_update_3(self):
-        # Use a temporary dir to test the config
-        dir_ = tempfile.TemporaryDirectory()
-
-        # Load config
-        c = Config(dir_.name + '.config')
-        c.getConfig()
-
-        self.assertTrue(vault.config_update(c, hide_secret_TTL='5'))
-
-        # Cleanup temporary directory
-        dir_.cleanup()
+        self.assertTrue(vault.config_update(hide_secret_TTL='5'))
 
     @patch.object(VaultClass, 'menu')
     def test_initialize(self, patched):
         patched.return_value = None
 
         # Set temporary files
-        file_config = tempfile.NamedTemporaryFile()
         file_vault = tempfile.NamedTemporaryFile()
 
-        # Load fake config
-        c = Config(file_config.name)
-        c.setDefaultConfigFile()
-        config = c.getConfig()
-
         # Load empty vault
-        v = VaultClass(config, file_vault.name)
+        v = VaultClass(self.config, file_vault.name)
 
         # Set a master key
         v.masterKey = str(uuid.uuid4())
 
-        # Create empty vault
-        v.vault = {'secrets': []}
-
-        # Ensure that the vault is correctly saved first
-        v.saveVault()
-
         # Try to unlock with the master key previously chosen
         with patch('getpass.getpass', return_value=v.masterKey):
-            vault.initialize(file_vault.name, file_config.name)
+            vault.initialize(file_vault.name, self.conf_path.name + '/config')
+
+    @patch.object(misc, 'erase_vault')
+    @patch.object(misc, 'confirm')
+    def test_initialize_2(self, patched, patched2):
+        patched.return_value = 'patched'
+        patched2.return_value = True
+
+        # Set temporary files
+        file_vault = tempfile.NamedTemporaryFile(delete=False)
+        Path(file_vault.name).touch()
+
+        self.assertRaises(SystemExit, vault.initialize,
+                          file_vault.name, self.conf_path.name + '/config', erase=True)

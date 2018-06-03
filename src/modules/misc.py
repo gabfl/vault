@@ -1,5 +1,6 @@
 import getpass
 import sys
+import os
 
 
 def logo():

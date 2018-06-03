@@ -108,55 +108,6 @@ class Vault:
 
             self.menu()
 
-    def saveVault(self):
-        """
-            Save vault
-        """
-
-        cipher = AES.new(self.getHash(), AES.MODE_EAX)
-        data = str.encode(json.dumps(self.vault))
-        ciphertext, tag = cipher.encrypt_and_digest(data)
-
-        f = open(self.vaultPath, "wb")
-        try:
-            [f.write(x) for x in (cipher.nonce, tag, ciphertext)]
-        finally:
-            f.close()
-        os.chmod(self.vaultPath, 0o600)
-
-        return True
-
-    def openVault(self):
-        """"
-            Open the vault with the master key
-        """
-
-        # Set auto lock timer (to prevent immediate re-locking)
-        self.setAutoLockTimer()
-
-        f = open(self.vaultPath, "rb")
-        try:
-            nonce, tag, ciphertext = [f.read(x) for x in (16, 16, -1)]
-        finally:
-            f.close()
-
-        # Unlock valt with key
-        cipher = AES.new(self.getHash(), AES.MODE_EAX, nonce)
-        data = cipher.decrypt_and_verify(ciphertext, tag)
-
-        # Set vault content to class level var
-        self.vault = json.loads(data.decode("utf-8"))
-
-    def getHash(self):
-        """
-            Returns a 32 bytes hash for a given master key
-        """
-
-        h = SHA256.new()
-        for i in range(1, 10000):
-            h.update(str.encode(str(i) + self.config['salt'] + self.masterKey))
-        return base64.b64decode(str.encode(h.hexdigest()[:32]))
-
     def addItemInput(self):
         """
             Add a new secret based on user input

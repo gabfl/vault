@@ -3,6 +3,8 @@ import sys
 
 from ..models.base import Base, get_session, get_engine
 from ..modules.misc import get_input
+from ..modules.carry import global_scope
+from ..lib.Encryption import Encryption
 
 
 def initialize(salt):
@@ -14,7 +16,13 @@ def initialize(salt):
     print()
 
     while True:
-        if get_key_input():
+        # Ask user for a master key
+        key = get_key_input()
+
+        if key:
+            # Create Encryption instance and set it to the global scope
+            global_scope['enc'] = Encryption(key.encode())
+
             # Create db
             create_db()
 
@@ -49,7 +57,7 @@ def get_key_input():
 
     # Ensure that the key was correctly typed twice and is valid
     if check_key_and_repeat(key, repeat) and is_key_valid(key):
-        return True
+        return key
 
     return False
 

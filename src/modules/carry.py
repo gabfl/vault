@@ -6,4 +6,5 @@
 global_scope = {
     'enc': None,  # Encryption instance
     'db_file': None,  # Database path
+    'conf': None,  # Config instance
 }

@@ -50,20 +50,20 @@ def check_directory(vault_path, config_path):
     return None
 
 
-def config_update(c, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None):
+def config_update(clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None):
     """
         Update config
     """
 
     if clipboard_TTL:
-        return c.update('clipboardTTL', clipboard_TTL)
+        return global_scope['conf'].update('clipboardTTL', clipboard_TTL)
     elif auto_lock_TTL:
-        return c.update('autoLockTTL', auto_lock_TTL)
+        return global_scope['conf'].update('autoLockTTL', auto_lock_TTL)
     elif hide_secret_TTL:
-        return c.update('hideSecretTTL', hide_secret_TTL)
+        return global_scope['conf'].update('hideSecretTTL', hide_secret_TTL)
 
 
-def initialize(vault_location_override, config_location_override, erase_vault=None, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None, change_key=None, import_items=None, export=None, file_format='json'):
+def initialize(vault_location_override, config_location_override, erase=None, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None, change_key=None, import_items=None, export=None, file_format='json'):
     # Some nice ascii art
     logo()
 
@@ -81,15 +81,15 @@ def initialize(vault_location_override, config_location_override, erase_vault=No
     assess_integrity(vault_path, config_path)
 
     # Erase a vault if the user requests it
-    if erase_vault:
+    if erase:
         erase_vault(vault_path, config_path)
 
     # Load config
-    c = Config(config_path)
-    config = c.getConfig()
+    global_scope['conf'] = Config(config_path)
+    config = global_scope['conf'].getConfig()
 
     # Update config
-    config_update(c, clipboard_TTL, auto_lock_TTL, hide_secret_TTL)
+    config_update(clipboard_TTL, auto_lock_TTL, hide_secret_TTL)
 
     # Init Vault
     v = Vault(config, vault_path)
@@ -113,7 +113,7 @@ def initialize(vault_location_override, config_location_override, erase_vault=No
 
     # Check if the vault exists
     if not os.path.isfile(vault_path):
-        setup.initialize(config['salt'], vault_path)
+        setup.initialize(config['salt'])
 
     # v.unlock()
     print('Vault should be unlocked now...')
@@ -146,7 +146,7 @@ def main():
 
     initialize(vault_location_override=args.vault_location,
                config_location_override=args.config_location,
-               erase_vault=args.erase_vault,
+               erase=args.erase_vault,
                clipboard_TTL=args.clipboard_TTL,
                auto_lock_TTL=args.auto_lock_TTL,
                hide_secret_TTL=args.hide_secret_TTL,
