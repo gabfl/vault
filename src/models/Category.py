@@ -8,7 +8,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    active = Column(Integer)
+    active = Column(Integer, default=1)
 
     def __repr__(self):
         return "<Category(id='%s', name='%s', active='%d')>" % (

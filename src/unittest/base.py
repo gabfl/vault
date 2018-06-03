@@ -6,6 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from ..models.base import Base, get_session, get_engine
 from ..models.User import User
+from ..lib.Config import Config
 from ..lib.Encryption import Encryption
 from ..modules.carry import global_scope
 
@@ -28,6 +29,11 @@ class BaseTest(unittest.TestCase):
         # Populate db
         cls.populate_base()
 
+        # Load config
+        cls.conf_path = tempfile.TemporaryDirectory()
+        cls.config = Config(cls.conf_path.name + '/config')
+        cls.config.getConfig()
+
     @classmethod
     def populate_base(cls):
         """
@@ -48,3 +54,6 @@ class BaseTest(unittest.TestCase):
     def tearDownClass(cls):
         # cls.session.remove()
         pass
+
+        # Cleanup config directory
+        cls.conf_path.cleanup()

@@ -1,8 +1,13 @@
+import hashlib
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import Session
 
 from ..modules.carry import global_scope
+
+
+sessions = {}
 
 
 @as_declarative()
@@ -19,7 +24,19 @@ def get_session():
         Return SQLAlchemy session
     """
 
-    return Session(bind=get_engine())
+    global sessions
+
+    if global_scope['db_file'] is None:
+        raise RuntimeError('`db_file` is not defined in the global scope')
+
+    # Create a unique key for the db session
+    db_file = global_scope['db_file']
+
+    # Add a session to the current list
+    if not sessions.get(db_file):
+        sessions[db_file] = Session(bind=get_engine())
+
+    return sessions[db_file]
 
 
 def get_engine(encrypted=True):

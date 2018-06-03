@@ -33,12 +33,13 @@ class Config:
         """
 
         self.config['MAIN'] = {
-            'version': '1.00',
+            'version': '2.00',
             'keyVersion': '1',  # Will be used to support legacy key versions if the algorithm changes
             'salt': self.generateRandomSalt(),
             'clipboardTTL': '15',
             'hideSecretTTL': '5',
-            'autoLockTTL': '900'
+            'autoLockTTL': '900',
+            'encryptedDb': True,
         }
 
         # Save
@@ -52,12 +53,12 @@ class Config:
         # Set new value
         self.config['MAIN'][name] = str(value)
 
-        # Save
-        self.saveConfig()
-
         print()
         print('The setting `%s` is now set to `%s`.' % (name, value))
         print()
+
+        # Save
+        return self.saveConfig()
 
     def saveConfig(self):
         """
@@ -67,6 +68,8 @@ class Config:
         with open(self.configPath, 'w') as configfile:
             self.config.write(configfile)
         os.chmod(self.configPath, 0o600)
+
+        return True
 
     def generateRandomSalt(self):
         """

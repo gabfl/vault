@@ -1,3 +1,6 @@
+import getpass
+import sys
+
 
 def logo():
     """
@@ -23,6 +26,10 @@ def create_directory_if_missing(dir_):
     try:
         if not os.path.exists(dir_):
             os.makedirs(dir_)
+
+            return True
+
+        return False
     except Exception:
         import sys
 
@@ -53,7 +60,7 @@ def assess_integrity(vaultPath, configPath):
         sys.exit()
 
 
-def erase_vault(vaultPath, configPath):
+def erase_vault(vault_path, config_path):
     """
         Will erase the vault and config file after asking user for confirmation
     """
@@ -64,10 +71,10 @@ def erase_vault(vaultPath, configPath):
     print()
     if confirm(prompt='Do you want to permanently erase your vault? All your data will be lost!', resp=False):
         # Delete files
-        if os.path.isfile(vaultPath):
-            os.remove(vaultPath)
-        if os.path.isfile(configPath):
-            os.remove(configPath)
+        if os.path.isfile(vault_path):
+            os.remove(vault_path)
+        if os.path.isfile(config_path):
+            os.remove(config_path)
 
         print()
         print('The vault and config file have been deleted.')
@@ -111,3 +118,42 @@ def confirm(prompt=None, resp=False):
             return True
         if ans == 'n' or ans == 'N':
             return False
+
+
+def is_unicode_supported():
+    """
+        Returns `True` if stdout supports unicode
+    """
+
+    if sys.stdout.encoding:
+        return sys.stdout.encoding.lower().startswith('utf-')
+
+    return False
+
+
+def lock_prefix():
+    """
+        Will prefix locks with a Unicode Character 'KEY' (U+1F511)
+        if the user's stdout supports it
+    """
+
+    if is_unicode_supported():
+        return u'\U0001F511  '  # Extra spaces are intentional
+
+    return ''
+
+
+def get_input(message='', secure=False):
+    """
+        Get and return user input
+    """
+
+    try:
+        if secure:
+            return getpass.getpass(lock_prefix() + message)
+        else:
+            return input(message)
+    # except KeyboardInterrupt:
+    #    return False
+    except Exception:  # Other Exception
+        return False

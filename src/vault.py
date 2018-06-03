@@ -6,92 +6,117 @@ from .lib.Vault import Vault
 from .lib.Config import Config
 from .lib.ImportExport import ImportExport
 from .modules.misc import logo, create_directory_if_missing, assess_integrity, erase_vault
+from .modules import setup
+from .modules.carry import global_scope
 
 # Default paths
 dir_ = os.path.expanduser('~') + '/.vault/'
-ConfigPathDefault = dir_ + '.config'
-vaultPathDefault = dir_ + '.secure'
+config_path_default = dir_ + '.config'
+vault_path_default = dir_ + '.secure'
 
 
-def getVaultPath(override=None):
+def get_vault_path(override=None):
     """
         Returns the vault location (either default or user defined)
     """
 
-    global vaultPathDefault
+    global vault_path_default
 
     if override:
         return override
-    return vaultPathDefault
+    return vault_path_default
 
 
-def getConfigPath(override=None):
+def get_config_path(override=None):
     """
         Returns the config location (either default or user defined)
     """
 
-    global ConfigPathDefault
+    global config_path_default
 
     if override:
         return override
-    return ConfigPathDefault
+    return config_path_default
 
 
-def initialize(vault_location, config_location, erase_vault=None, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None, change_key=None, import_items=None, export=None, file_format='json'):
+def check_directory(vault_path, config_path):
+    """
+        Create the vault folder if it does not exists yet
+    """
+
+    if vault_path == vault_path_default or config_path == config_path_default:
+        return create_directory_if_missing(dir_)
+
+    return None
+
+
+def config_update(c, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None):
+    """
+        Update config
+    """
+
+    if clipboard_TTL:
+        return c.update('clipboardTTL', clipboard_TTL)
+    elif auto_lock_TTL:
+        return c.update('autoLockTTL', auto_lock_TTL)
+    elif hide_secret_TTL:
+        return c.update('hideSecretTTL', hide_secret_TTL)
+
+
+def initialize(vault_location_override, config_location_override, erase_vault=None, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None, change_key=None, import_items=None, export=None, file_format='json'):
     # Some nice ascii art
     logo()
 
+    # Set vault and config path
+    vault_path = get_vault_path(vault_location_override)
+    config_path = get_config_path(config_location_override)
+
+    # Set vault path at the global scope
+    global_scope['db_file'] = vault_path
+
     # Create the vault folder if it does not exists yet
-    if getVaultPath(vault_location) == vaultPathDefault or getConfigPath(config_location) == ConfigPathDefault:
-        create_directory_if_missing(dir_)
+    check_directory(vault_path, config_path)
 
     # Assess files integrity
-    assess_integrity(getVaultPath(vault_location),
-                     getConfigPath(config_location))
+    assess_integrity(vault_path, config_path)
 
     # Erase a vault if the user requests it
     if erase_vault:
-        erase_vault(getVaultPath(vault_location),
-                    getConfigPath(config_location))
+        erase_vault(vault_path, config_path)
 
     # Load config
-    c = Config(getConfigPath(config_location))
+    c = Config(config_path)
     config = c.getConfig()
 
     # Update config
-    if clipboard_TTL:
-        c.update('clipboardTTL', clipboard_TTL)
-    elif auto_lock_TTL:
-        c.update('autoLockTTL', auto_lock_TTL)
-    elif hide_secret_TTL:
-        c.update('hideSecretTTL', hide_secret_TTL)
+    config_update(c, clipboard_TTL, auto_lock_TTL, hide_secret_TTL)
 
     # Init Vault
-    v = Vault(config, getVaultPath(vault_location))
+    v = Vault(config, vault_path)
 
     # Change vault key
     if change_key:
         v.changeKey()
 
-    # Import items to the vault
-    if import_items:
-        print()
-        print("Please consider backing up your vault located at `%s` before proceeding." % (
-            getVaultPath(vault_location)))
-        ie = ImportExport(v, import_items, file_format)
-        ie.importItems()
+    # # Import items to the vault
+    # if import_items:
+    #     print()
+    #     print("Please consider backing up your vault located at `%s` before proceeding." % (
+    #         vault_path))
+    #     ie = ImportExport(v, import_items, file_format)
+    #     ie.importItems()
 
-    # Export vault
-    if export:
-        ie = ImportExport(v, export, file_format)
-        ie.export()
+    # # Export vault
+    # if export:
+    #     ie = ImportExport(v, export, file_format)
+    #     ie.export()
 
     # Check if the vault exists
-    if not os.path.isfile(getVaultPath(vault_location)):
-        v.setup()
-    # Offer to unlock the vault
-    else:
-        v.unlock()
+    if not os.path.isfile(vault_path):
+        setup.initialize(config['salt'], vault_path)
+
+    # v.unlock()
+    print('Vault should be unlocked now...')
 
 
 def main():
@@ -119,8 +144,8 @@ def main():
                         help="Erase the vault and config file")
     args = parser.parse_args()
 
-    initialize(vault_location=args.vault_location,
-               config_location=args.config_location,
+    initialize(vault_location_override=args.vault_location,
+               config_location_override=args.config_location,
                erase_vault=args.erase_vault,
                clipboard_TTL=args.clipboard_TTL,
                auto_lock_TTL=args.auto_lock_TTL,

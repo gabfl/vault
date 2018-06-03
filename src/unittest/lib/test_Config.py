@@ -24,10 +24,11 @@ class Test(BaseTest):
         self.config.update('some_name', 'some_value')
         retrieved = self.config.getConfig()
         self.assertEqual(retrieved['some_name'], 'some_value')
+        self.assertTrue(retrieved)
 
     def test_saveConfig(self):
         self.config.getConfig()
-        self.assertIsNone(self.config.saveConfig())
+        self.assertTrue(self.config.saveConfig())
 
     def test_generateRandomSalt(self):
         self.assertIsInstance(self.config.generateRandomSalt(), str)

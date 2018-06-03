@@ -7,16 +7,18 @@ from ...models.Category import Category
 from ...models.Secret import Secret
 from ...views import categories
 
+from ...modules.carry import global_scope
+
 
 class Test(BaseTest):
 
     def setUp(self):
         # Create some categories
-        category_1 = Category(name='My category 1', active=1)
+        category_1 = Category(name='My category 1')
         self.session.add(category_1)
-        category_2 = Category(name='My category 2', active=1)
+        category_2 = Category(name='My category 2')
         self.session.add(category_2)
-        category_3 = Category(name='My category 3', active=1)
+        category_3 = Category(name='My category 3')
         self.session.add(category_3)
         category_4 = Category(name='My disabled category', active=0)
         self.session.add(category_4)
@@ -24,13 +26,6 @@ class Test(BaseTest):
 
     def tearDown(self):
         self.session.query(Category).delete()
-
-    def test_local_session(self):
-        self.assertIsInstance(categories.local_session(), Session)
-
-    def test_local_session_2(self):
-        categories.local_session()
-        self.assertIsInstance(categories.session, Session)
 
     def test_all(self):
         cats = categories.all()

@@ -13,13 +13,13 @@ class Test(BaseTest):
     def test_create_directory_if_missing(self):
         # When the folder exists
         with tempfile.TemporaryDirectory() as dir_:
-            self.assertIsNone(misc.create_directory_if_missing(
+            self.assertFalse(misc.create_directory_if_missing(
                 dir_))
 
     def test_create_directory_if_missing_2(self):
         # When the folder is missing
         with tempfile.TemporaryDirectory() as dir_:
-            self.assertIsNone(misc.create_directory_if_missing(
+            self.assertTrue(misc.create_directory_if_missing(
                 dir_ + '/some/dir'))
 
     def test_create_directory_if_missing_3(self):
@@ -61,11 +61,11 @@ class Test(BaseTest):
 
         with patch('src.modules.misc.confirm', return_value=True):
             self.assertRaises(SystemExit, misc.erase_vault,
-                              file_a.name, file_b.name)
+                              file_a.name + '/non/existent', file_b.name + '/non/existent')
 
         with patch('src.modules.misc.confirm', return_value=False):
             self.assertRaises(SystemExit, misc.erase_vault,
-                              file_a.name, file_b.name)
+                              file_a.name + '/non/existent', file_b.name + '/non/existent')
 
     def test_confirm(self):
         with patch('builtins.input', return_value='y'):
@@ -81,3 +81,20 @@ class Test(BaseTest):
         # Test empty return
         with patch('builtins.input', return_value=''):
             self.assertTrue(misc.confirm(resp=True))
+
+    def test_is_unicode_supported(self):
+        self.assertIsInstance(misc.is_unicode_supported(), bool)
+
+    def test_lock_prefix(self):
+        if misc.is_unicode_supported():
+            self.assertEqual(misc.lock_prefix(), u'\U0001F511  ')
+        else:
+            self.assertEqual(misc.lock_prefix(), '')
+
+    def test_get_input(self):
+        with patch('builtins.input', return_value='some input'):
+            self.assertEqual(misc.get_input(), 'some input')
+
+    def test_get_input_2(self):
+        with patch('getpass.getpass', return_value='some secure input'):
+            self.assertEqual(misc.get_input(secure=True), 'some secure input')

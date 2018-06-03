@@ -30,12 +30,6 @@ class Test(BaseTest):
         self.vault.vault = {'secrets': []}
         self.vault.saveVault()
 
-    @patch.object(Vault, 'unlock')
-    def test_setup(self, patched):
-        patched.return_value = None
-        with patch('getpass.getpass', return_value=str(uuid.uuid4())):
-            self.assertIsNone(self.vault.setup())
-
     def test_setAutoLockTimer(self):
         self.vault.setAutoLockTimer()
         self.assertIsInstance(self.vault.timer, int)
@@ -141,24 +135,24 @@ class Test(BaseTest):
         with patch('builtins.input', return_value='b'):
             self.assertIsNone(self.vault.itemEdit(0, item))
 
-    @patch.object(misc, 'confirm')
-    def test_itemDelete(self, patched):
-        patched.return_value = True
+    # @patch.object(misc, 'confirm')
+    # def test_itemDelete(self, patched):
+    #     patched.return_value = True
 
-        # Set item
-        item = {
-            'category': 0,
-            'name': 'some name',
-            'login': 'some login',
-            'password': 'my secret',
-            'notes': ''
-        }
+    #     # Set item
+    #     item = {
+    #         'category': 0,
+    #         'name': 'some name',
+    #         'login': 'some login',
+    #         'password': 'my secret',
+    #         'notes': ''
+    #     }
 
-        # Ensure that the vault is correctly saved first
-        self.vault.vault['secrets'].append(item)
-        self.vault.saveVault()
+    #     # Ensure that the vault is correctly saved first
+    #     self.vault.vault['secrets'].append(item)
+    #     self.vault.saveVault()
 
-        self.assertIsNone(self.vault.itemDelete(0))
+    #     self.assertIsNone(self.vault.itemDelete(0))
 
     def test_search(self):
         for command in ['s', 'a', 'l', 'q']:
@@ -216,28 +210,28 @@ class Test(BaseTest):
             self.assertEqual(
                 self.vault.vault['categories'][0]['name'], 'my category')
 
-    @patch.object(misc, 'confirm')
-    def test_categoryDelete(self, patched):
-        patched.return_value = True
+    # @patch.object(misc, 'confirm')
+    # def test_categoryDelete(self, patched):
+    #     patched.return_value = True
 
-        with patch('builtins.input', return_value='my category'):
-            self.vault.categoryAdd()
+    #     with patch('builtins.input', return_value='my category'):
+    #         self.vault.categoryAdd()
 
-        with patch('builtins.input', return_value='0'):
-            self.assertIsNone(self.vault.categoryDelete())
+    #     with patch('builtins.input', return_value='0'):
+    #         self.assertIsNone(self.vault.categoryDelete())
 
-    @patch.object(misc, 'confirm')
-    def test_categoryDelete_2(self, patched):
-        patched.return_value = True
+    # @patch.object(misc, 'confirm')
+    # def test_categoryDelete_2(self, patched):
+    #     patched.return_value = True
 
-        with patch('builtins.input', return_value='my category'):
-            self.vault.categoryAdd()
+    #     with patch('builtins.input', return_value='my category'):
+    #         self.vault.categoryAdd()
 
-        with patch('builtins.input', return_value='12'):
-            self.assertIsNone(self.vault.categoryDelete())
+    #     with patch('builtins.input', return_value='12'):
+    #         self.assertIsNone(self.vault.categoryDelete())
 
-    def test_categoryIsUsed(self):
-        self.assertFalse(self.vault.categoryIsUsed(12))
+    # def test_categoryIsUsed(self):
+    #     self.assertFalse(self.vault.categoryIsUsed(12))
 
     @patch.object(misc, 'confirm')
     def test_categoryRename(self, patched):
@@ -289,12 +283,3 @@ class Test(BaseTest):
     def test_getVault(self):
         self.vault.vault = {'secrets': {}}
         self.assertIsInstance(self.vault.getVault(), dict)
-
-    def test_isUnicodeSupported(self):
-        self.assertIsInstance(self.vault.isUnicodeSupported(), bool)
-
-    def test_lockPrefix(self):
-        if self.vault.isUnicodeSupported():
-            self.assertEqual(self.vault.lockPrefix(), u'\U0001F511  ')
-        else:
-            self.assertEqual(self.vault.lockPrefix(), '')

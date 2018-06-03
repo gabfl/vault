@@ -11,6 +11,8 @@ from Crypto.Hash import SHA256
 import pyperclip
 from passwordgenerator import pwgenerator
 
+from ..modules.misc import confirm, lock_prefix
+
 
 class Vault:
 
@@ -24,51 +26,6 @@ class Vault:
     def __init__(self, config, vaultPath):
         self.config = config
         self.vaultPath = vaultPath
-
-    def setup(self):
-        """
-            Master key setup
-        """
-
-        print('Welcome to Vault. Please choose a secure secret key.')
-        print()
-        while True:
-            try:
-                self.masterKey = getpass.getpass(
-                    self.lockPrefix() + 'Please choose a master key:')
-                masterKeyRepeat = getpass.getpass(
-                    self.lockPrefix() + 'Please confirm your master key:')
-                break
-            except KeyboardInterrupt as e:
-                # If the user presses `Ctrl`+`c`, exit the program
-                print()
-                sys.exit()
-            except Exception as e:  # Other Exception
-                print()
-                pass
-
-        if len(self.masterKey) < 8:
-            print()
-            print('The master key should be at least 8 characters. Please try again!')
-            print()
-            # Try again
-            self.setup()
-        elif self.masterKey == masterKeyRepeat:
-            # Create empty vault
-            self.vault = {}
-            self.saveVault()
-            print()
-            print("Your vault has been created and encrypted with your master key.")
-            print("Your unique salt is: %s " % (self.config['salt']))
-            print(
-                "Write it down. If you lose your config file you will need it to unlock your vault.")
-            self.unlock()
-        else:
-            print()
-            print('The master key does not match its confirmation. Please try again!')
-            print()
-            # Try again
-            self.setup()
 
     def setAutoLockTimer(self):
         """
@@ -120,7 +77,7 @@ class Vault:
             try:
                 print()
                 self.masterKey = getpass.getpass(
-                    self.lockPrefix() + 'Please enter your master key:')
+                    lock_prefix() + 'Please enter your master key:')
                 break
             except KeyboardInterrupt as e:
                 # If the user presses `Ctrl`+`c`, exit the program
@@ -548,8 +505,6 @@ class Vault:
             Delete an item
         """
 
-        from ..modules.misc import confirm
-
         try:
             # Get item
             item = self.vault['secrets'][itemKey]
@@ -859,8 +814,6 @@ class Vault:
         # Set auto lock timer (to prevent immediate re-locking)
         self.setAutoLockTimer()
 
-        from ..modules.misc import confirm
-
         print()
         try:
             id = self.input('Enter category number: ')
@@ -915,8 +868,6 @@ class Vault:
 
         # Set auto lock timer (to prevent immediate re-locking)
         self.setAutoLockTimer()
-
-        from ..modules.misc import confirm
 
         print()
         try:
@@ -1046,9 +997,9 @@ class Vault:
         # Choose a new key
         print()
         newMasterKey = getpass.getpass(
-            self.lockPrefix() + 'Please choose a new master key:')
+            lock_prefix() + 'Please choose a new master key:')
         newMasterKeyRepeat = getpass.getpass(
-            self.lockPrefix() + 'Please confirm your new master key:')
+            lock_prefix() + 'Please confirm your new master key:')
 
         if len(newMasterKey) < 8:
             print()
@@ -1079,23 +1030,3 @@ class Vault:
         """
 
         return self.vault
-
-    def isUnicodeSupported(self):
-        """
-            Returns `True` if stdout supports unicode
-        """
-        if sys.stdout.encoding:
-            return sys.stdout.encoding.lower().startswith('utf-')
-
-        return False
-
-    def lockPrefix(self):
-        """
-            Will prefix locks with a Unicode Character 'KEY' (U+1F511)
-            if the user's stdout supports it
-        """
-
-        if self.isUnicodeSupported():
-            return u'\U0001F511  '  # Extra spaces are intentional
-
-        return ''
