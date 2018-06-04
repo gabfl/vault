@@ -6,8 +6,9 @@ from .lib.Vault import Vault
 from .lib.Config import Config
 from .lib.ImportExport import ImportExport
 from .modules.misc import logo, create_directory_if_missing, assess_integrity, erase_vault
-from .modules import setup
+from .views import setup
 from .modules.carry import global_scope
+from .views.menu import unlock
 
 # Default paths
 dir_ = os.path.expanduser('~') + '/.vault/'
@@ -115,8 +116,8 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
     if not os.path.isfile(vault_path):
         setup.initialize(config['salt'])
 
-    # v.unlock()
-    print('Vault should be unlocked now...')
+    # Unlock the vault
+    unlock()
 
 
 def main():

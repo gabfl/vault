@@ -2,7 +2,10 @@ from unittest.mock import patch
 import uuid
 
 from ..base import BaseTest
-from ...modules import setup
+from ...views import setup
+from ...models.base import get_session
+from ...models.User import User
+from ...modules.carry import global_scope
 
 
 class Test(BaseTest):

@@ -1,13 +1,7 @@
-import tempfile
-
-from sqlalchemy.orm import Session
-
 from ..base import BaseTest
 from ...models.Category import Category
 from ...models.Secret import Secret
 from ...views import categories
-
-from ...modules.carry import global_scope
 
 
 class Test(BaseTest):

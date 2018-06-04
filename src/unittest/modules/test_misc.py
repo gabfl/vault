@@ -98,3 +98,7 @@ class Test(BaseTest):
     def test_get_input_2(self):
         with patch('getpass.getpass', return_value='some secure input'):
             self.assertEqual(misc.get_input(secure=True), 'some secure input')
+
+    def test_get_input_3(self):
+        with patch('builtins.input', return_value='SOME INPUT'):
+            self.assertEqual(misc.get_input(lowercase=True), 'some input')

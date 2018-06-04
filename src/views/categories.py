@@ -10,7 +10,7 @@ def all():
         Return a list of all categories
     """
 
-    return get_session().query(Category).filter(Category.active == 1).all()
+    return get_session().query(Category).filter(Category.active == 1).order_by(Category.id).all()
 
 
 def exists(id):

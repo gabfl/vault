@@ -1,9 +1,11 @@
 import getpass
 import sys
+import uuid
 
 from ..models.base import Base, get_session, get_engine
 from ..modules.misc import get_input
 from ..modules.carry import global_scope
+from ..views.users import new_validation_key
 from ..lib.Encryption import Encryption
 
 
@@ -25,6 +27,9 @@ def initialize(salt):
 
             # Create db
             create_db()
+
+            # Create validation key
+            new_validation_key()
 
             print()
             print("Your vault has been created and encrypted with your master key.")
@@ -53,7 +58,8 @@ def get_key_input():
     """
 
     key = get_input(message='Please choose a master key:', secure=True)
-    repeat = get_input(message='Please confirm your master key:', secure=True)
+    repeat = get_input(
+        message='Please confirm your master key:', secure=True)
 
     # Ensure that the key was correctly typed twice and is valid
     if check_key_and_repeat(key, repeat) and is_key_valid(key):

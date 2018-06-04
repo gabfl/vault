@@ -20,7 +20,7 @@ class BaseTest(unittest.TestCase):
 
         # Create a user key
         cls.secret_key = str(uuid.uuid4())
-        cls.enc = global_scope['enc'] = Encryption((cls.secret_key).encode())
+        cls.enc = global_scope['enc'] = Encryption(cls.secret_key.encode())
 
         # Load config
         cls.conf_path = tempfile.TemporaryDirectory()
@@ -45,9 +45,13 @@ class BaseTest(unittest.TestCase):
             Populate the database
         """
 
+        # Concatenate key and config's salt
+        key_salt = cls.secret_key.encode(
+        ) + global_scope['conf'].getConfig()['salt'].encode()
+
         # Save user
         user = User(key='key_validation',
-                    value=cls.enc.encrypt(b'validation_string'))
+                    value=cls.enc.encrypt(key_salt))
         cls.session.add(user)
         cls.session.commit()
 

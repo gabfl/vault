@@ -7,9 +7,9 @@ import uuid
 from .base import BaseTest
 from .. import vault
 from ..modules import misc
-from ..lib.ImportExport import ImportExport
-from ..lib.Vault import Vault as VaultClass
+from ..modules.carry import global_scope
 from ..lib.Config import Config
+from ..views import menu
 
 
 class Test(BaseTest):
@@ -49,22 +49,14 @@ class Test(BaseTest):
     def test_config_update_3(self):
         self.assertTrue(vault.config_update(hide_secret_TTL='5'))
 
-    @patch.object(VaultClass, 'menu')
+    @patch.object(menu, 'menu')
     def test_initialize(self, patched):
         patched.return_value = None
 
-        # Set temporary files
-        file_vault = tempfile.NamedTemporaryFile()
-
-        # Load empty vault
-        v = VaultClass(self.config, file_vault.name)
-
-        # Set a master key
-        v.masterKey = str(uuid.uuid4())
-
         # Try to unlock with the master key previously chosen
-        with patch('getpass.getpass', return_value=v.masterKey):
-            vault.initialize(file_vault.name, self.conf_path.name + '/config')
+        with patch('getpass.getpass', return_value=self.secret_key):
+            vault.initialize(
+                global_scope['db_file'], self.conf_path.name + '/config')
 
     @patch.object(misc, 'erase_vault')
     @patch.object(misc, 'confirm')
