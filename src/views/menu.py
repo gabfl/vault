@@ -171,13 +171,13 @@ def categories_menu():
 
         # Action based on command
         if command == 'a':  # Add a category
-            self.categoryAdd()
+            categories.add_input()
             return
         elif command == 'r':  # Rename a category
-            self.categoryRename()
+            categories.rename_input()
             return
         elif command == 'd':  # Delete a category
-            self.categoryDelete()
+            categories.delete_input()
             return
         elif command == 'b':  # Back to vault menu
             return

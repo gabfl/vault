@@ -3,6 +3,8 @@ import sys
 import uuid
 
 from ..models.base import Base, get_session, get_engine
+from ..models.Category import Category
+from ..models.Secret import Secret
 from ..modules.misc import get_input
 from ..modules.carry import global_scope
 from ..views.users import new_validation_key

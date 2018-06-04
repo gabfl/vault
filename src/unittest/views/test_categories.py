@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from ..base import BaseTest
 from ...models.Category import Category
 from ...models.Secret import Secret
@@ -37,6 +39,18 @@ class Test(BaseTest):
 
         self.assertEqual(categories.all_table(), 'Empty!')
 
+    def test_pick(self):
+        with patch('builtins.input', return_value='1'):
+            self.assertEqual(categories.pick(), 1)
+
+    def test_pick_2(self):
+        with patch('builtins.input', return_value='1234'):
+            self.assertFalse(categories.pick())
+
+    def test_pick_3(self):
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(categories.pick())
+
     def test_exists(self):
         self.assertTrue(categories.exists(1))
         self.assertTrue(categories.exists('1'))
@@ -63,6 +77,14 @@ class Test(BaseTest):
             Category.name == 'My new category').first()
         self.assertEqual(cat.name, 'My new category')
 
+    def test_add_input(self):
+        with patch('builtins.input', return_value='My new category'):
+            self.assertTrue(categories.add_input())
+
+    def test_add_input_2(self):
+        with patch('builtins.input', return_value=None):
+            self.assertFalse(categories.add_input())
+
     def test_rename(self):
         # Create a category
         categories.add('My new category')
@@ -72,6 +94,34 @@ class Test(BaseTest):
         # Rename it
         self.assertTrue(categories.rename(cat.id, 'Some new name'))
         self.assertEqual(categories.get_name(cat.id), 'Some new name')
+
+    @patch.object(categories, 'pick')
+    def test_rename_input(self, patched):
+        patched.return_value = 1
+
+        with patch('builtins.input', return_value='new name'):
+            self.assertTrue(categories.rename_input())
+
+    @patch.object(categories, 'pick')
+    def test_rename_input_2(self, patched):
+        patched.return_value = 1
+
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(categories.rename_input())
+
+    @patch.object(categories, 'pick')
+    def test_rename_input_3(self, patched):
+        patched.return_value = None
+
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(categories.rename_input())
+
+    @patch.object(categories, 'pick')
+    def test_rename_input_4(self, patched):
+        patched.return_value = 1234
+
+        with patch('builtins.input', return_value='new name'):
+            self.assertFalse(categories.rename_input())
 
     def test_rename_2(self):
         # Test with non existent category
@@ -93,6 +143,37 @@ class Test(BaseTest):
     def test_delete_2(self):
         # Test with non existent category
         self.assertFalse(categories.rename(1234, 'Some new name'))
+
+    @patch.object(categories, 'pick')
+    def test_delete_input(self, patched):
+        patched.return_value = 1
+
+        self.assertTrue(categories.delete_input())
+
+    @patch.object(categories, 'pick')
+    def test_delete_input_2(self, patched):
+        patched.return_value = 1234
+
+        self.assertFalse(categories.delete_input())
+
+    @patch.object(categories, 'pick')
+    def test_delete_input_3(self, patched):
+        patched.return_value = ''
+
+        self.assertFalse(categories.delete_input())
+
+    @patch.object(categories, 'pick')
+    def test_delete_input_4(self, patched):
+        # It should not be possible to delete a category currently used
+        patched.return_value = '1'
+
+        # Create a secret
+        secret = Secret(name='Name', url='-', login='login',
+                        password='password', category_id=1)
+        self.session.add(secret)
+        self.session.commit()
+
+        self.assertFalse(categories.delete_input())
 
     def test_is_used(self):
 
