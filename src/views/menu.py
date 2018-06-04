@@ -5,7 +5,7 @@ from ..modules.misc import get_input
 from ..modules.carry import global_scope
 from ..models.base import get_engine, get_session
 from ..lib.Encryption import Encryption
-from ..views import secrets, users
+from ..views import secrets, users, categories
 
 timer = None
 
@@ -87,11 +87,11 @@ def menu(next_command=None):
         if command == 's':  # Search an item
             next_command = self.search()
         elif command == 'all':  # Show all items
-            self.all()
+            print(secrets.all_table())
         elif command == 'a':  # Add an item
             self.addItemInput()
         elif command == 'cat':  # Manage categories
-            self.categoriesMenu()
+            categories_menu()
         elif command == 'l':  # Lock the vault and ask for the master key
             lock()
         elif command == 'q':  # Lock the vault and quit
@@ -149,3 +149,35 @@ def check_then_set_autolock_timer():
 
     check_autolock_timer()
     set_autolock_timer()
+
+
+def categories_menu():
+    """
+        Categories menu
+    """
+
+    while (True):
+        # Check then set auto lock timer
+        check_then_set_autolock_timer()
+
+        # List categories
+        print(categories.all_table())
+
+        print()
+        command = get_input_with_autolock(
+            message='Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ',
+            lowercase=True,
+            non_locking_values=['l', 'q'])
+
+        # Action based on command
+        if command == 'a':  # Add a category
+            self.categoryAdd()
+            return
+        elif command == 'r':  # Rename a category
+            self.categoryRename()
+            return
+        elif command == 'd':  # Delete a category
+            self.categoryDelete()
+            return
+        elif command == 'b':  # Back to vault menu
+            return

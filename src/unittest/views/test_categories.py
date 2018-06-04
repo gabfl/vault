@@ -20,11 +20,22 @@ class Test(BaseTest):
 
     def tearDown(self):
         self.session.query(Category).delete()
+        self.session.commit()
 
     def test_all(self):
         cats = categories.all()
         self.assertIsInstance(cats, list)
         self.assertEqual(len(cats), 3)
+
+    def test_all_table(self):
+        self.assertIsInstance(categories.all_table(), str)
+
+    def test_all_table_2(self):
+        # Empty categories
+        self.session.query(Category).delete()
+        self.session.commit()
+
+        self.assertEqual(categories.all_table(), 'Empty!')
 
     def test_exists(self):
         self.assertTrue(categories.exists(1))
@@ -39,8 +50,11 @@ class Test(BaseTest):
         self.assertEqual(categories.get_name('1'), 'My category 1')
 
     def test_get_name_2(self):
-        self.assertFalse(categories.get_name(1234))
-        self.assertFalse(categories.get_name('1234'))
+        self.assertEqual(categories.get_name(1234), '')
+        self.assertEqual(categories.get_name('1234'), '')
+
+    def test_get_name_3(self):
+        self.assertEqual(categories.get_name(None), '')
 
     def test_add(self):
         self.assertTrue(categories.add('My new category'))
