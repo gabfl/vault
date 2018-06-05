@@ -466,58 +466,6 @@ class Vault:
             print()
             return
 
-    def clipboard(self, toCopy):
-        """
-            Copy an item to the clipboard
-        """
-
-        pyperclip.copy(toCopy)
-
-        # Save signature
-        self.clipboardSignature = self.getSignature(toCopy)
-
-    def isClipboardChanged(self):
-        """
-            Returns `True` if the clipboard content has changed
-        """
-
-        return self.clipboardSignature != self.getSignature(pyperclip.paste())
-
-    def getSignature(self, item):
-        """
-            Returns the sha256 hash of a string
-        """
-
-        h = SHA256.new()
-        h.update(str.encode(item))
-        return h.hexdigest()
-
-    def waitAndEraseClipboard(self):
-        """
-            Wait X seconds and erase the clipboard
-        """
-
-        print("* Clipboard will be erased in %s seconds" %
-              (self.config['clipboardTTL']))
-
-        try:
-            # Loop until the delay is elapsed
-            for i in range(0, int(self.config['clipboardTTL'])):
-                print('.', end='', flush=True)
-                time.sleep(1)  # Sleep 1 sec
-
-                # Stop timer if clipboard content has changed
-                if self.isClipboardChanged():
-                    break
-        except KeyboardInterrupt as e:
-            # Will catch `^-c` and immediately erase the clipboard
-            pass
-
-        print()
-        if not self.isClipboardChanged():  # We will not empty the clipboard if its content has changed
-            self.clipboard('')  # Empty clipboard
-        self.clipboardSignature = ''  # Reset clipboard signature
-
     def changeKey(self):
         """
             Replace vault key
