@@ -8,7 +8,7 @@ from ..modules.carry import global_scope
 clipboard_signature = None
 
 
-def copy(to_copy):
+def copy(to_copy, name='password'):
     """
         Copy an item to the clipboard
     """
@@ -16,6 +16,8 @@ def copy(to_copy):
     global clipboard_signature
 
     pyperclip.copy(to_copy)
+
+    print('* The %s has been copied to the clipboard.' % (name))
 
     # Save signature
     clipboard_signature = get_signature(to_copy)

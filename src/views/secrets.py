@@ -6,9 +6,9 @@ from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
 from ..models.Secret import Secret
-from ..views.categories import get_name as get_category_name
 from ..modules.misc import get_input
-from ..views.categories import pick
+from ..views.categories import get_name as get_category_name, pick
+from ..views import clipboard
 
 
 def all():
@@ -187,7 +187,7 @@ def search_input():
     results = search_dispatch(query)
 
     if len(results) == 1:  # Exactly one result
-        return item_view(results[0].id)
+        return item_view(results[0])
     elif len(results) > 1:  # More than one result
         return search_results(results)
     else:
@@ -213,15 +213,59 @@ def search_results(rows):
             result = [row for row in rows if row.id == int(input_)]
 
             if result:
-                return item_view(result[0].id)
+                return item_view(result[0])
         except ValueError:  # Non integer
             pass
 
     return False
 
 
-def item_view(id_):
+def item_view(item):
     """
         Show a secret
     """
-    pass
+
+    print()
+    print(to_table([item]))
+    print()
+
+    # Show eventual notes
+    if item.notes:
+        print()
+        print('Notes:')
+        print(item.notes)
+
+    # Show item menu
+    return item_menu(item)
+
+
+def item_menu(item):
+    """
+        Item menu
+    """
+
+    while True:
+        command = get_input(
+            message='Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
+            lowercase=True,
+            #non_locking_values=['l', 'q']
+        )
+
+        # Action based on command
+        if command == 'l':  # Copy login to the clipboard
+            clipboard.copy(item.login, 'login')
+            clipboard.wait()
+        elif command == 'p':  # Copy a secret to the clipboard
+            clipboard.copy(item.password)
+            clipboard.wait()
+        elif command == 'o':  # Show a secret
+            # self.itemShowSecret(item['password'])
+            pass
+        elif command == 'e':  # Edit an item
+            #self.itemEdit(itemKey, item)
+            return
+        elif command == 'd':  # Delete an item
+            # self.itemDelete(itemKey)
+            return
+        elif command in ['s', 'b', 'q']:  # Common commands
+            return command

@@ -1,9 +1,12 @@
 from unittest.mock import patch
 
+import pyperclip
+
 from ..base import BaseTest
 from ...models.Secret import Secret
 from ...models.Category import Category
 from ...views import secrets
+from ...modules.carry import global_scope
 
 
 class Test(BaseTest):
@@ -178,3 +181,13 @@ class Test(BaseTest):
         results = secrets.all()
         with patch('builtins.input', return_value=''):
             self.assertFalse(secrets.search_results(results))
+
+    @patch.object(secrets, 'item_menu')
+    def test_item_view(self, patched):
+        patched.return_value = None
+        result = secrets.get_by_id(1)
+        self.assertIsNone(secrets.item_view(result))
+
+    def test_item_menu(self):
+        with patch('builtins.input', return_value='s'):
+            self.assertEqual(secrets.item_menu(secrets.get_by_id(1)), 's')
