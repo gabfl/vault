@@ -59,6 +59,24 @@ class Test(BaseTest):
     def test_get_by_id(self):
         self.assertEqual(secrets.get_by_id(1).name, 'Paypal')
 
+    def test_add(self):
+        self.assertTrue(secrets.add(name='Some name'))
+
+    def test_add_input(self):
+        # Leave blank to correctly pass the notes input
+        with patch('builtins.input', return_value='1'):
+            with patch('getpass.getpass', return_value='some password'):
+                self.assertTrue(secrets.add_input())
+
+    def test_notes_input(self):
+        with patch('builtins.input', return_value='some notes'):
+            self.assertEqual(secrets.notes_input(),
+                             ('some notes\n' * 15).strip())
+
+    def test_notes_input_2(self):
+        with patch('builtins.input', return_value=''):
+            self.assertEqual(secrets.notes_input(), '')
+
     def test_search(self):
         # Search with a name
         results = secrets.search('paypal')
@@ -116,7 +134,7 @@ class Test(BaseTest):
         with patch('builtins.input', return_value='b'):
             self.assertFalse(secrets.search_input())
 
-    @patch.object(secrets, 'get')
+    @patch.object(secrets, 'item_view')
     def test_search_input_4(self, patched):
         # Search digit
         patched.return_value = None
@@ -135,7 +153,7 @@ class Test(BaseTest):
         with patch('builtins.input', return_value='some invalid query'):
             self.assertFalse(secrets.search_input())
 
-    @patch.object(secrets, 'get')
+    @patch.object(secrets, 'item_view')
     def test_search_results(self, patched):
         # Select valid result
         patched.return_value = None

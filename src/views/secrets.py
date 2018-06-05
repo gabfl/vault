@@ -2,11 +2,13 @@
 
 from sqlalchemy import or_
 from tabulate import tabulate
+from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
 from ..models.Secret import Secret
 from ..views.categories import get_name as get_category_name
 from ..modules.misc import get_input
+from ..views.categories import pick
 
 
 def all():
@@ -48,6 +50,90 @@ def get_by_id(id_):
     return get_session().query(Secret).get(int(id_))
 
 
+def add(name, url='', login='', password='', notes='', category_id=None):
+    """
+        Create a new secret
+    """
+
+    secret = Secret(name=name,
+                    url=url,
+                    login=login,
+                    password=password,
+                    notes=notes,
+                    category_id=category_id)
+    get_session().add(secret)
+    get_session().commit()
+
+    return True
+
+
+def add_input():
+    """
+        Ask user for a secret details and create it
+    """
+
+    # Ask user input
+    category_id = pick(
+        message='* Choose a category number (or leave empty for none): ', optional=True)
+    if category_id is False:
+        return False
+
+    name = get_input(message='* Name: ')
+    if name is False:
+        return False
+
+    url = get_input(message='* URL: ')
+    if url is False:
+        return False
+
+    login = get_input(message='* Login: ')
+    if login is False:
+        return False
+
+    print('* Password suggestion: %s' % (pwgenerator.generate()))
+    password = get_input(message='* Password: ', secure=True)
+    if password is False:
+        return False
+
+    notes = notes_input()
+    if notes is False:
+        return False
+
+    # Save item
+    add(name=name,
+        url=url,
+        login=login,
+        password=password,
+        notes="\n".join(notes),
+        category_id=category_id or None)
+
+    print()
+    print('The new item has been saved to your vault.')
+    print()
+
+    return True
+
+
+def notes_input():
+    """
+        Ask user to input notes
+    """
+
+    print('* Notes: (press [ENTER] twice to complete)')
+    notes = []
+    for i in range(15):  # Max 15 lines
+        input_str = get_input(message="> ")
+        if input_str is False:
+            return False
+
+        if input_str == "":
+            break
+        else:
+            notes.append(input_str)
+
+    return "\n".join(notes)
+
+
 def search(query):
     """
         Search by keyword
@@ -83,6 +169,7 @@ def search_input():
     """
 
     # Ask user input
+    print()
     query = get_input(message='Enter search: ')
 
     if not query:
@@ -100,7 +187,7 @@ def search_input():
     results = search_dispatch(query)
 
     if len(results) == 1:  # Exactly one result
-        return get(results[0].id)
+        return item_view(results[0].id)
     elif len(results) > 1:  # More than one result
         return search_results(results)
     else:
@@ -113,7 +200,9 @@ def search_results(rows):
         Display search results
     """
 
+    print()
     print(to_table(rows))
+    print()
 
     # Ask user input
     input_ = get_input(
@@ -124,14 +213,15 @@ def search_results(rows):
             result = [row for row in rows if row.id == int(input_)]
 
             if result:
-                return get(result[0].id)
+                return item_view(result[0].id)
         except ValueError:  # Non integer
             pass
 
     return False
 
 
-def get(id_):
+def item_view(id_):
     """
         Show a secret
     """
+    pass

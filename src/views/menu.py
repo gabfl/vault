@@ -31,6 +31,7 @@ def unlock(redirect_to_menu=True, tentative=1):
     """
 
     # Get master key
+    print()
     key = get_input(message='Please enter your master key:', secure=True)
 
     if validate_key(key):
@@ -85,11 +86,12 @@ def menu(next_command=None):
 
         # Action based on command
         if command == 's':  # Search an item
-            next_command = self.search()
+            next_command = secrets.search_input()
         elif command == 'all':  # Show all items
+            print()
             print(secrets.to_table(secrets.all()))
         elif command == 'a':  # Add an item
-            self.addItemInput()
+            secrets.add_input()
         elif command == 'cat':  # Manage categories
             categories_menu()
         elif command == 'l':  # Lock the vault and ask for the master key

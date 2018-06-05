@@ -30,7 +30,7 @@ def to_table(rows=[]):
         return 'Empty!'
 
 
-def pick():
+def pick(message='Select a category: ', optional=False):
     """
         Ask a user to pick a category
     """
@@ -41,7 +41,7 @@ def pick():
     print()
 
     # Ask user input
-    id_ = get_input(message='Select a category: ')
+    id_ = get_input(message=message)
 
     # Cast as int
     try:
@@ -52,8 +52,9 @@ def pick():
     except ValueError:  # Not a valid number!
         pass
 
-    print()
-    print('Invalid category number!')
+    if optional:
+        print()
+        print('Invalid category number!')
 
     return False
 
