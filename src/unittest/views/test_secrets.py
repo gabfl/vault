@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from ..base import BaseTest
 from ...models.Secret import Secret
 from ...models.Category import Category
@@ -43,18 +45,118 @@ class Test(BaseTest):
         self.assertIsInstance(all_secrets, list)
         self.assertEqual(len(all_secrets), 3)
 
-    def test_all_table(self):
-        all_secrets_table = secrets.all_table()
-        self.assertIsInstance(all_secrets_table, str)
+    def test_to_table(self):
+        self.assertIsInstance(secrets.to_table(secrets.all()), str)
 
-    def test_all_table_2(self):
-        # Empty secrets
-        self.session.query(Secret).delete()
-        self.session.commit()
-
-        self.assertEqual(secrets.all_table(), 'Empty!')
+    def test_to_table_2(self):
+        self.assertEqual(secrets.to_table([]), 'Empty!')
 
     def test_count(self):
         count_secrets = secrets.count()
         self.assertIsInstance(count_secrets, int)
         self.assertEqual(count_secrets, 3)
+
+    def test_get_by_id(self):
+        self.assertEqual(secrets.get_by_id(1).name, 'Paypal')
+
+    def test_search(self):
+        # Search with a name
+        results = secrets.search('paypal')
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 1)
+
+    def test_search_2(self):
+        # Search with a login
+        results = secrets.search('gab@gmail')
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 3)
+
+    def test_search_3(self):
+        # Search with a URL
+        results = secrets.search('www.gmail.com')
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 1)
+
+    def test_search_dispatch(self):
+        # Real int
+        results = secrets.search_dispatch(1)
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 1)
+
+    def test_search_dispatch_2(self):
+        # String is int
+        results = secrets.search_dispatch('1')
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 1)
+
+    def test_search_dispatch_3(self):
+        # Integer that does not match an actual ID
+        results = secrets.search_dispatch(1234)
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 0)
+
+    def test_search_dispatch_4(self):
+        # Keyword
+        results = secrets.search_dispatch('ebay')
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 1)
+
+    def test_search_input(self):
+        # Empty search
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(secrets.search_input())
+
+    def test_search_input_2(self):
+        # Fat-finger prevention
+        with patch('builtins.input', return_value='q'):
+            self.assertEqual(secrets.search_input(), 'q')
+
+    def test_search_input_3(self):
+        # Fat-finger prevention
+        with patch('builtins.input', return_value='b'):
+            self.assertFalse(secrets.search_input())
+
+    @patch.object(secrets, 'get')
+    def test_search_input_4(self, patched):
+        # Search digit
+        patched.return_value = None
+        with patch('builtins.input', return_value='1'):
+            self.assertIsNone(secrets.search_input())
+
+    @patch.object(secrets, 'search_results')
+    def test_search_input_5(self, patched):
+        # Search string
+        patched.return_value = None
+        with patch('builtins.input', return_value='@gmail.com'):
+            self.assertIsNone(secrets.search_input())
+
+    def test_search_input_6(self):
+        # Search with no result
+        with patch('builtins.input', return_value='some invalid query'):
+            self.assertFalse(secrets.search_input())
+
+    @patch.object(secrets, 'get')
+    def test_search_results(self, patched):
+        # Select valid result
+        patched.return_value = None
+        results = secrets.all()
+        with patch('builtins.input', return_value='1'):
+            self.assertIsNone(secrets.search_results(results))
+
+    def test_search_results_2(self):
+        # Type integer not corresponding to a result
+        results = secrets.all()
+        with patch('builtins.input', return_value='1234'):
+            self.assertFalse(secrets.search_results(results))
+
+    def test_search_results_3(self):
+        # Type a string (invalid input)
+        results = secrets.all()
+        with patch('builtins.input', return_value='some string'):
+            self.assertFalse(secrets.search_results(results))
+
+    def test_search_results_4(self):
+        # No input
+        results = secrets.all()
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(secrets.search_results(results))

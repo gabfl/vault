@@ -29,15 +29,11 @@ class Test(BaseTest):
         self.assertIsInstance(cats, list)
         self.assertEqual(len(cats), 3)
 
-    def test_all_table(self):
-        self.assertIsInstance(categories.all_table(), str)
+    def test_to_table(self):
+        self.assertIsInstance(categories.to_table(categories.all()), str)
 
-    def test_all_table_2(self):
-        # Empty categories
-        self.session.query(Category).delete()
-        self.session.commit()
-
-        self.assertEqual(categories.all_table(), 'Empty!')
+    def test_to_table_2(self):
+        self.assertEqual(categories.to_table([]), 'Empty!')
 
     def test_pick(self):
         with patch('builtins.input', return_value='1'):

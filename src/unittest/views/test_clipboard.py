@@ -33,26 +33,32 @@ class Test(BaseTest):
         self.assertEqual(clipboard.get_signature(
             'some string'), '61d034473102d7dac305902770471fd50f4c5b26f6831a56dd90b5184b3c30fc')
 
+    @patch.object(pyperclip, 'copy')
     @patch.object(pyperclip, 'paste')
-    def test_wait(self, patched):
+    def test_wait(self, patched, patched2):
         patched.return_value = 'some string'
+        patched2.return_value = 'some string'
         # Ensure we have a short wait time
         global_scope['conf'].update('clipboardTTL', '1')
 
         self.assertIsNone(clipboard.wait())
         self.assertEqual(clipboard.clipboard_signature, '')
 
+    @patch.object(pyperclip, 'copy')
     @patch.object(pyperclip, 'paste')
-    def test_wait_2(self, patched):
+    def test_wait_2(self, patched, patched2):
         patched.return_value = 'some other string'
+        patched2.return_value = 'some string'
         # Ensure we have a short wait time
         global_scope['conf'].update('clipboardTTL', '1')
 
         self.assertIsNone(clipboard.wait())
         self.assertEqual(clipboard.clipboard_signature, '')
 
+    @patch.object(pyperclip, 'copy')
     @patch.object(pyperclip, 'paste')
-    def test_erase(self, patched):
+    def test_erase(self, patched, patched2):
         patched.return_value = 'some string'
+        patched2.return_value = 'some string'
         clipboard.erase()
         self.assertEqual(clipboard.clipboard_signature, '')

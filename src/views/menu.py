@@ -87,7 +87,7 @@ def menu(next_command=None):
         if command == 's':  # Search an item
             next_command = self.search()
         elif command == 'all':  # Show all items
-            print(secrets.all_table())
+            print(secrets.to_table(secrets.all()))
         elif command == 'a':  # Add an item
             self.addItemInput()
         elif command == 'cat':  # Manage categories
@@ -161,7 +161,7 @@ def categories_menu():
         check_then_set_autolock_timer()
 
         # List categories
-        print(categories.all_table())
+        print(categories.to_table(categories.all()))
 
         print()
         command = get_input_with_autolock(

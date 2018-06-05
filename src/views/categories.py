@@ -16,13 +16,13 @@ def all():
     return get_session().query(Category).filter(Category.active == 1).order_by(Category.id).all()
 
 
-def all_table():
+def to_table(rows=[]):
     """
-        Return a table of categories
+        Transform rows in a table
     """
 
     # Retrieve id and name
-    cats = [[cat.id, cat.name] for cat in all()]
+    cats = [[cat.id, cat.name] for cat in rows]
 
     if len(cats) > 0:
         return tabulate(cats, headers=['Item', 'Category name'])
@@ -37,7 +37,7 @@ def pick():
 
     # Display available categories
     print()
-    print(all_table())
+    print(to_table(all()))
     print()
 
     # Ask user input
