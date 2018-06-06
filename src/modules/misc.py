@@ -42,7 +42,7 @@ def create_directory_if_missing(dir_):
         sys.exit()
 
 
-def assess_integrity(vaultPath, configPath):
+def assess_integrity(vault_path, config_path):
     """
         The vault config file contains a salt. The salt is used to unlock the vault along with the master key.
         By default, config files are created automatically. A new config file will not allow to open an existing vault.
@@ -52,7 +52,7 @@ def assess_integrity(vaultPath, configPath):
     import os
     import sys
 
-    if not os.path.isfile(configPath) and os.path.isfile(vaultPath):
+    if not os.path.isfile(config_path) and os.path.isfile(vault_path):
         print()
         print("It looks like you have a vault setup but your config file is missing.")
         print("The vault cannot be unlocked without a critical piece of information from the config file (the salt).")

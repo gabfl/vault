@@ -19,7 +19,7 @@ class Test(BaseTest):
 
     def test_get_vault_path_2(self):
         self.assertEqual(vault.get_vault_path(),
-                         os.path.expanduser('~') + '/.vault/.secure')
+                         os.path.expanduser('~') + '/.vault/.secure.db')
 
     def test_get_config_path(self):
         self.assertEqual(vault.get_config_path('/some/path'), '/some/path')

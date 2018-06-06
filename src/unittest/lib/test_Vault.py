@@ -18,7 +18,7 @@
 
 #         # Load fake config
 #         c = Config(file_config.name)
-#         self.config = c.getConfig()
+#         self.config = c.get_config()
 
 #         # Load empty vault
 #         self.vault = Vault(self.config, file_vault.name)

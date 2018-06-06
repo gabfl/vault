@@ -9,12 +9,13 @@ from .modules.misc import logo, create_directory_if_missing, assess_integrity, e
 from .views import setup
 from .views.menu import unlock
 from .views.import_export import import_, export_
+from .views.migration import migrate
 from .modules.carry import global_scope
 
 # Default paths
 dir_ = os.path.expanduser('~') + '/.vault/'
 config_path_default = dir_ + '.config'
-vault_path_default = dir_ + '.secure'
+vault_path_default = dir_ + '.secure.db'
 
 
 def get_vault_path(override=None):
@@ -88,7 +89,12 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
 
     # Load config
     global_scope['conf'] = Config(config_path)
-    config = global_scope['conf'].getConfig()
+    config = global_scope['conf'].get_config()
+
+    # Migration from Vault 1.x to Vault 2.x
+    if config['version'].split('.')[0] == '1':
+        migrate(vault_path=vault_path.strip('.db'), config_path=config_path)
+        sys.exit()
 
     # Update config
     config_update(clipboard_TTL, auto_lock_TTL, hide_secret_TTL)

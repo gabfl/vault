@@ -13,7 +13,7 @@ def new_validation_key():
     """
 
     key_salt = global_scope['enc'].key + \
-        global_scope['conf'].getConfig()['salt'].encode()
+        global_scope['conf'].get_config()['salt'].encode()
 
     # Save user
     user = User(key='key_validation',
@@ -35,7 +35,7 @@ def validate_validation_key(key):
         return False
 
     # Concatenate user given key and config's salt
-    key_salt = key + global_scope['conf'].getConfig()['salt'].encode()
+    key_salt = key + global_scope['conf'].get_config()['salt'].encode()
 
     # Key is valid
     try:

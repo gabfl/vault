@@ -231,9 +231,9 @@ def item_view(item):
 
     # Show eventual notes
     if item.notes:
-        print()
         print('Notes:')
         print(item.notes)
+        print()
 
     # Show item menu
     return item_menu(item)

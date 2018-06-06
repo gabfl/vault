@@ -17,3 +17,8 @@ coverage.xml
 
 # Misc
 tests/
+
+# Legacy migration
+src/unittest/assets/migration/legacy-config2
+src/unittest/assets/migration/legacy-vault2
+src/unittest/assets/migration/legacy-vault.db

@@ -6,6 +6,7 @@ from ..base import BaseTest
 from ...views import import_export
 from ...models.Secret import Secret
 from ...models.Category import Category
+from ...modules.carry import global_scope
 
 
 class Test(BaseTest):
@@ -43,7 +44,7 @@ class Test(BaseTest):
             with patch('getpass.getpass', return_value=self.secret_key):
                 self.assertTrue(import_export.import_(
                     format_='json',
-                    path='src/unittest/utils/import.json'))
+                    path='sample/export.json'))
 
     def test_import__2(self):
         self.assertRaises(ValueError, import_export.import_,
@@ -84,16 +85,25 @@ class Test(BaseTest):
                 self.assertIsInstance(item, dict)
 
     def test_import_from_json(self):
+        # Test basic import
+        global_scope['enc'] = None
         with patch('builtins.input', return_value='y'):
             with patch('getpass.getpass', return_value=self.secret_key):
                 self.assertTrue(import_export.import_from_json(
-                    'src/unittest/utils/import.json'))
+                    'sample/export.json'))
 
     def test_import_from_json_2(self):
+        # Test import when vault is already unlocked (in unit test base)
+        with patch('builtins.input', return_value='y'):
+            self.assertTrue(import_export.import_from_json(
+                'sample/export.json'))
+
+    def test_import_from_json_3(self):
+        # Test import with confirmation denied
         with patch('builtins.input', return_value='n'):
             with patch('getpass.getpass', return_value=self.secret_key):
                 self.assertFalse(import_export.import_from_json(
-                    'src/unittest/utils/import.json'))
+                    'sample/export.json'))
 
     def test_to_table(self):
         self.assertIsInstance(import_export.to_table(

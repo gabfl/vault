@@ -12,7 +12,7 @@ class Test(BaseTest):
 
     def test_setup(self):
         with patch('getpass.getpass', return_value=self.secret_key):
-            self.assertTrue(setup.initialize(self.config.getConfig()['salt']))
+            self.assertTrue(setup.initialize(self.config.get_config()['salt']))
 
     def test_create_db(self):
         self.assertTrue(setup.create_db())

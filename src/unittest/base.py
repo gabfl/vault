@@ -25,7 +25,7 @@ class BaseTest(unittest.TestCase):
         # Load config
         cls.conf_path = tempfile.TemporaryDirectory()
         cls.config = Config(cls.conf_path.name + '/config')
-        cls.config.getConfig()
+        cls.config.get_config()
         global_scope['conf'] = cls.config
 
         # Create engine
@@ -47,7 +47,7 @@ class BaseTest(unittest.TestCase):
 
         # Concatenate key and config's salt
         key_salt = cls.secret_key.encode(
-        ) + global_scope['conf'].getConfig()['salt'].encode()
+        ) + global_scope['conf'].get_config()['salt'].encode()
 
         # Save user
         user = User(key='key_validation',

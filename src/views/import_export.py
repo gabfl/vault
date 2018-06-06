@@ -1,3 +1,5 @@
+# Import/export view
+
 import sys
 import json
 
@@ -5,6 +7,8 @@ from tabulate import tabulate
 
 from ..views import menu, secrets, categories
 from ..modules.misc import confirm
+from ..modules.carry import global_scope
+from ..lib.Encryption import Encryption
 
 """
     Adding import or export formats:
@@ -65,24 +69,27 @@ def export_to_json(path):
     return save_file(path, json.dumps(out))
 
 
-def import_from_json(path):
+def import_from_json(path=None, rows=None):
     """
         Import a Json file
     """
 
-    # Ask user to unlock the vault
-    unlock()
+    # Ask user to unlock the vault (except if its already unlocked in migration)
+    if not isinstance(global_scope['enc'], Encryption):
+        unlock()
 
-    # Read content
-    content = read_file(path)
+    if not rows:  # If importing from a file
+        # Read content
+        content = read_file(path)
 
-    # Decode json
-    rows = json.loads(content)
+        # Decode json
+        rows = json.loads(content)
 
     # User view of items
     print("The following items will be imported:")
     print()
-    print(to_table([list(row.values()) for row in rows]))
+    print(to_table(
+        [[row['name'], row['url'], row['login'], row['category']] for row in rows]))
     print()
 
     if confirm('Confirm import?', False):
@@ -129,7 +136,7 @@ def to_table(rows=[]):
     """
 
     if len(rows) > 0:
-        return tabulate(rows, headers=['Name', 'URL', 'Login', 'Password', 'Notes', 'Category'])
+        return tabulate(rows, headers=['Name', 'URL', 'Login', 'Category'])
     else:
         return 'Empty!'
 
