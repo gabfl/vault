@@ -155,24 +155,37 @@ class Test(BaseTest):
 
     @patch.object(categories, 'pick')
     def test_delete_input(self, patched):
+        # Successful deletion
         patched.return_value = 1
 
-        self.assertTrue(categories.delete_input())
+        with patch('builtins.input', return_value='y'):
+            self.assertTrue(categories.delete_input())
 
     @patch.object(categories, 'pick')
     def test_delete_input_2(self, patched):
-        patched.return_value = 1234
+        # Confirmation refused
+        patched.return_value = 1
 
-        self.assertFalse(categories.delete_input())
+        with patch('builtins.input', return_value='n'):
+            self.assertFalse(categories.delete_input())
 
     @patch.object(categories, 'pick')
     def test_delete_input_3(self, patched):
+        # Invalid category number
+        patched.return_value = 1234
+
+        with patch('builtins.input', return_value='y'):
+            self.assertFalse(categories.delete_input())
+
+    @patch.object(categories, 'pick')
+    def test_delete_input_4(self, patched):
+        # No input
         patched.return_value = ''
 
         self.assertFalse(categories.delete_input())
 
     @patch.object(categories, 'pick')
-    def test_delete_input_4(self, patched):
+    def test_delete_input_5(self, patched):
         # It should not be possible to delete a category currently used
         patched.return_value = '1'
 

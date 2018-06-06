@@ -90,6 +90,24 @@ class Test(BaseTest):
         with patch('builtins.input', return_value=False):
             self.assertFalse(secrets.notes_input())
 
+    def test_delete(self):
+        # Successful deletion
+        self.assertTrue(secrets.delete(1))
+
+    def test_delete_2(self):
+        # Deletion of non existing secret
+        self.assertFalse(secrets.delete(1234))
+
+    def test_delete_confirm(self):
+        # Successful deletion
+        with patch('builtins.input', return_value='y'):
+            self.assertTrue(secrets.delete_input(1))
+
+    def test_delete_confirm_2(self):
+        # Confirmation denied
+        with patch('builtins.input', return_value='n'):
+            self.assertFalse(secrets.delete_input(1))
+
     def test_search(self):
         # Search with a name
         results = secrets.search('paypal')
@@ -201,3 +219,9 @@ class Test(BaseTest):
     def test_item_menu(self):
         with patch('builtins.input', return_value='s'):
             self.assertEqual(secrets.item_menu(secrets.get_by_id(1)), 's')
+
+    def test_wait(self):
+        # Ensure we have a short wait time
+        global_scope['conf'].update('hideSecretTTL', '1')
+
+        self.assertTrue(secrets.show_secret('some password'))

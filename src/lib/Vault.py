@@ -27,23 +27,6 @@ class Vault:
         self.config = config
         self.vaultPath = vaultPath
 
-    def itemShowSecret(self, password):
-        """
-            Show a secret for X seconds and erase it from the screen
-        """
-
-        try:
-            print("The password will be hidden after %s seconds." %
-                  (self.config['hideSecretTTL']))
-            print('The password is: %s' % (password), end="\r")
-
-            time.sleep(int(self.config['hideSecretTTL']))
-        except KeyboardInterrupt as e:
-            # Will catch `^-c` and immediately hide the password
-            pass
-
-        print('The password is: ' + '*' * len(password))
-
     def itemEdit(self, itemKey, item):
         """
             Edit an item
@@ -150,26 +133,6 @@ class Vault:
         self.saveVault()
 
         print('The item has been updated.')
-
-    def itemDelete(self, itemKey):
-        """
-            Delete an item
-        """
-
-        try:
-            # Get item
-            item = self.vault['secrets'][itemKey]
-
-            # Show item
-            print()
-            if confirm('Confirm deletion?', False):
-                # Remove item
-                self.vault['secrets'].pop(itemKey)
-
-                # Save the vault
-                self.saveVault()
-        except Exception as e:
-            print('Item does not exist.')
 
     def changeKey(self):
         """

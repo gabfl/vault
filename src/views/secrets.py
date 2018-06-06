@@ -1,12 +1,16 @@
 # Secrets view
 
+import time
+import random
+
 from sqlalchemy import or_
 from tabulate import tabulate
 from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
 from ..models.Secret import Secret
-from ..modules.misc import get_input
+from ..modules.misc import get_input, confirm
+from ..modules.carry import global_scope
 from ..views.categories import get_name as get_category_name, pick
 from ..views import clipboard
 
@@ -134,6 +138,39 @@ def notes_input():
     return "\n".join(notes)
 
 
+def delete(id_):
+    """
+        Delete a secret
+    """
+
+    secret = get_session().query(Secret).filter(Secret.id == int(id_)).first()
+
+    if secret:
+        get_session().delete(secret)
+        get_session().commit()
+
+        return True
+
+    return False
+
+
+def delete_confirm(id_):
+    """
+        Delete a secret (ID is an input, just asking for confirmation)
+    """
+
+    if confirm('Confirm deletion?', False):
+        result = delete(id_)
+
+        if result is True:
+            print()
+            print('The secret has been deleted.')
+
+        return result
+
+    return False
+
+
 def search(query):
     """
         Search by keyword
@@ -259,13 +296,32 @@ def item_menu(item):
             clipboard.copy(item.password)
             clipboard.wait()
         elif command == 'o':  # Show a secret
-            # self.itemShowSecret(item['password'])
-            pass
+            show_secret(item.password)
         elif command == 'e':  # Edit an item
             # self.itemEdit(itemKey, item)
             return
         elif command == 'd':  # Delete an item
-            # self.itemDelete(itemKey)
+            delete_confirm(item.id)
             return
         elif command in ['s', 'b', 'q']:  # Common commands
             return command
+
+
+def show_secret(password):
+    """
+        Show a secret for X seconds and erase it from the screen
+    """
+
+    try:
+        print("* The password will be hidden after %s seconds." %
+              (global_scope['conf'].get_config()['hideSecretTTL']))
+        print('* The password is: %s' % (password), end="\r")
+
+        time.sleep(int(global_scope['conf'].get_config()['hideSecretTTL']))
+    except KeyboardInterrupt:
+        # Will catch `^-c` and immediately hide the password
+        pass
+
+    print('* The password is: ' + '*' * (len(password) + random.randint(1, 8)))
+
+    return True

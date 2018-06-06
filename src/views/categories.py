@@ -5,7 +5,7 @@ from tabulate import tabulate
 from ..models.base import get_session
 from ..models.Category import Category
 from ..models.Secret import Secret
-from ..modules.misc import get_input
+from ..modules.misc import get_input, confirm
 
 
 def all():
@@ -220,13 +220,16 @@ def delete_input():
             'The category cannot be deleted because it is currently used by some secrets.')
         return False
 
-    result = delete(id_)
+    if confirm('Confirm deletion of the category "' + get_name(id_) + '"?', False):
+        result = delete(id_)
 
-    if result is True:
-        print()
-        print('The category has been deleted.')
+        if result is True:
+            print()
+            print('The category has been deleted.')
 
-    return result
+        return result
+
+    return False
 
 
 def is_used(id_):
