@@ -122,14 +122,14 @@ def notes_input():
     print('* Notes: (press [ENTER] twice to complete)')
     notes = []
     for i in range(15):  # Max 15 lines
-        input_str = get_input(message="> ")
-        if input_str is False:
+        input_ = get_input(message="> ")
+        if input_ is False:
             return False
 
-        if input_str == "":
+        if input_ == "":
             break
         else:
-            notes.append(input_str)
+            notes.append(input_)
 
     return "\n".join(notes)
 
@@ -248,7 +248,7 @@ def item_menu(item):
         command = get_input(
             message='Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
             lowercase=True,
-            #non_locking_values=['l', 'q']
+            # non_locking_values=['l', 'q']
         )
 
         # Action based on command
@@ -262,7 +262,7 @@ def item_menu(item):
             # self.itemShowSecret(item['password'])
             pass
         elif command == 'e':  # Edit an item
-            #self.itemEdit(itemKey, item)
+            # self.itemEdit(itemKey, item)
             return
         elif command == 'd':  # Delete an item
             # self.itemDelete(itemKey)

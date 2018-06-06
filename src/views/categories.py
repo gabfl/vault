@@ -87,6 +87,23 @@ def get_name(id_):
     return ''
 
 
+def get_id(name):
+    """
+        Get a category ID from a category name
+    """
+
+    if not name:
+        return None
+
+    cat = get_session().query(Category).filter(
+        Category.name == name).filter(Category.active == 1).first()
+
+    if cat:
+        return cat.id
+
+    return None
+
+
 def add(name):
     """
         Create a new category
@@ -222,3 +239,33 @@ def is_used(id_):
         return True
 
     return False
+
+
+def menu():
+    """
+        Categories menu
+    """
+
+    while (True):
+        # List categories
+        print(to_table(all()))
+
+        print()
+        command = get_input(
+            message='Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ',
+            lowercase=True,
+            # non_locking_values=['l', 'q']
+        )
+
+        # Action based on command
+        if command == 'a':  # Add a category
+            add_input()
+            return
+        elif command == 'r':  # Rename a category
+            rename_input()
+            return
+        elif command == 'd':  # Delete a category
+            delete_input()
+            return
+        elif command == 'b':  # Back to vault menu
+            return

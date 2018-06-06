@@ -1,14 +1,15 @@
 import os
+import sys
 
 import argparse
 
 from .lib.Vault import Vault
 from .lib.Config import Config
-from .lib.ImportExport import ImportExport
 from .modules.misc import logo, create_directory_if_missing, assess_integrity, erase_vault
 from .views import setup
-from .modules.carry import global_scope
 from .views.menu import unlock
+from .views.import_export import import_, export_
+from .modules.carry import global_scope
 
 # Default paths
 dir_ = os.path.expanduser('~') + '/.vault/'
@@ -99,18 +100,18 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
     if change_key:
         v.changeKey()
 
-    # # Import items to the vault
-    # if import_items:
-    #     print()
-    #     print("Please consider backing up your vault located at `%s` before proceeding." % (
-    #         vault_path))
-    #     ie = ImportExport(v, import_items, file_format)
-    #     ie.importItems()
+    # Import items in the vault
+    if import_items:
+        print()
+        print("Please consider backing up your vault located at `%s` before proceeding." % (
+            vault_path))
+        import_(format_=file_format, path=import_items)
+        sys.exit()
 
-    # # Export vault
-    # if export:
-    #     ie = ImportExport(v, export, file_format)
-    #     ie.export()
+    # Export vault
+    if export:
+        export_(format_=file_format, path=export)
+        sys.exit()
 
     # Check if the vault exists
     if not os.path.isfile(vault_path):
@@ -140,7 +141,7 @@ def main():
     parser.add_argument("-x", "--export", type=str,
                         help="File to export credentials to")
     parser.add_argument("-f", "--file_format", type=str, help="Import/export file format (default: 'json')",
-                        choices=['json', 'native'], nargs='?', default='json')
+                        choices=['json'], nargs='?', default='json')
     parser.add_argument("-e", "--erase_vault", action='store_true',
                         help="Erase the vault and config file")
     args = parser.parse_args()

@@ -71,6 +71,11 @@ class Test(BaseTest):
             with patch('getpass.getpass', return_value='some password'):
                 self.assertTrue(secrets.add_input())
 
+    def test_add_input_2(self):
+        # Simulate user pressing Ctrl-C
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.add_input())
+
     def test_notes_input(self):
         with patch('builtins.input', return_value='some notes'):
             self.assertEqual(secrets.notes_input(),
@@ -79,6 +84,11 @@ class Test(BaseTest):
     def test_notes_input_2(self):
         with patch('builtins.input', return_value=''):
             self.assertEqual(secrets.notes_input(), '')
+
+    def test_notes_input_3(self):
+        # Simulate user pressing Ctrl-C
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.notes_input())
 
     def test_search(self):
         # Search with a name

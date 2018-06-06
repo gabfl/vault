@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Paypal",
+        "url": "https://www.paypal.com",
+        "login": "gab@gmail.com",
+        "password": "password",
+        "notes": "",
+        "category": "some name"
+    },
+    {
+        "name": "name",
+        "url": "url",
+        "login": "login",
+        "password": "password",
+        "notes": "some notes",
+        "category": ""
+    },
+    {
+        "name": "name",
+        "url": "url",
+        "login": "login",
+        "password": "pass",
+        "notes": "",
+        "category": "cat created with import"
+    }
+]

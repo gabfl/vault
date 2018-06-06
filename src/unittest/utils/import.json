@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Paypal",
+        "url": "https://www.paypal.com",
+        "login": "gab@gmail.com",
+        "password": "password123",
+        "notes": "Some notes",
+        "category": "My category 1"
+    },
+    {
+        "name": "Gmail",
+        "url": "https://www.gmail.com",
+        "login": "gab@gmail.com",
+        "password": "password;123",
+        "notes": "Some notes\nsome more notes",
+        "category": "Some other category"
+    },
+    {
+        "name": "eBay",
+        "url": "https://www.ebay.com",
+        "login": "gab@gmail.com",
+        "password": "123password",
+        "notes": "Some notes",
+        "category": ""
+    }
+]

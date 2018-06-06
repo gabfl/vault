@@ -47,6 +47,10 @@ class Test(BaseTest):
         with patch('builtins.input', return_value=''):
             self.assertFalse(categories.pick())
 
+    def test_pick_4(self):
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(categories.pick(optional=True))
+
     def test_exists(self):
         self.assertTrue(categories.exists(1))
         self.assertTrue(categories.exists('1'))
@@ -65,6 +69,15 @@ class Test(BaseTest):
 
     def test_get_name_3(self):
         self.assertEqual(categories.get_name(None), '')
+
+    def test_get_id(self):
+        self.assertEqual(categories.get_id('My category 1'), 1)
+
+    def test_get_id_2(self):
+        self.assertIsNone(categories.get_id('Some invalid name'))
+
+    def test_get_id_3(self):
+        self.assertIsNone(categories.get_id(None))
 
     def test_add(self):
         self.assertTrue(categories.add('My new category'))
@@ -181,3 +194,7 @@ class Test(BaseTest):
 
         self.assertTrue(categories.is_used(1))
         self.assertFalse(categories.is_used(1234))
+
+    def test_menu(self):
+        with patch('builtins.input', return_value='b'):
+            self.assertIsNone(categories.menu())

@@ -31,6 +31,11 @@ class Test(BaseTest):
         with patch('getpass.getpass', return_value='wrong password'):
             self.assertRaises(SystemExit, menu.unlock)
 
+    def test_unlock_4(self):
+        # Simulate user pressing Ctrl-C
+        with patch('getpass.getpass', return_value=False):
+            self.assertRaises(SystemExit, menu.unlock)
+
     def test_validate_key(self):
         self.assertTrue(menu.validate_key(
             self.secret_key))
@@ -63,11 +68,12 @@ class Test(BaseTest):
         menu.check_autolock_timer()
         self.assertIsNone(menu.check_autolock_timer())
 
-    # @patch.object(menu, 'lock')
+    # @patch.object(menu, 'menu')
     # def test_check_autolock_timer_2(self, patched):
     #     patched.return_value = None
-    #     menu.timer = 100
-    #     self.assertTrue(menu.check_autolock_timer())
+    #     with patch('getpass.getpass', return_value=self.secret_key):
+    #         menu.timer = 100
+    #         self.assertIsNone(menu.check_autolock_timer())
 
     def test_check_then_set_autolock_timer(self):
         menu.check_then_set_autolock_timer()

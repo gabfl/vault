@@ -34,6 +34,11 @@ def unlock(redirect_to_menu=True, tentative=1):
     print()
     key = get_input(message='Please enter your master key:', secure=True)
 
+    # Exit if the user pressed Ctrl-C
+    if key is False:
+        print()
+        sys.exit()
+
     if validate_key(key):
         if redirect_to_menu:
             print()
@@ -93,7 +98,7 @@ def menu(next_command=None):
         elif command == 'a':  # Add an item
             secrets.add_input()
         elif command == 'cat':  # Manage categories
-            categories_menu()
+            categories.menu()
         elif command == 'l':  # Lock the vault and ask for the master key
             lock()
         elif command == 'q':  # Lock the vault and quit
@@ -151,35 +156,3 @@ def check_then_set_autolock_timer():
 
     check_autolock_timer()
     set_autolock_timer()
-
-
-def categories_menu():
-    """
-        Categories menu
-    """
-
-    while (True):
-        # Check then set auto lock timer
-        check_then_set_autolock_timer()
-
-        # List categories
-        print(categories.to_table(categories.all()))
-
-        print()
-        command = get_input_with_autolock(
-            message='Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ',
-            lowercase=True,
-            non_locking_values=['l', 'q'])
-
-        # Action based on command
-        if command == 'a':  # Add a category
-            categories.add_input()
-            return
-        elif command == 'r':  # Rename a category
-            categories.rename_input()
-            return
-        elif command == 'd':  # Delete a category
-            categories.delete_input()
-            return
-        elif command == 'b':  # Back to vault menu
-            return
