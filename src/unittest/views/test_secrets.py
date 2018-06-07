@@ -30,7 +30,7 @@ class Test(BaseTest):
                           url='https://www.ebay.com',
                           login='gab@gmail.com',
                           password='123password',
-                          notes='Some notes')
+                          notes='')
         self.session.add(secret_3)
 
         # Add a category as well
@@ -104,6 +104,11 @@ class Test(BaseTest):
             self.assertTrue(secrets.delete_confirm(1))
 
     def test_delete_confirm_2(self):
+        # Test with a non existent ID
+        with patch('builtins.input', return_value='y'):
+            self.assertFalse(secrets.delete_confirm(1234))
+
+    def test_delete_confirm_3(self):
         # Confirmation denied
         with patch('builtins.input', return_value='n'):
             self.assertFalse(secrets.delete_confirm(1))
@@ -216,19 +221,171 @@ class Test(BaseTest):
         result = secrets.get_by_id(1)
         self.assertIsNone(secrets.item_view(result))
 
+    @patch.object(secrets, 'item_menu')
+    def test_item_view_2(self, patched):
+        # View item without notes
+        patched.return_value = None
+        result = secrets.get_by_id(3)
+        self.assertIsNone(secrets.item_view(result))
+
     def test_item_menu(self):
         with patch('builtins.input', return_value='s'):
             self.assertEqual(secrets.item_menu(secrets.get_by_id(1)), 's')
+
+    @patch.object(secrets, 'item_menu_edit')
+    def test_item_men_2(self, patched):
+        patched.return_value = None
+
+        with patch('builtins.input', return_value='e'):
+            self.assertIsNone(secrets.item_menu(secrets.get_by_id(1)))
+
+    @patch.object(secrets, 'delete_confirm')
+    def test_item_men_3(self, patched):
+        patched.return_value = None
+
+        with patch('builtins.input', return_value='d'):
+            self.assertIsNone(secrets.item_menu(secrets.get_by_id(1)))
 
     def test_item_menu_edit(self):
         secret = secrets.get_by_id(1)
         with patch('builtins.input', return_value='b'):
             self.assertIsNone(secrets.item_menu_edit(secret))
 
-    def test_item_menu_edit(self):
+    def test_item_menu_edit_2(self):
         secret = secrets.get_by_id(1)
         with patch('builtins.input', return_value=''):
             self.assertIsNone(secrets.item_menu_edit(secret))
+
+    @patch.object(secrets, 'edit_input')
+    def test_item_menu_edit_3(self, patched):
+        patched.return_value = None
+
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='c'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    @patch.object(secrets, 'edit_input')
+    def test_item_menu_edit_4(self, patched):
+        patched.return_value = None
+
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='n'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    @patch.object(secrets, 'edit_input')
+    def test_item_menu_edit_5(self, patched):
+        patched.return_value = None
+
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='u'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    @patch.object(secrets, 'edit_input')
+    def test_item_menu_edit_6(self, patched):
+        patched.return_value = None
+
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='l'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    @patch.object(secrets, 'edit_input')
+    def test_item_menu_edit_7(self, patched):
+        patched.return_value = None
+
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='p'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    @patch.object(secrets, 'edit_input')
+    def test_item_menu_edit_8(self, patched):
+        patched.return_value = None
+
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='o'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    def test_edit_input(self):
+        # Edit name
+        with patch('builtins.input', return_value='1'):
+            self.assertTrue(secrets.edit_input(
+                'category', secrets.get_by_id(1)))
+
+        self.assertEqual(secrets.get_by_id(1).category_id, 1)
+
+    def test_edit_input_2(self):
+        # Edit category (simulate Ctr-c)
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.edit_input(
+                'category', secrets.get_by_id(1)))
+
+    def test_edit_input_3(self):
+        # Edit name
+        with patch('builtins.input', return_value='new name'):
+            self.assertTrue(secrets.edit_input('name', secrets.get_by_id(1)))
+
+        self.assertEqual(secrets.get_by_id(1).name, 'new name')
+
+    def test_edit_input_4(self):
+        # Edit name (simulate Ctr-c)
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.edit_input('name', secrets.get_by_id(1)))
+
+    def test_edit_input_5(self):
+        # Edit URL
+        with patch('builtins.input', return_value='new URL'):
+            self.assertTrue(secrets.edit_input('url', secrets.get_by_id(1)))
+
+        self.assertEqual(secrets.get_by_id(1).url, 'new URL')
+
+    def test_edit_input_6(self):
+        # Edit URL (simulate Ctr-c)
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.edit_input('url', secrets.get_by_id(1)))
+
+    def test_edit_input_7(self):
+        # Edit login
+        with patch('builtins.input', return_value='new login'):
+            self.assertTrue(secrets.edit_input('login', secrets.get_by_id(1)))
+
+        self.assertEqual(secrets.get_by_id(1).login, 'new login')
+
+    def test_edit_input_8(self):
+        # Edit login (simulate Ctr-c)
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.edit_input('login', secrets.get_by_id(1)))
+
+    def test_edit_input_9(self):
+        # Edit password
+        with patch('getpass.getpass', return_value='new password'):
+            self.assertTrue(secrets.edit_input(
+                'password', secrets.get_by_id(1)))
+
+        self.assertEqual(secrets.get_by_id(1).password, 'new password')
+
+    def test_edit_input_10(self):
+        # Edit password (simulate Ctr-c)
+        with patch('getpass.getpass', return_value=False):
+            self.assertFalse(secrets.edit_input(
+                'password', secrets.get_by_id(1)))
+
+    def test_edit_input_11(self):
+        # Edit notes
+        with patch('builtins.input', return_value='new notes'):
+            self.assertTrue(secrets.edit_input(
+                'notes', secrets.get_by_id(1)))
+
+        self.assertEqual(secrets.get_by_id(1).notes,
+                         ('new notes\n' * 15).strip())
+
+    def test_edit_input_12(self):
+        # Edit notes (simulate Ctr-c)
+        with patch('builtins.input', return_value=False):
+            self.assertFalse(secrets.edit_input('notes', secrets.get_by_id(1)))
+
+    def test_edit_input_13(self):
+        # Edit an invalid column: should raise a ValueError
+        self.assertRaises(ValueError, secrets.edit_input,
+                          'some invalid value', secrets.get_by_id(1))
 
     def test_wait(self):
         # Ensure we have a short wait time

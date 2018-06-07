@@ -1,67 +1,6 @@
 
 class Vault:
 
-    def editItemInput(self, itemKey, fieldName, fieldCurrentValue):
-        """
-            Edit a field for an item
-        """
-
-        # Set auto lock timer (to prevent immediate re-locking)
-        self.setAutoLockTimer()
-
-        # Show current value
-        if fieldName != 'password':
-            print("* Current value: %s" % (fieldCurrentValue))
-
-        try:
-            # Get new value
-            if fieldName == 'password':
-                print('* Suggestion: %s' % (pwgenerator.generate()))
-                fieldNewValue = getpass.getpass('* New password: ')
-            elif fieldName == 'category':
-                # Show categories
-                print()
-                print("* Available categories:")
-                self.categoriesList()
-                print()
-
-                # Category ID
-                fieldNewValue = self.input(
-                    '* Choose a category number (or leave empty for none): ')
-
-                if fieldNewValue != '':
-                    if not self.categoryCheckId(fieldNewValue):
-                        print('Invalid category. Please try again.')
-                        self.editItemInput(
-                            itemKey, fieldName, fieldCurrentValue)
-            elif fieldName == 'notes':
-                print('* Notes: (press [ENTER] twice to complete)')
-                notes = []
-                while True:
-                    input_str = self.input("> ")
-                    if input_str == "":
-                        break
-                    else:
-                        notes.append(input_str)
-                fieldNewValue = "\n".join(notes)
-            else:
-                fieldNewValue = self.input('* New %s: ' % (fieldName))
-        except KeyboardInterrupt as e:
-            # Back to menu if user cancels
-            print()
-            return
-
-        # Update item
-        item = self.vault['secrets'][itemKey][fieldName] = fieldNewValue
-
-        # Debug
-        # print(self.vault['secrets'][itemKey])
-
-        # Save the vault
-        self.saveVault()
-
-        print('The item has been updated.')
-
     def changeKey(self):
         """
             Replace vault key

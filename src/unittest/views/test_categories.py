@@ -198,7 +198,6 @@ class Test(BaseTest):
         self.assertFalse(categories.delete_input())
 
     def test_is_used(self):
-
         # Create a secret
         secret = Secret(name='Name', url='-', login='login',
                         password='password', category_id=1)
@@ -208,6 +207,27 @@ class Test(BaseTest):
         self.assertTrue(categories.is_used(1))
         self.assertFalse(categories.is_used(1234))
 
-    def test_menu(self):
+    @patch.object(categories, 'add_input')
+    def test_menu(self, patched):
+        patched.return_value = None
+
+        with patch('builtins.input', return_value='a'):
+            self.assertIsNone(categories.menu())
+
+    @patch.object(categories, 'rename_input')
+    def test_menu_2(self, patched):
+        patched.return_value = None
+
+        with patch('builtins.input', return_value='r'):
+            self.assertIsNone(categories.menu())
+
+    @patch.object(categories, 'delete_input')
+    def test_menu_3(self, patched):
+        patched.return_value = None
+
+        with patch('builtins.input', return_value='d'):
+            self.assertIsNone(categories.menu())
+
+    def test_menu_4(self):
         with patch('builtins.input', return_value='b'):
             self.assertIsNone(categories.menu())

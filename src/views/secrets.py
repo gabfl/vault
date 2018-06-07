@@ -314,26 +314,29 @@ def item_menu_edit(item):
 
     print()
     command = get_input(
-        message='Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ',
+        message='Choose what you would like to edit [(c)ategory / (n)ame  / (u)rl / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ',
         lowercase=True,
         # non_locking_values=['l', 'q']
     )
 
     # Action based on command
     if command == 'c':  # Edit category
-        edit_input(item.id, 'category', get_category_name(item.category))
+        edit_input('category', item)
         return
     elif command == 'n':  # Edit name
-        edit_input(item.id, 'name', item['name'])
+        edit_input('name', item)
+        return
+    elif command == 'u':  # Edit URL
+        edit_input('url', item)
         return
     elif command == 'l':  # Edit login
-        edit_input(item.id, 'login', item['login'])
+        edit_input('login', item)
         return
     elif command == 'p':  # Edit password
-        edit_input(item.id, 'password', '')
+        edit_input('password', item)
         return
     elif command == 'o':  # Edit notes
-        edit_input(item.id, 'notes', item['notes'])
+        edit_input('notes', item)
         return
     elif command == 'b':  # Back to vault menu
         return
@@ -341,8 +344,76 @@ def item_menu_edit(item):
     return
 
 
-def edit_input(id_, element_name, current_value):
-    pass
+def edit_input(element_name, item):
+    """
+        Edit an item
+    """
+
+    if element_name == 'category':
+        print('* Current nategory: %s' %
+              (get_category_name(item.category_id) or 'Empty!'))
+        category_id = pick(message='* New category: ')
+
+        if category_id is not False:
+            item.category_id = category_id
+        else:
+            print('\nCancelled!')
+            return False
+    elif element_name == 'name':
+        print('* Current name: %s' % (item.name or 'Empty!'))
+        name = get_input(message='* New name: ')
+
+        if name is not False:
+            item.name = name
+        else:
+            print('\nCancelled!')
+            return False
+    elif element_name == 'url':
+        print('* Current URL: %s' % (item.url) or 'Empty!')
+        url = get_input(message='* New URL: ')
+
+        if url is not False:
+            item.url = url
+        else:
+            print('\nCancelled!')
+            return False
+    elif element_name == 'login':
+        print('* Current login: %s' % (item.login) or 'Empty!')
+        login = get_input(message='* New login: ')
+
+        if login is not False:
+            item.login = login
+        else:
+            print('\nCancelled!')
+            return False
+    elif element_name == 'password':
+        print('* Password suggestion: %s' % (pwgenerator.generate()))
+        password = get_input(message='* New password: ', secure=True)
+
+        if password is not False:
+            item.password = password
+        else:
+            print('\nCancelled!')
+            return False
+    elif element_name == 'notes':
+        print('* Current notes: %s' % (item.notes) or 'Empty!')
+        notes = notes_input()
+
+        if notes is not False:
+            item.notes = notes
+        else:
+            print('\nCancelled!')
+            return False
+    else:
+        raise ValueError('Element `%s` not not exists.' % (element_name))
+
+    # Process update
+    get_session().add(item)
+    get_session().commit()
+
+    print('The %s has been updated.' % (element_name))
+
+    return True
 
 
 def show_secret(password):
