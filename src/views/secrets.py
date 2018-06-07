@@ -298,13 +298,51 @@ def item_menu(item):
         elif command == 'o':  # Show a secret
             show_secret(item.password)
         elif command == 'e':  # Edit an item
-            # self.itemEdit(itemKey, item)
+            item_menu_edit(item)
             return
         elif command == 'd':  # Delete an item
             delete_confirm(item.id)
             return
         elif command in ['s', 'b', 'q']:  # Common commands
             return command
+
+
+def item_menu_edit(item):
+    """
+        Edit an item
+    """
+
+    print()
+    command = get_input(
+        message='Choose what you would like to edit [(c)ategory / (n)ame / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ',
+        lowercase=True,
+        # non_locking_values=['l', 'q']
+    )
+
+    # Action based on command
+    if command == 'c':  # Edit category
+        edit_input(item.id, 'category', get_category_name(item.category))
+        return
+    elif command == 'n':  # Edit name
+        edit_input(item.id, 'name', item['name'])
+        return
+    elif command == 'l':  # Edit login
+        edit_input(item.id, 'login', item['login'])
+        return
+    elif command == 'p':  # Edit password
+        edit_input(item.id, 'password', '')
+        return
+    elif command == 'o':  # Edit notes
+        edit_input(item.id, 'notes', item['notes'])
+        return
+    elif command == 'b':  # Back to vault menu
+        return
+
+    return
+
+
+def edit_input(id_, element_name, current_value):
+    pass
 
 
 def show_secret(password):

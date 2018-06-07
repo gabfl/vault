@@ -101,12 +101,12 @@ class Test(BaseTest):
     def test_delete_confirm(self):
         # Successful deletion
         with patch('builtins.input', return_value='y'):
-            self.assertTrue(secrets.delete_input(1))
+            self.assertTrue(secrets.delete_confirm(1))
 
     def test_delete_confirm_2(self):
         # Confirmation denied
         with patch('builtins.input', return_value='n'):
-            self.assertFalse(secrets.delete_input(1))
+            self.assertFalse(secrets.delete_confirm(1))
 
     def test_search(self):
         # Search with a name
@@ -219,6 +219,16 @@ class Test(BaseTest):
     def test_item_menu(self):
         with patch('builtins.input', return_value='s'):
             self.assertEqual(secrets.item_menu(secrets.get_by_id(1)), 's')
+
+    def test_item_menu_edit(self):
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value='b'):
+            self.assertIsNone(secrets.item_menu_edit(secret))
+
+    def test_item_menu_edit(self):
+        secret = secrets.get_by_id(1)
+        with patch('builtins.input', return_value=''):
+            self.assertIsNone(secrets.item_menu_edit(secret))
 
     def test_wait(self):
         # Ensure we have a short wait time

@@ -3,7 +3,6 @@ import sys
 
 import argparse
 
-from .lib.Vault import Vault
 from .lib.Config import Config
 from .modules.misc import logo, create_directory_if_missing, assess_integrity, erase_vault
 from .views import setup
@@ -99,12 +98,9 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
     # Update config
     config_update(clipboard_TTL, auto_lock_TTL, hide_secret_TTL)
 
-    # Init Vault
-    v = Vault(config, vault_path)
-
-    # Change vault key
-    if change_key:
-        v.changeKey()
+    # # Change vault key
+    # if change_key:
+    #     v.changeKey()
 
     # Import items in the vault
     if import_items:
