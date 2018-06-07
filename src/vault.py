@@ -88,10 +88,9 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
 
     # Load config
     global_scope['conf'] = Config(config_path)
-    config = global_scope['conf'].get_config()
 
     # Migration from Vault 1.x to Vault 2.x
-    if config['version'].split('.')[0] == '1':
+    if global_scope['conf'].version.split('.')[0] == '1':
         migrate(vault_path=vault_path.strip('.db'), config_path=config_path)
         sys.exit()
 
@@ -117,7 +116,7 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
 
     # Check if the vault exists
     if not os.path.isfile(vault_path):
-        setup.initialize(config['salt'])
+        setup.initialize(global_scope['conf'].salt)
 
     # Unlock the vault
     unlock()

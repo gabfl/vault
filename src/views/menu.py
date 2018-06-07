@@ -143,7 +143,7 @@ def check_autolock_timer():
 
     global timer
 
-    if timer and int(time.time()) > timer + int(global_scope['conf'].get_config()['autoLockTTL']):
+    if timer and int(time.time()) > timer + int(global_scope['conf'].autoLockTTL):
         print()
         print("The vault has been locked due to inactivity.")
         lock()

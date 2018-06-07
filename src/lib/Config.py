@@ -78,3 +78,15 @@ class Config:
         """
 
         return str(uuid4())
+
+    def __getattr__(self, name):
+        """
+            Allows calls to configuration values:
+            config = Config()
+            print(config.salt) # Will print the salt
+        """
+
+        try:
+            return self.get_config()[name]
+        except KeyError:  # For values that don't exist in the config file
+            return None

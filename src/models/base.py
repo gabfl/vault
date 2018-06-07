@@ -67,7 +67,7 @@ def get_db_key():
         raise RuntimeError('`conf` is not defined in the global scope')
 
     # Retrieve key
-    return sha256(global_scope['enc'].key + global_scope['conf'].get_config()['salt'].encode()).hexdigest()
+    return sha256(global_scope['enc'].key + global_scope['conf'].salt.encode()).hexdigest()
 
 
 def get_slashes(encrypted=True):

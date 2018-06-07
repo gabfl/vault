@@ -352,10 +352,10 @@ def show_secret(password):
 
     try:
         print("* The password will be hidden after %s seconds." %
-              (global_scope['conf'].get_config()['hideSecretTTL']))
+              (global_scope['conf'].hideSecretTTL))
         print('* The password is: %s' % (password), end="\r")
 
-        time.sleep(int(global_scope['conf'].get_config()['hideSecretTTL']))
+        time.sleep(int(global_scope['conf'].hideSecretTTL))
     except KeyboardInterrupt:
         # Will catch `^-c` and immediately hide the password
         pass

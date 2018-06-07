@@ -127,7 +127,7 @@ def get_hash(key):
     h = SHA256.new()
     for i in range(1, 10000):
         h.update(str.encode(
-            str(i) + config.get_config()['salt'] + key))
+            str(i) + config.salt + key))
     return base64.b64decode(str.encode(h.hexdigest()[:32]))
 
 

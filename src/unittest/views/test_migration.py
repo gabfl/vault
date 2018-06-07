@@ -1,5 +1,6 @@
 from unittest.mock import patch
 import tempfile
+from shutil import copyfile
 
 from ..base import BaseTest
 from ...views import migration
@@ -15,10 +16,7 @@ class Test(BaseTest):
     def setUp(self):
         # Copy config file to a temporary file
         self.config_path = tempfile.NamedTemporaryFile(delete=False)
-        with open(self.config_path_to_copy, mode='r') as f:
-            content = f.read()
-            with open(self.config_path.name, mode='w') as f2:
-                f2.write(content)
+        copyfile(self.config_path_to_copy, self.config_path.name)
 
     def test_migrate(self):
         # Successful migration
@@ -47,8 +45,8 @@ class Test(BaseTest):
 
     def update_config(self):
         migration.update_config()
-        self.assertEqual(migration.config.get_config()['version'], '2.00')
-        self.assertEqual(migration.config.get_config()['encrypteddb'], True)
+        self.assertEqual(migration.config.version, '2.00')
+        self.assertEqual(migration.config.encrypteddb, True)
 
     def test_unlock(self):
         vault_content = migration.unlock(self.vault_path, self.legacy_password)

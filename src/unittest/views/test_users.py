@@ -16,7 +16,7 @@ class Test(BaseTest):
 
         # Re-create key + salt
         key_salt = global_scope['enc'].key + \
-            global_scope['conf'].get_config()['salt'].encode()
+            global_scope['conf'].salt.encode()
 
         self.assertEqual(global_scope['enc'].decrypt(user.value), (key_salt))
 

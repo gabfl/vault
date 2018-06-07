@@ -32,3 +32,9 @@ class Test(BaseTest):
 
     def test_generate_random_salt(self):
         self.assertIsInstance(self.config.generate_random_salt(), str)
+
+    def test_getattr(self):
+        self.assertIsInstance(self.config.salt, str)
+
+    def test_getattr_2(self):
+        self.assertIsNone(self.config.some_invalid_value)

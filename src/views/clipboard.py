@@ -46,11 +46,11 @@ def wait():
     """
 
     print("* Clipboard will be erased in %s seconds" %
-          (global_scope['conf'].get_config()['clipboardTTL']))
+          (global_scope['conf'].clipboardTTL))
 
     try:
         # Loop until the delay is elapsed
-        for i in range(0, int(global_scope['conf'].get_config()['clipboardTTL'])):
+        for i in range(0, int(global_scope['conf'].clipboardTTL)):
             print('.', end='', flush=True)
             time.sleep(1)  # Sleep 1 sec
 
