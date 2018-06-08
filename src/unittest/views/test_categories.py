@@ -208,26 +208,26 @@ class Test(BaseTest):
         self.assertFalse(categories.is_used(1234))
 
     @patch.object(categories, 'add_input')
-    def test_menu(self, patched):
+    def test_main_menu(self, patched):
         patched.return_value = None
 
         with patch('builtins.input', return_value='a'):
-            self.assertIsNone(categories.menu())
+            self.assertIsNone(categories.main_menu())
 
     @patch.object(categories, 'rename_input')
-    def test_menu_2(self, patched):
+    def test_main_menu_2(self, patched):
         patched.return_value = None
 
         with patch('builtins.input', return_value='r'):
-            self.assertIsNone(categories.menu())
+            self.assertIsNone(categories.main_menu())
 
     @patch.object(categories, 'delete_input')
-    def test_menu_3(self, patched):
+    def test_main_menu_3(self, patched):
         patched.return_value = None
 
         with patch('builtins.input', return_value='d'):
-            self.assertIsNone(categories.menu())
+            self.assertIsNone(categories.main_menu())
 
-    def test_menu_4(self):
+    def test_main_menu_4(self):
         with patch('builtins.input', return_value='b'):
-            self.assertIsNone(categories.menu())
+            self.assertIsNone(categories.main_menu())

@@ -8,14 +8,22 @@ from ...modules.carry import global_scope
 
 class Test(BaseTest):
 
-    def test_get_input_with_autolock(self):
+    def test_get_input(self):
         with patch('builtins.input', return_value='some input'):
-            self.assertEqual(menu.get_input_with_autolock(
-                non_locking_values=['a', 'b']), 'some input')
+            self.assertEqual(menu.get_input(), 'some input')
 
-    def test_get_input_with_autolock_2(self):
+    def test_get_input_2(self):
+        with patch('getpass.getpass', return_value='some secure input'):
+            self.assertEqual(menu.get_input(secure=True), 'some secure input')
+
+    def test_get_input_3(self):
+        with patch('builtins.input', return_value='SOME INPUT'):
+            self.assertEqual(menu.get_input(lowercase=True), 'some input')
+
+    def test_get_input_4(self):
         with patch('builtins.input', return_value='some input'):
-            self.assertEqual(menu.get_input_with_autolock(), 'some input')
+            self.assertEqual(menu.get_input(
+                non_locking_values=['a', 'b', 'c']), 'some input')
 
     def test_unlock(self):
         with patch('getpass.getpass', return_value=self.secret_key):

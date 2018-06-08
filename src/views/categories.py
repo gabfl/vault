@@ -5,7 +5,8 @@ from tabulate import tabulate
 from ..models.base import get_session
 from ..models.Category import Category
 from ..models.Secret import Secret
-from ..modules.misc import get_input, confirm
+from ..modules.misc import confirm
+from ..views import menu
 
 
 def all():
@@ -41,7 +42,7 @@ def pick(message='Select a category: ', optional=False):
     print()
 
     # Ask user input
-    id_ = get_input(message=message)
+    id_ = menu.get_input(message=message)
 
     # Cast as int
     try:
@@ -122,7 +123,7 @@ def add_input():
     """
 
     # Ask user input
-    name = get_input(message='Category name: ')
+    name = menu.get_input(message='Category name: ')
 
     # Return false if name is missing
     if not name:
@@ -168,7 +169,7 @@ def rename_input():
         return False
 
     # Ask user input
-    name = get_input(message='Category name: ')
+    name = menu.get_input(message='Category name: ')
 
     # Return false if name is missing
     if not name:
@@ -244,7 +245,7 @@ def is_used(id_):
     return False
 
 
-def menu():
+def main_menu():
     """
         Categories menu
     """
@@ -254,10 +255,10 @@ def menu():
         print(to_table(all()))
 
         print()
-        command = get_input(
+        command = menu.get_input(
             message='Choose a command [(a)dd a category / (r)rename a category / (d)elete a category / (b)ack to Vault]: ',
             lowercase=True,
-            # non_locking_values=['l', 'q']
+            non_locking_values=['l', 'q']
         )
 
         # Action based on command

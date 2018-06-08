@@ -1,4 +1,3 @@
-import getpass
 import sys
 import os
 
@@ -142,25 +141,3 @@ def lock_prefix():
         return u'\U0001F511  '  # Extra spaces are intentional
 
     return ''
-
-
-def get_input(message='', secure=False, lowercase=False):
-    """
-        Get and return user input
-    """
-
-    try:
-        if secure:
-            input_ = getpass.getpass(lock_prefix() + message)
-        else:
-            input_ = input(message)
-
-        # Ensure the input is lowercased if required
-        if lowercase:
-            input_ = input_.lower()
-    except KeyboardInterrupt:
-        return False
-    except Exception:  # Other Exception
-        return False
-
-    return input_

@@ -90,15 +90,3 @@ class Test(BaseTest):
             self.assertEqual(misc.lock_prefix(), u'\U0001F511  ')
         else:
             self.assertEqual(misc.lock_prefix(), '')
-
-    def test_get_input(self):
-        with patch('builtins.input', return_value='some input'):
-            self.assertEqual(misc.get_input(), 'some input')
-
-    def test_get_input_2(self):
-        with patch('getpass.getpass', return_value='some secure input'):
-            self.assertEqual(misc.get_input(secure=True), 'some secure input')
-
-    def test_get_input_3(self):
-        with patch('builtins.input', return_value='SOME INPUT'):
-            self.assertEqual(misc.get_input(lowercase=True), 'some input')

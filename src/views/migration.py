@@ -9,13 +9,13 @@ import sys
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 
-from ..modules.misc import get_input
 from ..modules.carry import global_scope
 from ..lib.Config import Config
 from ..lib.Encryption import Encryption
 from ..views.setup import create_db
 from ..views.users import new_validation_key
 from ..views.import_export import import_from_json
+from ..views import menu
 
 config = None
 
@@ -47,8 +47,8 @@ def migrate(vault_path, config_path, new_vault_path=None):
     config = Config(config_path)
 
     # Ask user to input master key
-    key = get_input(
-        message=' * Enter your master key to begin the migration: ', secure=True)
+    key = menu.get_input(
+        message=' * Enter your master key to begin the migration: ', secure=True, check_timer=False)
 
     # Unlock the vault
     try:

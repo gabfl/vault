@@ -5,9 +5,9 @@ import uuid
 from ..models.base import Base, get_session, get_engine
 from ..models.Category import Category  # Imported for schema creation
 from ..models.Secret import Secret  # Imported for schema creation
-from ..modules.misc import get_input
 from ..modules.carry import global_scope
 from ..views.users import new_validation_key
+from ..views.menu import get_input
 from ..lib.Encryption import Encryption
 
 
@@ -59,9 +59,10 @@ def get_key_input():
         Prompt user for a master key
     """
 
-    key = get_input(message='Please choose a master key:', secure=True)
+    key = get_input(message='Please choose a master key:',
+                    secure=True, check_timer=False)
     repeat = get_input(
-        message='Please confirm your master key:', secure=True)
+        message='Please confirm your master key:', secure=True, check_timer=False)
 
     # Ensure that the key was correctly typed twice and is valid
     if check_key_and_repeat(key, repeat) and is_key_valid(key):

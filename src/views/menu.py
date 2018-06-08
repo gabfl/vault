@@ -1,26 +1,39 @@
 import sys
 import time
+import getpass
 
-from ..modules.misc import get_input
 from ..modules.carry import global_scope
 from ..models.base import get_engine, get_session
+from ..modules.misc import lock_prefix
 from ..lib.Encryption import Encryption
 from ..views import secrets, users, categories
 
 timer = None
 
 
-def get_input_with_autolock(message='', secure=False, lowercase=False, non_locking_values=[]):
+def get_input(message='', secure=False, lowercase=False, check_timer=True, non_locking_values=[]):
     """
-        Wrapper arrund get_input() to check autolock timer
+        Get and return user input
     """
 
-    input_ = get_input(message=message,
-                       secure=secure,
-                       lowercase=lowercase)
+    try:
+        if secure:
+            input_ = getpass.getpass(lock_prefix() + message)
+        else:
+            input_ = input(message)
 
-    if input_ not in non_locking_values:
-        check_autolock_timer()
+        if check_timer and input_ not in non_locking_values:
+            check_then_set_autolock_timer()
+        else:
+            set_autolock_timer()
+
+        # Ensure the input is lowercased if required
+        if lowercase:
+            input_ = input_.lower()
+    except KeyboardInterrupt:
+        return False
+    except Exception:  # Other Exception
+        return False
 
     return input_
 
@@ -32,7 +45,8 @@ def unlock(redirect_to_menu=True, tentative=1):
 
     # Get master key
     print()
-    key = get_input(message='Please enter your master key:', secure=True)
+    key = get_input(message='Please enter your master key:',
+                    secure=True, check_timer=False)
 
     # Exit if the user pressed Ctrl-C
     if key is False:
@@ -84,7 +98,7 @@ def menu(next_command=None):
             next_command = None  # reset
         else:  # otherwise, ask for user input
             print()
-            command = get_input_with_autolock(
+            command = get_input(
                 message='Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ',
                 lowercase=True,
                 non_locking_values=['l', 'q'])
@@ -98,7 +112,7 @@ def menu(next_command=None):
         elif command == 'a':  # Add an item
             secrets.add_input()
         elif command == 'cat':  # Manage categories
-            categories.menu()
+            categories.main_menu()
         elif command == 'l':  # Lock the vault and ask for the master key
             lock()
         elif command == 'q':  # Lock the vault and quit

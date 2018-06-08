@@ -9,10 +9,11 @@ from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
 from ..models.Secret import Secret
-from ..modules.misc import get_input, confirm
+from ..modules.misc import confirm
 from ..modules.carry import global_scope
 from ..views.categories import get_name as get_category_name, pick
 from ..views import clipboard
+from ..views import menu
 
 
 def all():
@@ -82,20 +83,20 @@ def add_input():
     if category_id is False:
         return False
 
-    name = get_input(message='* Name: ')
+    name = menu.get_input(message='* Name: ')
     if name is False:
         return False
 
-    url = get_input(message='* URL: ')
+    url = menu.get_input(message='* URL: ')
     if url is False:
         return False
 
-    login = get_input(message='* Login: ')
+    login = menu.get_input(message='* Login: ')
     if login is False:
         return False
 
     print('* Password suggestion: %s' % (pwgenerator.generate()))
-    password = get_input(message='* Password: ', secure=True)
+    password = menu.get_input(message='* Password: ', secure=True)
     if password is False:
         return False
 
@@ -126,7 +127,7 @@ def notes_input():
     print('* Notes: (press [ENTER] twice to complete)')
     notes = []
     for i in range(15):  # Max 15 lines
-        input_ = get_input(message="> ")
+        input_ = menu.get_input(message="> ")
         if input_ is False:
             return False
 
@@ -207,7 +208,7 @@ def search_input():
 
     # Ask user input
     print()
-    query = get_input(message='Enter search: ')
+    query = menu.get_input(message='Enter search: ')
 
     if not query:
         print()
@@ -242,7 +243,7 @@ def search_results(rows):
     print()
 
     # Ask user input
-    input_ = get_input(
+    input_ = menu.get_input(
         message='Select a result # or type any key to go back to the main menu: ')
 
     if input_:
@@ -282,10 +283,10 @@ def item_menu(item):
     """
 
     while True:
-        command = get_input(
+        command = menu.get_input(
             message='Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
             lowercase=True,
-            # non_locking_values=['l', 'q']
+            non_locking_values=['l', 'q']
         )
 
         # Action based on command
@@ -313,10 +314,10 @@ def item_menu_edit(item):
     """
 
     print()
-    command = get_input(
+    command = menu.get_input(
         message='Choose what you would like to edit [(c)ategory / (n)ame  / (u)rl / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ',
         lowercase=True,
-        # non_locking_values=['l', 'q']
+        non_locking_values=['l', 'q']
     )
 
     # Action based on command
@@ -361,7 +362,7 @@ def edit_input(element_name, item):
             return False
     elif element_name == 'name':
         print('* Current name: %s' % (item.name or 'Empty!'))
-        name = get_input(message='* New name: ')
+        name = menu.get_input(message='* New name: ')
 
         if name is not False:
             item.name = name
@@ -370,7 +371,7 @@ def edit_input(element_name, item):
             return False
     elif element_name == 'url':
         print('* Current URL: %s' % (item.url) or 'Empty!')
-        url = get_input(message='* New URL: ')
+        url = menu.get_input(message='* New URL: ')
 
         if url is not False:
             item.url = url
@@ -379,7 +380,7 @@ def edit_input(element_name, item):
             return False
     elif element_name == 'login':
         print('* Current login: %s' % (item.login) or 'Empty!')
-        login = get_input(message='* New login: ')
+        login = menu.get_input(message='* New login: ')
 
         if login is not False:
             item.login = login
@@ -388,7 +389,7 @@ def edit_input(element_name, item):
             return False
     elif element_name == 'password':
         print('* Password suggestion: %s' % (pwgenerator.generate()))
-        password = get_input(message='* New password: ', secure=True)
+        password = menu.get_input(message='* New password: ', secure=True)
 
         if password is not False:
             item.password = password
