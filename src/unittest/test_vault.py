@@ -9,7 +9,7 @@ from .. import vault
 from ..modules import misc
 from ..modules.carry import global_scope
 from ..lib.Config import Config
-from ..views import menu
+from ..views import menu, setup
 
 
 class Test(BaseTest):
@@ -51,6 +51,8 @@ class Test(BaseTest):
 
     @patch.object(menu, 'menu')
     def test_initialize(self, patched):
+        # Test unlock
+
         patched.return_value = None
 
         # Try to unlock with the master key previously chosen
@@ -58,11 +60,11 @@ class Test(BaseTest):
             vault.initialize(
                 global_scope['db_file'], self.conf_path.name + '/config')
 
-    @patch.object(misc, 'erase_vault')
-    @patch.object(misc, 'confirm')
-    def test_initialize_2(self, patched, patched2):
+    @patch.object(vault, 'erase_vault')
+    def test_initialize_2(self, patched):
+        # Test erase
+
         patched.return_value = 'patched'
-        patched2.return_value = True
 
         # Set temporary files
         file_vault = tempfile.NamedTemporaryFile(delete=False)
@@ -70,3 +72,53 @@ class Test(BaseTest):
 
         self.assertRaises(SystemExit, vault.initialize,
                           file_vault.name, self.conf_path.name + '/config', erase=True)
+
+    def test_initialize_3(self):
+        # Test re-keyi
+
+        # Set temporary files
+        file_vault = tempfile.NamedTemporaryFile(delete=False)
+        Path(file_vault.name).touch()
+
+        self.assertRaises(SystemExit, vault.initialize,
+                          file_vault.name, self.conf_path.name + '/config', rekey_vault=True)
+
+    @patch.object(vault, 'import_')
+    def test_initialize_4(self, patched):
+        # Test import
+
+        patched.return_value = 'patched'
+
+        # Set temporary files
+        file_vault = tempfile.NamedTemporaryFile(delete=False)
+        Path(file_vault.name).touch()
+
+        self.assertRaises(SystemExit, vault.initialize,
+                          file_vault.name, self.conf_path.name + '/config', import_items=True)
+
+    @patch.object(vault, 'export_')
+    def test_initialize_5(self, patched):
+        # Test export
+
+        patched.return_value = 'patched'
+
+        # Set temporary files
+        file_vault = tempfile.NamedTemporaryFile(delete=False)
+        Path(file_vault.name).touch()
+
+        self.assertRaises(SystemExit, vault.initialize,
+                          file_vault.name, self.conf_path.name + '/config', export=True)
+
+    @patch.object(vault.setup, 'initialize')
+    @patch.object(vault, 'unlock')
+    def test_initialize_6(self, patched, patched2):
+        # Test export
+
+        patched.return_value = 'patched'
+        patched2.return_value = 'patched'
+
+        # Set temporary files
+        dir_ = tempfile.TemporaryDirectory()
+
+        self.assertIsNone(vault.initialize(dir_.name + '/some/new/file',
+                                           self.conf_path.name + '/config'))

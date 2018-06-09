@@ -85,6 +85,7 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
     # Erase a vault if the user requests it
     if erase:
         erase_vault(vault_path, config_path)
+        sys.exit()
 
     # Load config
     global_scope['conf'] = Config(config_path)
@@ -97,7 +98,7 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
     # Update config
     config_update(clipboard_TTL, auto_lock_TTL, hide_secret_TTL)
 
-    # # Change vault key
+    # Change vault key
     if rekey_vault:
         print()
         # print("Please consider backing up your vault located at `%s` before proceeding." % (
