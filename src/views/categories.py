@@ -6,7 +6,7 @@ from ..models.base import get_session
 from ..models.Category import Category
 from ..models.Secret import Secret
 from ..modules.misc import confirm
-from ..views import menu
+from . import menu
 
 
 def all():
@@ -260,6 +260,9 @@ def main_menu():
             lowercase=True,
             non_locking_values=['l', 'q']
         )
+
+        if command is False:
+            print()
 
         # Action based on command
         if command == 'a':  # Add a category

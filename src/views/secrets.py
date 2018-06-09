@@ -11,9 +11,8 @@ from ..models.base import get_session
 from ..models.Secret import Secret
 from ..modules.misc import confirm
 from ..modules.carry import global_scope
-from ..views.categories import get_name as get_category_name, pick
-from ..views import clipboard
-from ..views import menu
+from .categories import get_name as get_category_name, pick
+from . import clipboard, menu
 
 
 def all():
@@ -288,6 +287,9 @@ def item_menu(item):
             lowercase=True,
             non_locking_values=['l', 'q']
         )
+
+        if command is False:
+            print()
 
         # Action based on command
         if command == 'l':  # Copy login to the clipboard

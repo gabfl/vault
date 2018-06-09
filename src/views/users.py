@@ -7,7 +7,7 @@ from ..models.User import User
 from ..modules.carry import global_scope
 
 
-def new_validation_key():
+def validation_key_new():
     """
         Create a validation key
     """
@@ -22,7 +22,7 @@ def new_validation_key():
     get_session().commit()
 
 
-def validate_validation_key(key):
+def validation_key_validate(key):
     """
         Verify if a validation key is valid
     """
@@ -43,5 +43,29 @@ def validate_validation_key(key):
             return True
     except ValueError:  # Decryption error
         return False
+
+    return False
+
+
+def validation_key_rekey(newenc):
+    """
+        Replace a validation key with a new master key
+    """
+
+    # Get validation key
+    user = get_session().query(User).filter(
+        User.key == 'key_validation').order_by(User.id.desc()).first()
+
+    if user:
+        key_salt = newenc.key + \
+            global_scope['conf'].salt.encode()
+
+        # Update validation key
+        user.value = newenc.encrypt(key_salt)
+
+        get_session().add(user)
+        get_session().commit()
+
+        return True
 
     return False

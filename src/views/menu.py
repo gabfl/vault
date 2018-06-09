@@ -6,7 +6,7 @@ from ..modules.carry import global_scope
 from ..models.base import get_engine, get_session
 from ..modules.misc import lock_prefix
 from ..lib.Encryption import Encryption
-from ..views import secrets, users, categories
+from . import secrets, users, categories
 
 timer = None
 
@@ -81,7 +81,7 @@ def validate_key(key):
     global_scope['enc'] = Encryption(key.encode())
 
     # Attempt to unlock the database
-    return users.validate_validation_key(key.encode())
+    return users.validation_key_validate(key.encode())
 
 
 def menu(next_command=None):
@@ -102,6 +102,9 @@ def menu(next_command=None):
                 message='Choose a command [(s)earch / show (all) / (a)dd / (cat)egories / (l)ock / (q)uit]: ',
                 lowercase=True,
                 non_locking_values=['l', 'q'])
+
+            if command is False:
+                print()
 
         # Action based on command
         if command == 's':  # Search an item

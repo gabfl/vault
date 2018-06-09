@@ -12,10 +12,10 @@ from Crypto.Hash import SHA256
 from ..modules.carry import global_scope
 from ..lib.Config import Config
 from ..lib.Encryption import Encryption
-from ..views.setup import create_db
-from ..views.users import new_validation_key
-from ..views.import_export import import_from_json
-from ..views import menu
+from .setup import create_db
+from .users import validation_key_new
+from .import_export import import_from_json
+from . import menu
 
 config = None
 
@@ -71,7 +71,7 @@ def migrate(vault_path, config_path, new_vault_path=None):
     create_db()
 
     # Create validation key
-    new_validation_key()
+    validation_key_new()
 
     # Import items in the new db
     result = import_from_json(rows=import_)

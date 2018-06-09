@@ -9,8 +9,9 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Features
 
- - AES-256 encryption with [pycryptodome](http://legrandin.github.io/pycryptodome/)
- - Secret key is hashed with a unique salt (100,000 iterations)
+ - Secrets are stored in an encrypted SQLite database with [SQLCipher](https://www.zetetic.net/sqlcipher/)
+ - Within the database, each password and notes are encrypted with a unique salt using AES-256 encryption with [pycryptodome](http://legrandin.github.io/pycryptodome/)
+ - Master key is hashed with a unique salt
  - Possibility to create an unlimited number of vaults
  - Clipboard cleared automatically
  - Automatic vault locking after inactivity

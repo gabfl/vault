@@ -5,7 +5,7 @@ import json
 
 from tabulate import tabulate
 
-from ..views import menu, secrets, categories
+from . import menu, secrets, categories
 from ..modules.misc import confirm
 from ..modules.carry import global_scope
 from ..lib.Encryption import Encryption

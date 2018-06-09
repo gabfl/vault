@@ -5,7 +5,7 @@ import argparse
 
 from .lib.Config import Config
 from .modules.misc import logo, create_directory_if_missing, assess_integrity, erase_vault
-from .views import setup
+from .views import setup, change_key
 from .views.menu import unlock
 from .views.import_export import import_, export_
 from .views.migration import migrate
@@ -65,7 +65,7 @@ def config_update(clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None):
         return global_scope['conf'].update('hideSecretTTL', hide_secret_TTL)
 
 
-def initialize(vault_location_override, config_location_override, erase=None, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None, change_key=None, import_items=None, export=None, file_format='json'):
+def initialize(vault_location_override, config_location_override, erase=None, clipboard_TTL=None, auto_lock_TTL=None, hide_secret_TTL=None, rekey_vault=None, import_items=None, export=None, file_format='json'):
     # Some nice ascii art
     logo()
 
@@ -98,8 +98,14 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
     config_update(clipboard_TTL, auto_lock_TTL, hide_secret_TTL)
 
     # # Change vault key
-    # if change_key:
-    #     v.changeKey()
+    if rekey_vault:
+        print()
+        # print("Please consider backing up your vault located at `%s` before proceeding." % (
+        #     vault_path))
+        # change_key.rekey()
+        print('This feature is not currently implemented.')
+        print('Please export the vault to a Json file, create a new vault with the new key and import the Json file in the new vault.')
+        sys.exit()
 
     # Import items in the vault
     if import_items:
@@ -153,7 +159,7 @@ def main():
                clipboard_TTL=args.clipboard_TTL,
                auto_lock_TTL=args.auto_lock_TTL,
                hide_secret_TTL=args.hide_secret_TTL,
-               change_key=args.change_key,
+               rekey_vault=args.change_key,
                import_items=args.import_items,
                export=args.export,
                file_format=args.file_format)

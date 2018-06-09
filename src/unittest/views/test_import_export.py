@@ -39,14 +39,14 @@ class Test(BaseTest):
 
         self.session.commit()
 
-    def test_import__(self):
+    def test_import_(self):
         with patch('builtins.input', return_value='y'):
             with patch('getpass.getpass', return_value=self.secret_key):
                 self.assertTrue(import_export.import_(
                     format_='json',
                     path='sample/export.json'))
 
-    def test_import__2(self):
+    def test_import_2(self):
         self.assertRaises(ValueError, import_export.import_,
                           format_='some_invalid_format', path='/tmp/')
 
