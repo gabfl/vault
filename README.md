@@ -9,8 +9,9 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Features
 
- - AES-256 encryption with [pycryptodome](http://legrandin.github.io/pycryptodome/)
- - Secret key is hashed with a unique salt (100,000 iterations)
+ - Secrets are stored in an encrypted SQLite database with [SQLCipher](https://www.zetetic.net/sqlcipher/)
+ - Within the database, each password and notes are encrypted with a unique salt using AES-256 encryption with [pycryptodome](http://legrandin.github.io/pycryptodome/)
+ - Master key is hashed with a unique salt
  - Possibility to create an unlimited number of vaults
  - Clipboard cleared automatically
  - Automatic vault locking after inactivity
@@ -22,6 +23,21 @@ Vault is a simple Python password manager. It allows you to securely save secret
 ![Demo](https://github.com/gabfl/vault/blob/master/img/demo.gif?raw=true)
 
 ## Installation and setup
+
+### Install sqlcipher
+
+Vault 2.x requires `sqlcipher` to be installed on your machine.
+
+On MacOS, you can install it with [brew](https://brew.sh/):
+```bash
+brew install sqlcipher
+```
+
+On Ubuntu/Debian, you can install it with apt-get:
+```bash
+sudo apt-get update
+sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
+```
 
 ### Using PyPI
 
@@ -50,7 +66,7 @@ vault
 ```
 usage: vault [-h] [-t [CLIPBOARD_TTL]] [-p [HIDE_SECRET_TTL]]
              [-a [AUTO_LOCK_TTL]] [-v VAULT_LOCATION] [-c CONFIG_LOCATION]
-             [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-f [{json,native}]] [-e]
+             [-k] [-i IMPORT_ITEMS] [-x EXPORT] [-f [{json}]] [-e]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -70,7 +86,7 @@ optional arguments:
                         File to import credentials from
   -x EXPORT, --export EXPORT
                         File to export credentials to
-  -f [{json,native}], --file_format [{json,native}]
+  -f [{json}], --file_format [{json}]
                         Import/export file format (default: 'json')
   -e, --erase_vault     Erase the vault and config file
 ```

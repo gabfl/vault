@@ -1,0 +1,8 @@
+[MAIN]
+version = 1.00
+keyversion = 1
+salt = 067a73ef-35d1-457f-8769-5eafcc0904c9
+clipboardttl = 15
+hidesecretttl = 5
+autolockttl = 900
+

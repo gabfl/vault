@@ -1,3 +1,6 @@
+import sys
+import os
+
 
 def logo():
     """
@@ -13,7 +16,7 @@ def logo():
     print(r"                                 '.__________.'")
 
 
-def createFolderIfMissing(folderPath):
+def create_directory_if_missing(dir_):
     """
         Create the vault and configuration file storage folder if it does not exist
     """
@@ -21,20 +24,24 @@ def createFolderIfMissing(folderPath):
     import os
 
     try:
-        if not os.path.exists(folderPath):
-            os.makedirs(folderPath)
-    except Exception as e:
+        if not os.path.exists(dir_):
+            os.makedirs(dir_)
+
+            return True
+
+        return False
+    except Exception:
         import sys
 
         print()
         print('We were unable to create the folder `%s` to store the vault and configuration file.' % (
-            folderPath))
+            dir_))
         print('Please check the permissions or run `./vault.py --help` to find out how to specify an alternative path for both files.')
         print()
         sys.exit()
 
 
-def assessIntegrity(vaultPath, configPath):
+def assess_integrity(vault_path, config_path):
     """
         The vault config file contains a salt. The salt is used to unlock the vault along with the master key.
         By default, config files are created automatically. A new config file will not allow to open an existing vault.
@@ -44,7 +51,7 @@ def assessIntegrity(vaultPath, configPath):
     import os
     import sys
 
-    if not os.path.isfile(configPath) and os.path.isfile(vaultPath):
+    if not os.path.isfile(config_path) and os.path.isfile(vault_path):
         print()
         print("It looks like you have a vault setup but your config file is missing.")
         print("The vault cannot be unlocked without a critical piece of information from the config file (the salt).")
@@ -53,7 +60,7 @@ def assessIntegrity(vaultPath, configPath):
         sys.exit()
 
 
-def eraseVault(vaultPath, configPath):
+def erase_vault(vault_path, config_path):
     """
         Will erase the vault and config file after asking user for confirmation
     """
@@ -63,11 +70,11 @@ def eraseVault(vaultPath, configPath):
 
     print()
     if confirm(prompt='Do you want to permanently erase your vault? All your data will be lost!', resp=False):
-        # Delte files
-        if os.path.isfile(vaultPath):
-            os.remove(vaultPath)
-        if os.path.isfile(configPath):
-            os.remove(configPath)
+        # Delete files
+        if os.path.isfile(vault_path):
+            os.remove(vault_path)
+        if os.path.isfile(config_path):
+            os.remove(config_path)
 
         print()
         print('The vault and config file have been deleted.')
@@ -111,3 +118,26 @@ def confirm(prompt=None, resp=False):
             return True
         if ans == 'n' or ans == 'N':
             return False
+
+
+def is_unicode_supported():
+    """
+        Returns `True` if stdout supports unicode
+    """
+
+    if sys.stdout.encoding:
+        return sys.stdout.encoding.lower().startswith('utf-')
+
+    return False
+
+
+def lock_prefix():
+    """
+        Will prefix locks with a Unicode Character 'KEY' (U+1F511)
+        if the user's stdout supports it
+    """
+
+    if is_unicode_supported():
+        return u'\U0001F511  '  # Extra spaces are intentional
+
+    return ''
