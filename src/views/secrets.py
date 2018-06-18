@@ -108,7 +108,7 @@ def add_input():
         url=url,
         login=login,
         password=password,
-        notes="\n".join(notes),
+        notes=notes,
         category_id=category_id or None)
 
     print()
@@ -129,8 +129,7 @@ def notes_input():
         input_ = menu.get_input(message="> ")
         if input_ is False:
             return False
-
-        if input_ == "":
+        elif input_ == "":
             break
         else:
             notes.append(input_)
