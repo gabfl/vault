@@ -49,7 +49,7 @@ class Test(BaseTest):
 
     def test_pick_4(self):
         with patch('builtins.input', return_value=''):
-            self.assertFalse(categories.pick(optional=True))
+            self.assertIsNone(categories.pick(optional=True))
 
     def test_exists(self):
         self.assertTrue(categories.exists(1))
