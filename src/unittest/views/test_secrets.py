@@ -387,8 +387,12 @@ class Test(BaseTest):
         self.assertRaises(ValueError, secrets.edit_input,
                           'some invalid value', secrets.get_by_id(1))
 
-    def test_wait(self):
+    @patch.object(secrets, 'item_view')
+    def test_show_secret(self, patched):
+        patched.return_value = None
+
         # Ensure we have a short wait time
         global_scope['conf'].update('hideSecretTTL', '1')
 
-        self.assertTrue(secrets.show_secret('some password'))
+        secret = secrets.get_by_id(1)
+        self.assertIsNone(secrets.show_secret(secret))
