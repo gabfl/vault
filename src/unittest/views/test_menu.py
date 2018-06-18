@@ -8,6 +8,14 @@ from ...modules.carry import global_scope
 
 class Test(BaseTest):
 
+    def setUp(self):
+        # Preserve enc to restore it on tear down
+        self.enc_save = global_scope['enc']
+
+    def tearDown(self):
+        # restore enc in global scope
+        global_scope['enc'] = self.enc_save
+
     def test_get_input(self):
         with patch('builtins.input', return_value='some input'):
             self.assertEqual(menu.get_input(), 'some input')
