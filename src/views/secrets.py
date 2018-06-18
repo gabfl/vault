@@ -452,7 +452,7 @@ def show_secret(item):
         # Will catch `^-c` and immediately hide the password
         pass
 
-    print('* The password is: ' + '*' *
-          (len(item.password) + random.randint(1, 8)))
+    print('* The password is: ' + '*' * (
+        len(item.password) + random.randint(1, 8)))
 
     return item_view(item)

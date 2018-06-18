@@ -55,8 +55,6 @@ def unlock(redirect_to_menu=True, tentative=1):
 
     if validate_key(key):
         if redirect_to_menu:
-            print()
-            print("%s items are saved in the vault" % (secrets.count()))
             menu()
         else:
             return True
@@ -98,6 +96,9 @@ def menu(next_command=None):
 
         # Small logo
         logo_small()
+
+        # Secret count
+        print("\n%s items are saved in the vault" % (secrets.count()))
 
         if next_command:  # If we already know the next command
             command = next_command
