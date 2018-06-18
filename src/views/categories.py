@@ -48,16 +48,18 @@ def pick(message='Select a category: ', optional=False):
 
     # Cast as int
     try:
-        id_ = int(id_)
-
-        if id_ and exists(id_):
-            return id_
+        id_int = int(id_)
+        if id_int and exists(id_int):
+            return id_int
     except ValueError:  # Not a valid number!
         pass
 
-    if optional:
-        print()
-        print('Invalid category number!')
+    # No category picked
+    if optional and id_ == '':
+        return None
+
+    print()
+    print('Invalid category number!')
 
     return False
 

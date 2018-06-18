@@ -365,7 +365,7 @@ def edit_input(element_name, item):
     if element_name == 'category':
         print('* Current nategory: %s' %
               (get_category_name(item.category_id) or 'Empty!'))
-        category_id = pick(message='* New category: ')
+        category_id = pick(message='* New category: ', optional=True)
 
         if category_id is not False:
             item.category_id = category_id
