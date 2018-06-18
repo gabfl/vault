@@ -41,6 +41,18 @@ def get_session():
     return sessions[db_file]
 
 
+def drop_sessions():
+    """
+        Drop current db sessions
+    """
+
+    global sessions
+
+    sessions = {}
+
+    return True
+
+
 def get_engine(encrypted=True):
     """
         return SQLAlchemy engine

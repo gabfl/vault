@@ -2,7 +2,7 @@
 
 from sqlalchemy import exc
 
-from ..models.base import get_session
+from ..models.base import get_session, drop_sessions
 from ..models.User import User
 from ..modules.carry import global_scope
 
@@ -32,6 +32,9 @@ def validation_key_validate(key):
         user = get_session().query(User).filter(
             User.key == 'key_validation').order_by(User.id.desc()).first()
     except exc.DatabaseError:  # In case of encrypted db, if the encryption key is invalid
+        # Drop db sessions to force a re-connection with the new key
+        drop_sessions()
+
         return False
 
     # Concatenate user given key and config's salt

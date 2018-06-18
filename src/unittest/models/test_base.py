@@ -19,6 +19,10 @@ class Test(BaseTest):
         with patch.dict(global_scope, {'db_file': None}):
             self.assertRaises(RuntimeError, base.get_session)
 
+    def test_drop_sessions(self):
+        self.assertTrue(base.drop_sessions())
+        self.assertEqual(base.sessions, {})
+
     def test_get_engine(self):
         self.assertIsInstance(base.get_engine(), engine.base.Engine)
 
