@@ -9,7 +9,7 @@ from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
 from ..models.Secret import Secret
-from ..modules.misc import confirm
+from ..modules.misc import confirm, clear_screen
 from ..modules.carry import global_scope
 from .categories import get_name as get_category_name, pick
 from . import clipboard, menu
@@ -76,6 +76,9 @@ def add_input():
         Ask user for a secret details and create it
     """
 
+    # Clear screen
+    clear_screen()
+
     # Ask user input
     category_id = pick(
         message='* Choose a category number (or leave empty for none): ', optional=True)
@@ -108,12 +111,14 @@ def add_input():
         url=url,
         login=login,
         password=password,
-        notes="\n".join(notes),
+        notes=notes,
         category_id=category_id or None)
 
     print()
     print('The new item has been saved to your vault.')
     print()
+
+    time.sleep(2)
 
     return True
 
@@ -129,8 +134,7 @@ def notes_input():
         input_ = menu.get_input(message="> ")
         if input_ is False:
             return False
-
-        if input_ == "":
+        elif input_ == "":
             break
         else:
             notes.append(input_)
@@ -165,6 +169,8 @@ def delete_confirm(id_):
         if result is True:
             print()
             print('The secret has been deleted.')
+
+            time.sleep(2)
 
         return result
 
@@ -229,6 +235,9 @@ def search_input():
         return search_results(results)
     else:
         print('No results!')
+
+        time.sleep(2)
+
         return False
 
 
@@ -262,7 +271,9 @@ def item_view(item):
         Show a secret
     """
 
-    print()
+    # Clear screen
+    clear_screen()
+
     print(to_table([item]))
     print()
 
@@ -299,7 +310,7 @@ def item_menu(item):
             clipboard.copy(item.password)
             clipboard.wait()
         elif command == 'o':  # Show a secret
-            show_secret(item.password)
+            return show_secret(item)
         elif command == 'e':  # Edit an item
             item_menu_edit(item)
             return
@@ -315,7 +326,6 @@ def item_menu_edit(item):
         Edit an item
     """
 
-    print()
     command = menu.get_input(
         message='Choose what you would like to edit [(c)ategory / (n)ame  / (u)rl / (l)ogin / (p)assword / n(o)tes / (b)ack to Vault]: ',
         lowercase=True,
@@ -360,6 +370,7 @@ def edit_input(element_name, item):
         if category_id is not False:
             item.category_id = category_id
         else:
+            time.sleep(2)
             print('\nCancelled!')
             return False
     elif element_name == 'name':
@@ -370,6 +381,7 @@ def edit_input(element_name, item):
             item.name = name
         else:
             print('\nCancelled!')
+            time.sleep(2)
             return False
     elif element_name == 'url':
         print('* Current URL: %s' % (item.url) or 'Empty!')
@@ -379,6 +391,7 @@ def edit_input(element_name, item):
             item.url = url
         else:
             print('\nCancelled!')
+            time.sleep(2)
             return False
     elif element_name == 'login':
         print('* Current login: %s' % (item.login) or 'Empty!')
@@ -388,6 +401,7 @@ def edit_input(element_name, item):
             item.login = login
         else:
             print('\nCancelled!')
+            time.sleep(2)
             return False
     elif element_name == 'password':
         print('* Password suggestion: %s' % (pwgenerator.generate()))
@@ -397,6 +411,7 @@ def edit_input(element_name, item):
             item.password = password
         else:
             print('\nCancelled!')
+            time.sleep(2)
             return False
     elif element_name == 'notes':
         print('* Current notes: %s' % (item.notes) or 'Empty!')
@@ -406,6 +421,7 @@ def edit_input(element_name, item):
             item.notes = notes
         else:
             print('\nCancelled!')
+            time.sleep(2)
             return False
     else:
         raise ValueError('Element `%s` not not exists.' % (element_name))
@@ -415,11 +431,12 @@ def edit_input(element_name, item):
     get_session().commit()
 
     print('The %s has been updated.' % (element_name))
+    time.sleep(2)
 
     return True
 
 
-def show_secret(password):
+def show_secret(item):
     """
         Show a secret for X seconds and erase it from the screen
     """
@@ -427,13 +444,14 @@ def show_secret(password):
     try:
         print("* The password will be hidden after %s seconds." %
               (global_scope['conf'].hideSecretTTL))
-        print('* The password is: %s' % (password), end="\r")
+        print('* The password is: %s' % (item.password), end="\r")
 
         time.sleep(int(global_scope['conf'].hideSecretTTL))
     except KeyboardInterrupt:
         # Will catch `^-c` and immediately hide the password
         pass
 
-    print('* The password is: ' + '*' * (len(password) + random.randint(1, 8)))
+    print('* The password is: ' + '*' * (
+        len(item.password) + random.randint(1, 8)))
 
-    return True
+    return item_view(item)

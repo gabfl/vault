@@ -8,7 +8,10 @@ from ...modules import misc
 class Test(BaseTest):
 
     def test_logo(self):
-        self.assertIsNone(misc.logo(), str)
+        self.assertIsNone(misc.logo())
+
+    def test_logo_small(self):
+        self.assertIsNone(misc.logo_small())
 
     def test_create_directory_if_missing(self):
         # When the folder exists
@@ -90,3 +93,6 @@ class Test(BaseTest):
             self.assertEqual(misc.lock_prefix(), u'\U0001F511  ')
         else:
             self.assertEqual(misc.lock_prefix(), '')
+
+    def test_clear_screen(self):
+        self.assertTrue(misc.clear_screen())

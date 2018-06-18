@@ -4,7 +4,7 @@ import getpass
 
 from ..modules.carry import global_scope
 from ..models.base import get_engine, get_session
-from ..modules.misc import lock_prefix
+from ..modules.misc import lock_prefix, clear_screen, logo_small
 from ..lib.Encryption import Encryption
 from . import secrets, users, categories
 
@@ -55,8 +55,6 @@ def unlock(redirect_to_menu=True, tentative=1):
 
     if validate_key(key):
         if redirect_to_menu:
-            print()
-            print("%s items are saved in the vault" % (secrets.count()))
             menu()
         else:
             return True
@@ -93,6 +91,15 @@ def menu(next_command=None):
         # Check then set auto lock timer
         check_then_set_autolock_timer()
 
+        # Clear screen
+        clear_screen()
+
+        # Small logo
+        logo_small()
+
+        # Secret count
+        print("\n%s items are saved in the vault" % (secrets.count()))
+
         if next_command:  # If we already know the next command
             command = next_command
             next_command = None  # reset
@@ -112,6 +119,7 @@ def menu(next_command=None):
         elif command == 'all':  # Show all items
             print()
             print(secrets.to_table(secrets.all()))
+            next_command = secrets.search_input()
         elif command == 'a':  # Add an item
             secrets.add_input()
         elif command == 'cat':  # Manage categories
@@ -129,6 +137,12 @@ def lock():
 
     # Lock the vault
     global_scope['enc'] = None
+
+    # Clear screen
+    clear_screen()
+
+    # Small logo
+    logo_small()
 
     # Unlock form
     unlock(False)

@@ -16,6 +16,18 @@ def logo():
     print(r"                                 '.__________.'")
 
 
+def logo_small():
+    """
+        No comment.
+    """
+
+    print(r"                  _ _   ")
+    print(r"__   ____ _ _   _| | |_ ")
+    print(r"\ \ / / _` | | | | | __|")
+    print(r" \ V / (_| | |_| | | |_ ")
+    print(r"  \_/ \__,_|\__,_|_|\__|")
+
+
 def create_directory_if_missing(dir_):
     """
         Create the vault and configuration file storage folder if it does not exist
@@ -141,3 +153,13 @@ def lock_prefix():
         return u'\U0001F511  '  # Extra spaces are intentional
 
     return ''
+
+
+def clear_screen():
+    """
+        Clear user window
+    """
+
+    print('\x1b[1J')
+
+    return True

@@ -1,11 +1,13 @@
 # Categories view
 
+import time
+
 from tabulate import tabulate
 
 from ..models.base import get_session
 from ..models.Category import Category
 from ..models.Secret import Secret
-from ..modules.misc import confirm
+from ..modules.misc import confirm, clear_screen
 from . import menu
 
 
@@ -137,6 +139,8 @@ def add_input():
     print()
     print('The category has been created.')
 
+    time.sleep(2)
+
     return result
 
 
@@ -182,6 +186,8 @@ def rename_input():
     if result is True:
         print()
         print('The category has been renamed.')
+
+        time.sleep(2)
 
     return result
 
@@ -230,6 +236,8 @@ def delete_input():
             print()
             print('The category has been deleted.')
 
+            time.sleep(2)
+
         return result
 
     return False
@@ -253,6 +261,9 @@ def main_menu():
     """
 
     while (True):
+        # Clear screen
+        clear_screen()
+
         # List categories
         print(to_table(all()))
 
