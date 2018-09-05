@@ -234,9 +234,14 @@ def search_input():
     elif len(results) > 1:  # More than one result
         return search_results(results)
     else:
-        print('No results!')
+        try:
+            print('No results!')
 
-        time.sleep(2)
+            time.sleep(2)
+        except KeyboardInterrupt:
+            pass
+        except Exception:  # Other Exception
+            pass
 
         return False
 
