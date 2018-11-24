@@ -28,7 +28,7 @@ class Test(BaseTest):
         self.session.add(secret_2)
         secret_3 = SecretModel(name='eBay',
                                url='https://www.ebay.com',
-                               login='gab@gmail.com',
+                               login='gab2@gmail.com',
                                password='123password',
                                notes='')
         self.session.add(secret_3)
@@ -61,6 +61,9 @@ class Test(BaseTest):
 
     def test_get_by_id(self):
         self.assertEqual(secrets.get_by_id(1).name, 'Paypal')
+
+    def test_get_top_logins(self):
+        assert secrets.get_top_logins() == ['gab@gmail.com', 'gab2@gmail.com']
 
     def test_add(self):
         self.assertTrue(secrets.add(name='Some name'))
@@ -123,7 +126,7 @@ class Test(BaseTest):
         # Search with a login
         results = secrets.search('gab@gmail')
         self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 2)
 
     def test_search_3(self):
         # Search with a URL

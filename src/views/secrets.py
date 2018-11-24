@@ -3,7 +3,7 @@
 import time
 import random
 
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from tabulate import tabulate
 from passwordgenerator import pwgenerator
 
@@ -55,6 +55,24 @@ def get_by_id(id_):
     return get_session().query(SecretModel).get(int(id_))
 
 
+def get_top_logins(limit=10):
+    """ Return most popular logins for auto-completion """
+
+    count_ = func.count('*')
+
+    results = get_session().query(SecretModel.login, count_).\
+        filter(SecretModel.login != '').\
+        group_by(SecretModel.login).\
+        order_by(count_.desc()).\
+        limit(limit).\
+        all()
+
+    if results:
+        return [result.login for result in results]
+
+    return []
+
+
 def add(name, url='', login='', password='', notes='', category_id=None):
     """
         Create a new secret
@@ -94,6 +112,8 @@ def add_input():
     if url is False:
         return False
 
+    # Get list for auto-completion
+    autocomplete.completion_list = get_top_logins()
     login = autocomplete.get_input_autocomplete(
         message='* Login (use [tab] for autocompletion): ')
     if login is False:
@@ -102,9 +122,9 @@ def add_input():
     suggestion = pwgenerator.generate()
     print('* Password suggestion: %s' % (suggestion))
     password = menu.get_input(
-        message='* Password (press [enter] to use suggestion): ', secure=True)
+        message='* Password: ', secure=True)
     if password is False:
-        password = suggestion
+        return False
 
     notes = notes_input()
     if notes is False:
