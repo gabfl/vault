@@ -324,7 +324,7 @@ def item_menu(item):
 
     while True:
         command = menu.get_input(
-            message='Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
+            message='Choose a command [copy (l)ogin, (p)assword or (u)rl to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
             lowercase=True,
             non_locking_values=['l', 'q']
         )
@@ -338,6 +338,9 @@ def item_menu(item):
             clipboard.wait()
         elif command == 'p':  # Copy a secret to the clipboard
             clipboard.copy(item.password)
+            clipboard.wait()
+        elif command == 'u':  # Copy URL to the clipboard
+            clipboard.copy(item.url, 'URL')
             clipboard.wait()
         elif command == 'o':  # Show a secret
             return show_secret(item)
