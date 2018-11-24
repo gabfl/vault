@@ -123,7 +123,10 @@ def initialize(vault_location_override, config_location_override, erase=None, cl
 
     # Check if the vault exists
     if not os.path.isfile(vault_path):
-        setup.initialize(global_scope['conf'].salt)
+        res = setup.initialize(global_scope['conf'].salt)
+        if res is False:
+            print()
+            return False
 
     # Unlock the vault
     unlock()

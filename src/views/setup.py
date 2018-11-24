@@ -22,6 +22,8 @@ def initialize(salt):
     while True:
         # Ask user for a master key
         key = get_key_input()
+        if key is False:
+            return False
 
         if key:
             # Create Encryption instance and set it to the global scope
@@ -61,14 +63,18 @@ def get_key_input():
 
     key = get_input(message='Please choose a master key:',
                     secure=True, check_timer=False)
+    if key is False:
+        return False
     repeat = get_input(
         message='Please confirm your master key:', secure=True, check_timer=False)
+    if repeat is False:
+        return False
 
     # Ensure that the key was correctly typed twice and is valid
     if check_key_and_repeat(key, repeat) and is_key_valid(key):
         return key
 
-    return False
+    return None
 
 
 def is_key_valid(key):

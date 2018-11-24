@@ -17,7 +17,7 @@ def autocomplete(text, state):
     line = readline.get_line_buffer().split()
 
     # account for last argument ending in a space
-    if re.compile('.*\s+$', re.M).match(buffer):
+    if re.compile(r'.*\s+$', re.M).match(buffer):
         line.append('')
 
     # resolve command to the implementation function
