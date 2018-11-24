@@ -8,9 +8,10 @@ from tabulate import tabulate
 from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
-from ..models.Secret import Secret
+from ..models.Secret import SecretModel
 from ..modules.misc import confirm, clear_screen
 from ..modules.carry import global_scope
+from ..modules import autocomplete
 from .categories import get_name as get_category_name, pick
 from . import clipboard, menu
 
@@ -20,7 +21,7 @@ def all():
         Return a list of all secrets
     """
 
-    return get_session().query(Secret).order_by(Secret.id).all()
+    return get_session().query(SecretModel).order_by(SecretModel.id).all()
 
 
 def to_table(rows=[]):
@@ -43,7 +44,7 @@ def count():
         Return a count of all secrets
     """
 
-    return get_session().query(Secret).count()
+    return get_session().query(SecretModel).count()
 
 
 def get_by_id(id_):
@@ -51,7 +52,7 @@ def get_by_id(id_):
         Get a secret by ID
     """
 
-    return get_session().query(Secret).get(int(id_))
+    return get_session().query(SecretModel).get(int(id_))
 
 
 def add(name, url='', login='', password='', notes='', category_id=None):
@@ -59,12 +60,12 @@ def add(name, url='', login='', password='', notes='', category_id=None):
         Create a new secret
     """
 
-    secret = Secret(name=name,
-                    url=url,
-                    login=login,
-                    password=password,
-                    notes=notes,
-                    category_id=category_id)
+    secret = SecretModel(name=name,
+                         url=url,
+                         login=login,
+                         password=password,
+                         notes=notes,
+                         category_id=category_id)
     get_session().add(secret)
     get_session().commit()
 
@@ -93,14 +94,17 @@ def add_input():
     if url is False:
         return False
 
-    login = menu.get_input(message='* Login: ')
+    login = autocomplete.get_input_autocomplete(
+        message='* Login (use [tab] for autocompletion): ')
     if login is False:
         return False
 
-    print('* Password suggestion: %s' % (pwgenerator.generate()))
-    password = menu.get_input(message='* Password: ', secure=True)
+    suggestion = pwgenerator.generate()
+    print('* Password suggestion: %s' % (suggestion))
+    password = menu.get_input(
+        message='* Password (press [enter] to use suggestion): ', secure=True)
     if password is False:
-        return False
+        password = suggestion
 
     notes = notes_input()
     if notes is False:
@@ -147,7 +151,8 @@ def delete(id_):
         Delete a secret
     """
 
-    secret = get_session().query(Secret).filter(Secret.id == int(id_)).first()
+    secret = get_session().query(SecretModel).filter(
+        SecretModel.id == int(id_)).first()
 
     if secret:
         get_session().delete(secret)
@@ -184,9 +189,9 @@ def search(query):
 
     query = '%' + str(query) + '%'
 
-    return get_session().query(Secret) \
-        .filter(or_(Secret.name.like(query), Secret.url.like(query), Secret.login.like(query))) \
-        .order_by(Secret.id).all()
+    return get_session().query(SecretModel) \
+        .filter(or_(SecretModel.name.like(query), SecretModel.url.like(query), SecretModel.login.like(query))) \
+        .order_by(SecretModel.id).all()
 
 
 def search_dispatch(query):

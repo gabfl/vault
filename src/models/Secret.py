@@ -5,7 +5,7 @@ from .base import Base
 from ..modules.carry import global_scope
 
 
-class Secret(Base):
+class SecretModel(Base):
     __tablename__ = 'secrets'
 
     id = Column(Integer, primary_key=True)
@@ -28,13 +28,11 @@ class Secret(Base):
         self.category_id = category_id
 
     def __repr__(self):
-        return "<Secret(id='%s', name='%s', login='%s', salt='%s')>" % (
+        return "<SecretModel(id='%s', name='%s', login='%s', salt='%s')>" % (
             self.id, self.name, self.login, self._salt)
 
     def get_enc(self):
-        """
-            Returns a shared instance of Encryption class
-        """
+        """ Returns a shared instance of Encryption class """
 
         if global_scope['enc'] is None:
             raise RuntimeError('`enc` is not defined in the global scope.')
@@ -43,52 +41,40 @@ class Secret(Base):
 
     @hybrid_property
     def salt(self):
-        """
-            `salt` getter
-        """
+        """ `salt` getter """
 
         return self._salt
 
     @salt.setter
     def salt(self, void=''):
-        """
-            `salt` setter
-        """
+        """ `salt` setter """
 
         self._salt = self.get_enc().gen_salt()
 
     @hybrid_property
     def password(self):
-        """
-            `password` getter
-        """
+        """ `password` getter """
 
         self.get_enc().set_salt(self.salt)
         return self.get_enc().decrypt(self._password).decode('utf-8')
 
     @password.setter
     def password(self, password):
-        """
-            `password` setter
-        """
+        """ `password` setter """
 
         self.get_enc().set_salt(self.salt)
         self._password = self.get_enc().encrypt(password.encode())
 
     @hybrid_property
     def notes(self):
-        """
-            `notes` getter
-        """
+        """ `notes` getter """
 
         self.get_enc().set_salt(self.salt)
         return self.get_enc().decrypt(self._notes).decode('utf-8')
 
     @notes.setter
     def notes(self, notes):
-        """
-            `notes` setter
-        """
+        """ `notes` setter """
 
         self.get_enc().set_salt(self.salt)
         self._notes = self.get_enc().encrypt(notes.encode())

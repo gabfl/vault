@@ -7,8 +7,8 @@ from ..base import BaseTest
 from ...views import change_key
 from ...modules.carry import global_scope
 from ...lib.Encryption import Encryption
-from ...models.Secret import Secret
-from ...models.User import User
+from ...models.Secret import SecretModel
+from ...models.User import UserModel
 
 
 class Test(BaseTest):
@@ -20,23 +20,23 @@ class Test(BaseTest):
         change_key.enc_new = Encryption(global_scope['enc'].key)
 
         # Create some secrets
-        secret_1 = Secret(name='Paypal',
-                          url='https://www.paypal.com',
-                          login='gab@gmail.com',
-                          password='password123',
-                          notes='Some notes')
+        secret_1 = SecretModel(name='Paypal',
+                               url='https://www.paypal.com',
+                               login='gab@gmail.com',
+                               password='password123',
+                               notes='Some notes')
         self.session.add(secret_1)
-        secret_2 = Secret(name='Gmail',
-                          url='https://www.gmail.com',
-                          login='gab@gmail.com',
-                          password='password;123',
-                          notes='Some notes\nsome more notes')
+        secret_2 = SecretModel(name='Gmail',
+                               url='https://www.gmail.com',
+                               login='gab@gmail.com',
+                               password='password;123',
+                               notes='Some notes\nsome more notes')
         self.session.add(secret_2)
-        secret_3 = Secret(name='eBay',
-                          url='https://www.ebay.com',
-                          login='gab@gmail.com',
-                          password='123password',
-                          notes='')
+        secret_3 = SecretModel(name='eBay',
+                               url='https://www.ebay.com',
+                               login='gab@gmail.com',
+                               password='123password',
+                               notes='')
         self.session.add(secret_3)
 
         # Create validation key
@@ -44,15 +44,15 @@ class Test(BaseTest):
             global_scope['conf'].salt.encode()
 
         # Save user
-        user = User(key='key_validation',
-                    value=global_scope['enc'].encrypt(key_salt))
+        user = UserModel(key='key_validation',
+                         value=global_scope['enc'].encrypt(key_salt))
         self.session.add(user)
 
         self.session.commit()
 
     def tearDown(self):
         # Truncate users table
-        self.session.query(User).delete()
+        self.session.query(UserModel).delete()
         self.session.commit()
 
     def test_rekey(self):

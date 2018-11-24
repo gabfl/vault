@@ -1,8 +1,8 @@
 from unittest.mock import patch
 
 from ..base import BaseTest
-from ...models.Category import Category
-from ...models.Secret import Secret
+from ...models.Category import CategoryModel
+from ...models.Secret import SecretModel
 from ...views import categories
 
 
@@ -10,18 +10,18 @@ class Test(BaseTest):
 
     def setUp(self):
         # Create some categories
-        category_1 = Category(name='My category 1')
+        category_1 = CategoryModel(name='My category 1')
         self.session.add(category_1)
-        category_2 = Category(name='My category 2')
+        category_2 = CategoryModel(name='My category 2')
         self.session.add(category_2)
-        category_3 = Category(name='My category 3')
+        category_3 = CategoryModel(name='My category 3')
         self.session.add(category_3)
-        category_4 = Category(name='My disabled category', active=0)
+        category_4 = CategoryModel(name='My disabled category', active=0)
         self.session.add(category_4)
         self.session.commit()
 
     def tearDown(self):
-        self.session.query(Category).delete()
+        self.session.query(CategoryModel).delete()
         self.session.commit()
 
     def test_all(self):
@@ -82,8 +82,8 @@ class Test(BaseTest):
     def test_add(self):
         self.assertTrue(categories.add('My new category'))
 
-        cat = self.session.query(Category).filter(
-            Category.name == 'My new category').first()
+        cat = self.session.query(CategoryModel).filter(
+            CategoryModel.name == 'My new category').first()
         self.assertEqual(cat.name, 'My new category')
 
     def test_add_input(self):
@@ -97,8 +97,8 @@ class Test(BaseTest):
     def test_rename(self):
         # Create a category
         categories.add('My new category')
-        cat = self.session.query(Category).filter(
-            Category.name == 'My new category').first()
+        cat = self.session.query(CategoryModel).filter(
+            CategoryModel.name == 'My new category').first()
 
         # Rename it
         self.assertTrue(categories.rename(cat.id, 'Some new name'))
@@ -139,8 +139,8 @@ class Test(BaseTest):
     def test_delete(self):
         # Create a category
         categories.add('My new category')
-        cat = self.session.query(Category).filter(
-            Category.name == 'My new category').first()
+        cat = self.session.query(CategoryModel).filter(
+            CategoryModel.name == 'My new category').first()
 
         # Rename it
         self.assertTrue(categories.delete(cat.id))
@@ -190,8 +190,8 @@ class Test(BaseTest):
         patched.return_value = '1'
 
         # Create a secret
-        secret = Secret(name='Name', url='-', login='login',
-                        password='password', category_id=1)
+        secret = SecretModel(name='Name', url='-', login='login',
+                             password='password', category_id=1)
         self.session.add(secret)
         self.session.commit()
 
@@ -199,8 +199,8 @@ class Test(BaseTest):
 
     def test_is_used(self):
         # Create a secret
-        secret = Secret(name='Name', url='-', login='login',
-                        password='password', category_id=1)
+        secret = SecretModel(name='Name', url='-', login='login',
+                             password='password', category_id=1)
         self.session.add(secret)
         self.session.commit()
 

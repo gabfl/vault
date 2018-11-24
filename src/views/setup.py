@@ -3,8 +3,8 @@ import sys
 import uuid
 
 from ..models.base import Base, get_session, get_engine
-from ..models.Category import Category  # Imported for schema creation
-from ..models.Secret import Secret  # Imported for schema creation
+from ..models.Category import CategoryModel  # Imported for schema creation
+from ..models.Secret import SecretModel  # Imported for schema creation
 from ..modules.carry import global_scope
 from .users import validation_key_new
 from .menu import get_input

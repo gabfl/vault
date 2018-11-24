@@ -5,7 +5,7 @@ import uuid
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from ..models.base import Base, get_session, get_engine
-from ..models.User import User
+from ..models.User import UserModel
 from ..lib.Config import Config
 from ..lib.Encryption import Encryption
 from ..modules.carry import global_scope
@@ -49,8 +49,8 @@ class BaseTest(unittest.TestCase):
         ) + global_scope['conf'].salt.encode()
 
         # Save user
-        user = User(key='key_validation',
-                    value=cls.enc.encrypt(key_salt))
+        user = UserModel(key='key_validation',
+                         value=cls.enc.encrypt(key_salt))
         cls.session.add(user)
         cls.session.commit()
 

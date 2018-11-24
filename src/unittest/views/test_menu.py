@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from ..base import BaseTest
-from ...models.Secret import Secret
+from ...models.Secret import SecretModel
 from ...views import menu
 from ...modules.carry import global_scope
 
