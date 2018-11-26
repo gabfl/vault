@@ -3,27 +3,35 @@ import readline
 
 # Usage:
 #
-# completion_list = ['suggestion', 'suggestion2', 'other_suggestion']
+# set_parameters(list_=['suggestion', 'suggestion2', 'other_suggestion'])
 # result = get_input_autocomplete()
 # print('Response -> ** % s**' % result)
 
 completion_list = ['one', 'two', 'thee']
+is_case_sensitive = True
+
+
+def set_parameters(list_, case_sensitive=True):
+    """ Set module parameters """
+
+    global completion_list, is_case_sensitive
+
+    completion_list = list_
+    is_case_sensitive = case_sensitive
 
 
 def autocomplete(text, state):
     """ Generic readline completion entry point. """
 
     buffer = readline.get_line_buffer()
-    line = readline.get_line_buffer().split()
 
-    # account for last argument ending in a space
-    if re.compile(r'.*\s+$', re.M).match(buffer):
-        line.append('')
+    comp = completion_list
+    if not is_case_sensitive:
+        buffer = buffer.lower()
+        comp = [c.lower() for c in completion_list]
 
-    # resolve command to the implementation function
-    cmd = line[0].strip()
-
-    results = [c for c in completion_list if c.startswith(cmd)] + [None]
+    results = [c.split()[-1]
+               for c in comp if c.startswith(buffer)] + [None]
 
     return results[state]
 
