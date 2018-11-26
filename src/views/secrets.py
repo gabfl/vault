@@ -55,6 +55,19 @@ def get_by_id(id_):
     return get_session().query(SecretModel).get(int(id_))
 
 
+def get_names(limit=2000):
+    """ Return secret's names for auto-completion """
+
+    results = get_session().query(SecretModel.name).\
+        filter(SecretModel.name != '').\
+        all()
+
+    if results:
+        return [result.name for result in results]
+
+    return []
+
+
 def get_top_logins(limit=10):
     """ Return most popular logins for auto-completion """
 
@@ -113,7 +126,7 @@ def add_input():
         return False
 
     # Get list for auto-completion
-    autocomplete.completion_list = get_top_logins()
+    autocomplete.set_parameters(list_=get_top_logins(), case_sensitive=True)
     login = autocomplete.get_input_autocomplete(
         message='* Login (use [tab] for autocompletion): ')
     if login is False:
@@ -238,7 +251,9 @@ def search_input():
 
     # Ask user input
     print()
-    query = menu.get_input(message='Enter search: ')
+    autocomplete.set_parameters(list_=get_names(), case_sensitive=False)
+    query = autocomplete.get_input_autocomplete(
+        message='Enter search: ')
 
     if not query:
         print()

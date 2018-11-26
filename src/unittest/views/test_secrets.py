@@ -62,6 +62,9 @@ class Test(BaseTest):
     def test_get_by_id(self):
         self.assertEqual(secrets.get_by_id(1).name, 'Paypal')
 
+    def test_get_names(self):
+        assert secrets.get_names() == ['Paypal', 'Gmail', 'eBay']
+
     def test_get_top_logins(self):
         assert secrets.get_top_logins() == ['gab@gmail.com', 'gab2@gmail.com']
 
