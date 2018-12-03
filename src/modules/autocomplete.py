@@ -30,8 +30,12 @@ def autocomplete(text, state):
         buffer = buffer.lower()
         comp = [c.lower() for c in completion_list]
 
-    results = [c.split()[-1]
-               for c in comp if c.startswith(buffer)] + [None]
+    results = [c for c in comp if c.startswith(buffer)] + [None]
+
+    # Handle multi-word inputs by truncating strings at the last space
+    if buffer.find(' ') > 0:
+        strip_pos = buffer.rfind(' ') + 1
+        results = [i[strip_pos:] for i in results if i is not None] + [None]
 
     return results[state]
 

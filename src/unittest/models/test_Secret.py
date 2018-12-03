@@ -62,6 +62,3 @@ class Test(BaseTest):
         secret = self.session.query(
             SecretModel).filter_by(name=self.name).first()
         self.assertEqual(secret.notes, self.notes)
-
-    # def test_get_top_logins(self):
-    #     assert

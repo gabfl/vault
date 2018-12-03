@@ -60,6 +60,7 @@ def get_names(limit=2000):
 
     results = get_session().query(SecretModel.name).\
         filter(SecretModel.name != '').\
+        limit(limit).\
         all()
 
     if results:
