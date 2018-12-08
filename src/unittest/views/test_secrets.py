@@ -3,8 +3,8 @@ from unittest.mock import patch
 import pyperclip
 
 from ..base import BaseTest
-from ...models.Secret import Secret
-from ...models.Category import Category
+from ...models.Secret import SecretModel
+from ...models.Category import CategoryModel
 from ...views import secrets
 from ...modules.carry import global_scope
 
@@ -13,34 +13,34 @@ class Test(BaseTest):
 
     def setUp(self):
         # Create some secrets
-        secret_1 = Secret(name='Paypal',
-                          url='https://www.paypal.com',
-                          login='gab@gmail.com',
-                          password='password123',
-                          notes='Some notes',
-                          category_id=1)
+        secret_1 = SecretModel(name='Paypal',
+                               url='https://www.paypal.com',
+                               login='gab@gmail.com',
+                               password='password123',
+                               notes='Some notes',
+                               category_id=1)
         self.session.add(secret_1)
-        secret_2 = Secret(name='Gmail',
-                          url='https://www.gmail.com',
-                          login='gab@gmail.com',
-                          password='password;123',
-                          notes='Some notes\nsome more notes')
+        secret_2 = SecretModel(name='Gmail',
+                               url='https://www.gmail.com',
+                               login='gab@gmail.com',
+                               password='password;123',
+                               notes='Some notes\nsome more notes')
         self.session.add(secret_2)
-        secret_3 = Secret(name='eBay',
-                          url='https://www.ebay.com',
-                          login='gab@gmail.com',
-                          password='123password',
-                          notes='')
+        secret_3 = SecretModel(name='eBay',
+                               url='https://www.ebay.com',
+                               login='gab2@gmail.com',
+                               password='123password',
+                               notes='')
         self.session.add(secret_3)
 
         # Add a category as well
-        category_1 = Category(name='My category 1')
+        category_1 = CategoryModel(name='My category 1')
         self.session.add(category_1)
 
         self.session.commit()
 
     def tearDown(self):
-        self.session.query(Secret).delete()
+        self.session.query(SecretModel).delete()
         self.session.commit()
 
     def test_all(self):
@@ -61,6 +61,12 @@ class Test(BaseTest):
 
     def test_get_by_id(self):
         self.assertEqual(secrets.get_by_id(1).name, 'Paypal')
+
+    def test_get_names(self):
+        assert secrets.get_names() == ['Paypal', 'Gmail', 'eBay']
+
+    def test_get_top_logins(self):
+        assert secrets.get_top_logins() == ['gab@gmail.com', 'gab2@gmail.com']
 
     def test_add(self):
         self.assertTrue(secrets.add(name='Some name'))
@@ -123,7 +129,7 @@ class Test(BaseTest):
         # Search with a login
         results = secrets.search('gab@gmail')
         self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 2)
 
     def test_search_3(self):
         # Search with a URL

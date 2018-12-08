@@ -1,14 +1,15 @@
 from ..base import BaseTest
-from ...models.User import User
+from ...models.User import UserModel
 
 
 class Test(BaseTest):
 
     def test_get_key_validation(self):
-        user = self.session.query(User).filter_by(key='key_validation').first()
+        user = self.session.query(UserModel).filter_by(
+            key='key_validation').first()
         self.assertIsInstance(user.value, bytes)
 
     def test_repr(self):
-        user = self.session.query(User).get(1)
+        user = self.session.query(UserModel).get(1)
         print(user)  # Required for codecov
         self.assertIsInstance(user, object)

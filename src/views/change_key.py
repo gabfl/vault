@@ -10,9 +10,9 @@ from ..modules.carry import global_scope
 from ..lib.Encryption import Encryption
 from .users import validation_key_rekey
 from ..models.base import Base, get_session, get_engine
-from ..models.Category import Category  # Imported for schema creation
-from ..models.Secret import Secret  # Imported for schema creation
-from ..models.User import User  # Imported for schema creation
+from ..models.Category import CategoryModel  # Imported for schema creation
+from ..models.Secret import SecretModel  # Imported for schema creation
+from ..models.User import UserModel  # Imported for schema creation
 
 enc_current = enc_new = None
 

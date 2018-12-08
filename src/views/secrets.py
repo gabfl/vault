@@ -3,14 +3,15 @@
 import time
 import random
 
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from tabulate import tabulate
 from passwordgenerator import pwgenerator
 
 from ..models.base import get_session
-from ..models.Secret import Secret
+from ..models.Secret import SecretModel
 from ..modules.misc import confirm, clear_screen
 from ..modules.carry import global_scope
+from ..modules import autocomplete
 from .categories import get_name as get_category_name, pick
 from . import clipboard, menu
 
@@ -20,7 +21,7 @@ def all():
         Return a list of all secrets
     """
 
-    return get_session().query(Secret).order_by(Secret.id).all()
+    return get_session().query(SecretModel).order_by(SecretModel.id).all()
 
 
 def to_table(rows=[]):
@@ -43,7 +44,7 @@ def count():
         Return a count of all secrets
     """
 
-    return get_session().query(Secret).count()
+    return get_session().query(SecretModel).count()
 
 
 def get_by_id(id_):
@@ -51,7 +52,39 @@ def get_by_id(id_):
         Get a secret by ID
     """
 
-    return get_session().query(Secret).get(int(id_))
+    return get_session().query(SecretModel).get(int(id_))
+
+
+def get_names(limit=2000):
+    """ Return secret's names for auto-completion """
+
+    results = get_session().query(SecretModel.name).\
+        filter(SecretModel.name != '').\
+        limit(limit).\
+        all()
+
+    if results:
+        return [result.name for result in results]
+
+    return []
+
+
+def get_top_logins(limit=10):
+    """ Return most popular logins for auto-completion """
+
+    count_ = func.count('*')
+
+    results = get_session().query(SecretModel.login, count_).\
+        filter(SecretModel.login != '').\
+        group_by(SecretModel.login).\
+        order_by(count_.desc()).\
+        limit(limit).\
+        all()
+
+    if results:
+        return [result.login for result in results]
+
+    return []
 
 
 def add(name, url='', login='', password='', notes='', category_id=None):
@@ -59,12 +92,12 @@ def add(name, url='', login='', password='', notes='', category_id=None):
         Create a new secret
     """
 
-    secret = Secret(name=name,
-                    url=url,
-                    login=login,
-                    password=password,
-                    notes=notes,
-                    category_id=category_id)
+    secret = SecretModel(name=name,
+                         url=url,
+                         login=login,
+                         password=password,
+                         notes=notes,
+                         category_id=category_id)
     get_session().add(secret)
     get_session().commit()
 
@@ -93,12 +126,17 @@ def add_input():
     if url is False:
         return False
 
-    login = menu.get_input(message='* Login: ')
+    # Get list for auto-completion
+    autocomplete.set_parameters(list_=get_top_logins(), case_sensitive=True)
+    login = autocomplete.get_input_autocomplete(
+        message='* Login (use [tab] for autocompletion): ')
     if login is False:
         return False
 
-    print('* Password suggestion: %s' % (pwgenerator.generate()))
-    password = menu.get_input(message='* Password: ', secure=True)
+    suggestion = pwgenerator.generate()
+    print('* Password suggestion: %s' % (suggestion))
+    password = menu.get_input(
+        message='* Password: ', secure=True)
     if password is False:
         return False
 
@@ -147,7 +185,8 @@ def delete(id_):
         Delete a secret
     """
 
-    secret = get_session().query(Secret).filter(Secret.id == int(id_)).first()
+    secret = get_session().query(SecretModel).filter(
+        SecretModel.id == int(id_)).first()
 
     if secret:
         get_session().delete(secret)
@@ -184,9 +223,9 @@ def search(query):
 
     query = '%' + str(query) + '%'
 
-    return get_session().query(Secret) \
-        .filter(or_(Secret.name.like(query), Secret.url.like(query), Secret.login.like(query))) \
-        .order_by(Secret.id).all()
+    return get_session().query(SecretModel) \
+        .filter(or_(SecretModel.name.like(query), SecretModel.url.like(query), SecretModel.login.like(query))) \
+        .order_by(SecretModel.id).all()
 
 
 def search_dispatch(query):
@@ -213,7 +252,9 @@ def search_input():
 
     # Ask user input
     print()
-    query = menu.get_input(message='Enter search: ')
+    autocomplete.set_parameters(list_=get_names(), case_sensitive=False)
+    query = autocomplete.get_input_autocomplete(
+        message='Enter search: ')
 
     if not query:
         print()
@@ -299,7 +340,7 @@ def item_menu(item):
 
     while True:
         command = menu.get_input(
-            message='Choose a command [copy (l)ogin or (p)assword to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
+            message='Choose a command [copy (l)ogin, (p)assword or (u)rl to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
             lowercase=True,
             non_locking_values=['l', 'q']
         )
@@ -313,6 +354,9 @@ def item_menu(item):
             clipboard.wait()
         elif command == 'p':  # Copy a secret to the clipboard
             clipboard.copy(item.password)
+            clipboard.wait()
+        elif command == 'u':  # Copy URL to the clipboard
+            clipboard.copy(item.url, 'URL')
             clipboard.wait()
         elif command == 'o':  # Show a secret
             return show_secret(item)

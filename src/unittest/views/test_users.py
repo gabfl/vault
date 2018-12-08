@@ -1,7 +1,7 @@
 from ..base import BaseTest
 from ...models.base import get_session, sessions
 from ...models import base
-from ...models.User import User
+from ...models.User import UserModel
 from ...views import users
 from ...modules.carry import global_scope
 from ...lib.Encryption import Encryption
@@ -15,22 +15,22 @@ class Test(BaseTest):
             global_scope['conf'].salt.encode()
 
         # Save user
-        user = User(key='key_validation',
-                    value=global_scope['enc'].encrypt(key_salt))
+        user = UserModel(key='key_validation',
+                         value=global_scope['enc'].encrypt(key_salt))
         get_session().add(user)
         get_session().commit()
 
     def tearDown(self):
         # Truncate table
-        self.session.query(User).delete()
+        self.session.query(UserModel).delete()
         self.session.commit()
 
     def test_validation_key_new(self):
         users.validation_key_new()
 
         # Get inserted row
-        user = get_session().query(User).filter(
-            User.key == 'key_validation').order_by(User.id.desc()).first()
+        user = get_session().query(UserModel).filter(
+            UserModel.key == 'key_validation').order_by(UserModel.id.desc()).first()
 
         # Re-create key + salt
         key_salt = global_scope['enc'].key + \
@@ -75,7 +75,7 @@ class Test(BaseTest):
         # Test without a valid row in the table
 
         # Truncate table
-        self.session.query(User).delete()
+        self.session.query(UserModel).delete()
         self.session.commit()
 
         enc = Encryption(b'new key')
