@@ -238,15 +238,8 @@ class Test(BaseTest):
         with patch('builtins.input', return_value='s'):
             self.assertEqual(secrets.item_menu(secrets.get_by_id(1)), 's')
 
-    @patch.object(secrets, 'item_menu_edit')
-    def test_item_men_2(self, patched):
-        patched.return_value = None
-
-        with patch('builtins.input', return_value='e'):
-            self.assertIsNone(secrets.item_menu(secrets.get_by_id(1)))
-
     @patch.object(secrets, 'delete_confirm')
-    def test_item_men_3(self, patched):
+    def test_item_menu_2(self, patched):
         patched.return_value = None
 
         with patch('builtins.input', return_value='d'):
