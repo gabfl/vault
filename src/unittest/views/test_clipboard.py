@@ -16,6 +16,11 @@ class Test(BaseTest):
         self.assertEqual(clipboard.get_signature(
             'some string'), '61d034473102d7dac305902770471fd50f4c5b26f6831a56dd90b5184b3c30fc')
 
+    @patch.object(pyperclip, 'copy')
+    def test_copy_none(self, patched):
+        patched.return_value = None
+        assert clipboard.copy(None) is False
+
     @patch.object(pyperclip, 'paste')
     def test_is_changed(self, patched):
         patched.return_value = 'some string'
