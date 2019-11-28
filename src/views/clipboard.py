@@ -15,6 +15,11 @@ def copy(to_copy, name='password'):
 
     global clipboard_signature
 
+    # Discard invalid input like `None` or empty strings
+    if type(to_copy) != str or to_copy == '':
+        print('* Nothing to copy!')
+        return False
+
     pyperclip.copy(to_copy)
 
     print('* The %s has been copied to the clipboard.' % (name))

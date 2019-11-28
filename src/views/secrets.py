@@ -340,7 +340,15 @@ def item_menu(item):
 
     while True:
         command = menu.get_input(
-            message='Choose a command [copy (l)ogin, (p)assword or (u)rl to clipboard / sh(o)w password / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ',
+            message='Choose a command [%s%s%s%s%s%s / (e)dit / (d)elete / (s)earch / (b)ack to Vault]: ' % (
+                    'copy ' if item.login or item.password or item.url else '',
+                    '(l)ogin, ' if item.login else '',
+                    '(p)assword' if item.password else '',
+                    ' or ' if (
+                        item.login or item.password) and item.url else '',
+                    '(u)rl to clipboard' if item.url else '',
+                    ' / sh(o)w password' if item.password else '',
+            ),
             lowercase=True,
             non_locking_values=['l', 'q']
         )
@@ -362,7 +370,6 @@ def item_menu(item):
             return show_secret(item)
         elif command == 'e':  # Edit an item
             item_menu_edit(item)
-            return
         elif command == 'd':  # Delete an item
             delete_confirm(item.id)
             return
@@ -433,7 +440,7 @@ def edit_input(element_name, item):
             time.sleep(2)
             return False
     elif element_name == 'url':
-        print('* Current URL: %s' % (item.url) or 'Empty!')
+        print('* Current URL: %s' % (item.url or 'Empty!'))
         url = menu.get_input(message='* New URL: ')
 
         if url is not False:
@@ -443,7 +450,7 @@ def edit_input(element_name, item):
             time.sleep(2)
             return False
     elif element_name == 'login':
-        print('* Current login: %s' % (item.login) or 'Empty!')
+        print('* Current login: %s' % (item.login or 'Empty!'))
         login = menu.get_input(message='* New login: ')
 
         if login is not False:
@@ -463,7 +470,7 @@ def edit_input(element_name, item):
             time.sleep(2)
             return False
     elif element_name == 'notes':
-        print('* Current notes: %s' % (item.notes) or 'Empty!')
+        print('* Current notes: %s' % (item.notes or 'Empty!'))
         notes = notes_input()
 
         if notes is not False:
