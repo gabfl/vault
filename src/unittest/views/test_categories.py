@@ -51,6 +51,14 @@ class Test(BaseTest):
         with patch('builtins.input', return_value=''):
             self.assertIsNone(categories.pick(optional=True))
 
+    @patch.object(categories, 'all')
+    def test_pick_5(self, patched):
+        patched.return_value = []
+
+        # Test when there are no categories (all() returns `[]`)
+        with patch('builtins.input', return_value=''):
+            self.assertFalse(categories.rename_input())
+
     def test_exists(self):
         self.assertTrue(categories.exists(1))
         self.assertTrue(categories.exists('1'))
