@@ -12,7 +12,7 @@ from ..models.Secret import SecretModel
 from ..modules.misc import confirm, clear_screen
 from ..modules.carry import global_scope
 from ..modules import autocomplete
-from .categories import get_name as get_category_name, pick
+from .categories import get_name as get_category_name, pick, all as all_categories
 from . import clipboard, menu
 
 
@@ -113,10 +113,12 @@ def add_input():
     clear_screen()
 
     # Ask user input
-    category_id = pick(
-        message='* Choose a category number (or leave empty for none): ', optional=True)
-    if category_id is False:
-        return False
+    category_id = None
+    if len(all_categories()) > 0:
+        category_id = pick(
+            message='* Choose a category number (or leave empty for none): ', optional=True)
+        if category_id is False:
+            return False
 
     name = menu.get_input(message='* Name: ')
     if name is False:

@@ -38,9 +38,16 @@ def pick(message='Select a category: ', optional=False):
         Ask a user to pick a category
     """
 
+    all_categories = all()
+
+    if len(all_categories) == 0:
+        print()
+        print('You did not create any category yet. You can create one from the main menu.')
+        return False
+
     # Display available categories
     print()
-    print(to_table(all()))
+    print(to_table(all_categories))
     print()
 
     # Ask user input
