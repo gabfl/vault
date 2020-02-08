@@ -8,7 +8,7 @@ from ..modules.carry import global_scope
 clipboard_signature = None
 
 
-def copy(to_copy, name='password'):
+def copy(to_copy, name='password', erase=False):
     """
         Copy an item to the clipboard
     """
@@ -16,13 +16,14 @@ def copy(to_copy, name='password'):
     global clipboard_signature
 
     # Discard invalid input like `None` or empty strings
-    if type(to_copy) != str or to_copy == '':
+    if not erase and (type(to_copy) != str or to_copy == ''):
         print('* Nothing to copy!')
         return False
 
     pyperclip.copy(to_copy)
 
-    print('* The %s has been copied to the clipboard.' % (name))
+    if not erase:
+        print('* The %s has been copied to the clipboard.' % (name))
 
     # Save signature
     clipboard_signature = get_signature(to_copy)
@@ -78,5 +79,5 @@ def erase():
     global clipboard_signature
 
     if not is_changed():  # We will not empty the clipboard if its content has changed
-        copy('')  # Empty clipboard
+        copy(to_copy='', erase=True)  # Empty clipboard
     clipboard_signature = ''  # Reset clipboard signature
