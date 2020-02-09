@@ -1,5 +1,6 @@
 # Import/export view
 
+import csv
 import sys
 import json
 
@@ -31,6 +32,8 @@ def import_(format_, path):
 
     if format_ == 'json':
         return import_from_json(path)
+    elif format_ == 'csv':
+        return import_from_csv(path)
     else:
         raise ValueError('%s is not a supported file format' % (format_))
 
@@ -42,6 +45,8 @@ def export_(format_, path):
 
     if format_ == 'json':
         return export_to_json(path)
+    elif format_ == 'csv':
+        return export_to_csv(path)
     else:
         raise ValueError('%s is not a supported file format' % (format_))
 
@@ -69,6 +74,33 @@ def export_to_json(path):
     return save_file(path, json.dumps(out))
 
 
+def export_to_csv(path):
+    """
+        Export to a CSV file
+    """
+
+    # Ask user to unlock the vault
+    unlock()
+
+    # Create rows of secrets
+    # NOTE: We are not using headers for now, it is disabled by default in KeePassXC csv import
+    # TODO: ask maintainer if csv.DictReader is still preferred, or how how to handle this
+    # keepassxc_headers = ['Group', 'Title', 'Username', 'Password', 'URL', 'Notes']
+    # pyvault_headers = ['category', 'name', 'login', 'password', 'url', 'notes']
+    rows = []
+    for secret in secrets.all():
+        rows.append([
+            categories.get_name(secret.category_id),
+            secret.name,
+            secret.login,
+            secret.password,
+            secret.url,
+            secret.notes,
+        ])
+
+    return save_file(path, rows, format_='csv')
+
+
 def import_from_json(path=None, rows=None):
     """
         Import a Json file
@@ -94,6 +126,49 @@ def import_from_json(path=None, rows=None):
 
     if confirm('Confirm import?', False):
         return import_items(rows)
+    else:
+        print("Import cancelled.")
+        return False
+
+
+def import_from_csv(path=None, rows=None):
+    """
+        Import a CSV file
+    """
+
+    # Ask user to unlock the vault (except if its already unlocked in migration)
+    if not isinstance(global_scope['enc'], Encryption):
+        unlock()
+
+    if not rows:  # If importing from a file
+        # Read content
+        content = read_file(path, format_='csv')
+
+        # Decode CSV
+        reader = csv.reader(content)
+        rows = list(reader)
+
+        # Check if first rows contains `keepassxc_headers'
+        keepassxc_headers = ['GROUP', 'TITLE', 'USERNAME', 'PASSWORD', 'URL', 'NOTES']
+        if all([c.upper() in keepassxc_headers for c in rows[0]]):
+            del rows[0]
+
+
+    # TODO: csv.DictReader ?
+    items = [{'category': row[0], 'name': row[1], 'login': row[2], 'password': row[3], 'url': row[4], 'notes': row[5]} for row in rows]
+    # TODO: UNDO: KeePassXC includes "Root/" prefix that may(?) be desired
+    for item in items:
+        item['category'] = item['category'].split('/')[1]
+
+    # User view of items
+    print("The following items will be imported:")
+    print()
+    print(to_table(
+        [[item['name'], item['url'], item['login'], item['category']] for item in items]))
+    print()
+
+    if confirm('Confirm import?', False):
+        return import_items(items)
     else:
         print("Import cancelled.")
         return False
@@ -141,7 +216,7 @@ def to_table(rows=[]):
         return 'Empty!'
 
 
-def read_file(path, mode='r'):
+def read_file(path, mode='r', format_='json'):
     """
         Read an import file and return its content
     """
@@ -149,6 +224,8 @@ def read_file(path, mode='r'):
     # Read import file
     try:
         file = open(path, mode=mode)
+        if format_ == 'csv':
+            return file
         fileContent = file.read()
         file.close()
 
@@ -159,7 +236,7 @@ def read_file(path, mode='r'):
         sys.exit()
 
 
-def save_file(path, content, mode='w'):
+def save_file(path, content, mode='w', format_='json'):
     """
         Save exported items to a file
     """
@@ -167,8 +244,13 @@ def save_file(path, content, mode='w'):
     # Save to file
     try:
         file = open(path, mode)
-        file.write(content)
-        file.close()
+
+        if format_ == 'json':
+            file.write(content)
+            file.close()
+        else:
+            writer = csv.writer(file)
+            writer.writerows(content)
 
         print("The vault has been exported to the file `%s`." % (path))
     except Exception as e:

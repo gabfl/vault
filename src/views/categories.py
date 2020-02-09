@@ -140,6 +140,11 @@ def add_input():
     if not name:
         return False
 
+    # No slashes in category names (see: KeePassXC csv protocol)
+    if '/' in name:
+        print('ERROR: cannot have "/" character in category name')
+        return False
+
     # Create category
     result = add(name=name)
 
