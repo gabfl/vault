@@ -43,8 +43,13 @@ def autocomplete(text, state):
 def get_input_autocomplete(message=''):
     """ Allow user to type input and provide auto-completion """
 
-    readline.set_completer_delims(' \t\n;')
-    readline.parse_and_bind("tab: complete")
+    # Apple does not ship GNU readline with OS X.
+    # It does ship BSD libedit which includes a readline compatibility interface.
+    # Source: https://stackoverflow.com/questions/7116038/python-tab-completion-mac-osx-10-7-lion
+    if 'libedit' in readline.__doc__:
+        readline.parse_and_bind("bind ^I rl_complete")
+    else:
+        readline.parse_and_bind("tab: complete")
     readline.set_completer(autocomplete)
 
     try:
