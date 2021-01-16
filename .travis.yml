@@ -1,9 +1,11 @@
 language: python
 python:
+  - "3.7"
   - "3.8"
 before_install:
   - sudo apt-get update
   - sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
+  - pip install -U pip
   - pip install pycodestyle codecov
   - python3 setup.py install
 script:
