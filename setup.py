@@ -19,14 +19,14 @@ setup(
               'vault.modules', 'vault.views'],
     package_dir={'vault': 'src'},
     install_requires=['pycryptodome==3.9.9', 'pyperclip', 'tabulate',
-                      'argparse', 'passwordgenerator', 'SQLAlchemy==1.3.16',
+                      'argparse', 'passwordgenerator', 'SQLAlchemy==1.3.20',
                       'pysqlcipher3'],  # external dependencies
     entry_points={
         'console_scripts': [
             'vault = vault.vault:main',
         ],
     },
-    classifiers=[  # see https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    classifiers=[  # see https://pypi.org/pypi?%3Aaction=list_classifiers
         'Topic :: Security',
         'Topic :: Security :: Cryptography',
         'License :: OSI Approved :: MIT License',
