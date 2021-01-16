@@ -1,9 +1,9 @@
 # Vault
 
 [![Pypi](https://img.shields.io/pypi/v/pyvault.svg)](https://pypi.org/project/pyvault)
-[![Build Status](https://travis-ci.org/gabfl/vault.svg?branch=master)](https://travis-ci.org/gabfl/vault)
-[![codecov](https://codecov.io/gh/gabfl/vault/branch/master/graph/badge.svg)](https://codecov.io/gh/gabfl/vault)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/gabfl/vault/master/LICENSE)
+[![Build Status](https://travis-ci.org/gabfl/vault.svg?branch=main)](https://travis-ci.org/gabfl/vault)
+[![codecov](https://codecov.io/gh/gabfl/vault/branch/main/graph/badge.svg)](https://codecov.io/gh/gabfl/vault)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/gabfl/vault/main/LICENSE)
 
 Vault is a simple Python password manager. It allows you to securely save secrets with a simple CLI interface.
 
@@ -20,7 +20,7 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Basic usage
 
-![Demo](https://github.com/gabfl/vault/blob/master/img/demo.gif?raw=true)
+![Demo](https://github.com/gabfl/vault/blob/main/img/demo.gif?raw=true)
 
 ## Installation and setup
 
