@@ -8,7 +8,7 @@ except(IOError, ImportError):
 
 setup(
     name='pyvault',
-    version='2.3.3',
+    version='2.3.4',
     description='Python password manager',
     long_description=long_description,
     author='Gabriel Bordeaux',
