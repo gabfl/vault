@@ -62,7 +62,7 @@ def get_engine(encrypted=True):
         raise RuntimeError('`db_file` is not defined in the global scope')
 
     if encrypted:
-        return create_engine('sqlite+pysqlcipher://:' + get_db_key() + '@' + get_slashes() + global_scope['db_file'])
+        return create_engine('sqlite+sqlcipher3://:' + get_db_key() + '@' + get_slashes() + global_scope['db_file'])
     else:
         return create_engine('sqlite:' + get_slashes() + global_scope['db_file'])
 
