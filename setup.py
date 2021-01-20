@@ -20,7 +20,7 @@ setup(
     package_dir={'vault': 'src'},
     install_requires=['pycryptodome==3.9.9', 'pyperclip', 'tabulate',
                       'argparse', 'passwordgenerator', 'SQLAlchemy==1.3.22',
-                      'pysqlcipher3'],  # external dependencies
+                      'sqlcipher3==0.4.5'],  # external dependencies
     entry_points={
         'console_scripts': [
             'vault = vault.vault:main',
