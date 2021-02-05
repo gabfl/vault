@@ -31,6 +31,13 @@ Vault 2.x requires `sqlcipher` to be installed on your machine.
 On MacOS, you can install it with [brew](https://brew.sh/):
 ```bash
 brew install sqlcipher
+
+# Install sqlcipher3
+pip3 install sqlcipher3==0.4.5
+
+# If you are getting an error "Failed to build sqlcipher3", you would need to fix the build flags:
+SQLCIPHER_PATH="$(brew --cellar sqlcipher)/$(brew list --versions sqlcipher | tr ' ' '\n' | tail -1)"
+C_INCLUDE_PATH=$SQLCIPHER_PATH/include LIBRARY_PATH=$SQLCIPHER_PATH/lib pip3 install sqlcipher3==0.4.5
 ```
 
 On Ubuntu/Debian, you can install it with apt-get:
