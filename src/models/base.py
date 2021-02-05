@@ -2,6 +2,7 @@ import os
 from hashlib import sha256
 
 
+import sqlcipher3
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import Session
@@ -62,7 +63,7 @@ def get_engine(encrypted=True):
         raise RuntimeError('`db_file` is not defined in the global scope')
 
     if encrypted:
-        return create_engine('sqlite+pysqlcipher://:' + get_db_key() + '@' + get_slashes() + global_scope['db_file'])
+        return create_engine('sqlite+pysqlcipher://:' + get_db_key() + '@' + get_slashes() + global_scope['db_file'], module=sqlcipher3)
     else:
         return create_engine('sqlite:' + get_slashes() + global_scope['db_file'])
 
