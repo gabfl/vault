@@ -32,12 +32,26 @@ def autocomplete(text, state):
 
     results = [c for c in comp if c.startswith(buffer)] + [None]
 
-    # Handle multi-word inputs by truncating strings at the last space
-    if buffer.find(' ') > 0:
-        strip_pos = buffer.rfind(' ') + 1
-        results = [i[strip_pos:] for i in results if i is not None] + [None]
+    # Handle breaking characters by truncating strings at the last breaking character
+    strip_pos = find_breaking_strings(buffer)
+    if strip_pos > 0:
+        results = [i[strip_pos + 1:]
+                   for i in results if i is not None] + [None]
 
     return results[state]
+
+
+def find_breaking_strings(string):
+    """ Find last breaking string in a string """
+
+    breaking_strings = [' ', '@', '?', '#', '$', '%', '&', '*']
+    result = 0
+    for breaking_string in breaking_strings:
+        rf = string.rfind(breaking_string)
+        if rf > result:
+            result = rf
+
+    return result
 
 
 def get_input_autocomplete(message=''):
