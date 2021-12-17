@@ -1,7 +1,7 @@
 # Vault
 
 [![Pypi](https://img.shields.io/pypi/v/pyvault.svg)](https://pypi.org/project/pyvault)
-[![Build Status](https://travis-ci.org/gabfl/vault.svg?branch=main)](https://travis-ci.org/gabfl/vault)
+[![Build Status](https://travis-ci.com/gabfl/vault.svg?branch=main)](https://travis-ci.com/gabfl/vault)
 [![codecov](https://codecov.io/gh/gabfl/vault/branch/main/graph/badge.svg)](https://codecov.io/gh/gabfl/vault)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/gabfl/vault/main/LICENSE)
 
