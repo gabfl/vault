@@ -23,7 +23,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
           pip install -U pip
-          pip install pycodestyle codecov
+          pip install pycodestyle codecov pytest
           python3 setup.py install
       - name: Run pycodestyle
         run: |
