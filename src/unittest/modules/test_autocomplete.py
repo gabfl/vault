@@ -49,7 +49,7 @@ class Test(BaseTest):
         assert autocomplete.find_breaking_strings('abc@def') == 3
         assert autocomplete.find_breaking_strings('abc@def*ghi') == 7
         assert autocomplete.find_breaking_strings(
-            'some@email.com somethingelse') == 1
+            'some@email.com somethingelse') == 14
 
     def test_get_input_autocomplete(self):
         autocomplete.set_parameters([
