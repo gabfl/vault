@@ -1,0 +1,36 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v1
+      with:
+        python-version:
+           - '3.7'
+           - '3.8'
+           - '3.9'
+    - name: Install dependencies
+      run: |
+        - sudo apt-get update
+        - sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
+        - pip install -U pip
+        - pip install pycodestyle codecov
+        - python3 setup.py install
+    - name: Run pycodestyle
+      run: |
+        pycodestyle --exclude=venv --ignore=E501 .
+    - name: Run pytest
+      run: |
+        coverage run --source=. -m pytest
+    - name: Generate coverage report
+      run: |
+        coverage report -m
+    - name: Report to codecov
+      run: |
+        codecov
