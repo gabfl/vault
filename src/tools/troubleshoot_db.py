@@ -1,3 +1,8 @@
+"""
+    sqlcipher troubleshooting tool
+    Usage: python3 -m src.tools.troubleshoot_db
+"""
+
 from tempfile import NamedTemporaryFile
 import uuid
 
