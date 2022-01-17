@@ -22,7 +22,7 @@ class Base(object):
     pass
 
 
-def get_session():
+def get_session(fresh=False):
     """
         Return SQLAlchemy session
     """
@@ -36,7 +36,7 @@ def get_session():
     db_file = global_scope['db_file']
 
     # Add a session to the current list
-    if not sessions.get(db_file):
+    if fresh or not sessions.get(db_file):
         sessions[db_file] = Session(bind=get_engine())
 
     return sessions[db_file]
