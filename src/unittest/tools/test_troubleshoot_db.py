@@ -1,8 +1,3 @@
-"""
-    sqlcypher troubleshooting tool
-    Usage: python3 -m src.tools.troubleshoot_db
-"""
-
 import os
 from unittest.mock import patch
 from tempfile import NamedTemporaryFile
