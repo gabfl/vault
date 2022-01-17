@@ -65,8 +65,9 @@ def create_temporary_secret():
 def attempt_dummy_encrypted_db(db_path):
     """ Create a dummy encrypted database """
 
-    engine = create_engine('sqlite+pysqlcipher://:' + create_temporary_secret() +
-                           '@//' + db_path, module=sqlcipher3)
+    engine = create_engine(
+        'sqlite+pysqlcipher://:' + create_temporary_secret() + '@//' + db_path,
+        module=sqlcipher3)
     # engine = create_engine('sqlite:///' + db_path)
     connection = engine.connect()
     connection.execute('CREATE TABLE foo (a int)')

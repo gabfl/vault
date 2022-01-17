@@ -77,8 +77,8 @@ class Test(BaseTest):
 
         # Create an encrypted database with a dummy key
         f = NamedTemporaryFile(delete=False)
-        engine = create_engine('sqlite+pysqlcipher://:' + 'abcd' +
-                               '@//' + f.name, module=sqlcipher3)
+        engine = create_engine(
+            'sqlite+pysqlcipher://:abcd@//' + f.name, module=sqlcipher3)
         connection = engine.connect()
         connection.execute('CREATE TABLE foo (a int)')
 
