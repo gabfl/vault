@@ -98,7 +98,7 @@ if __name__ == '__main__':
         print('* Create dummy database: OK')
     else:
         print(
-            '!!! Create dummy database: ERROR (Dummy encrypted database failed to create)')
+            '!!! Create dummy database: ERROR (Dummy encrypted database could not be created)')
 
     if verify_if_dummy_db_is_encrypted(temp_db_file):
         print('* Check if dummy database is encrypted: OK')
@@ -121,7 +121,7 @@ if __name__ == '__main__':
             print('* Attempt to query vault: OK')
         else:
             print(
-                '!!! Attempt to query vault: ERROR (Database failed is not encrypted with supplied key)')
+                '!!! Attempt to query vault: ERROR (Database is not encrypted with supplied key)')
 
         drop_sessions()
 
