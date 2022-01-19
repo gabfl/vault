@@ -33,4 +33,4 @@ RUN wget https://bootstrap.pypa.io/get-pip.py \
 
 RUN pip3 install pyvault
 
-ENTRYPOINT [ "vault" ]
+ENTRYPOINT [ "/bin/bash", "-c", "sqlcipher --version && pip3 freeze | grep pyvault && vault" ]
