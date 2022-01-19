@@ -65,6 +65,12 @@ class Test(BaseTest):
         self.assertIsNone(clipboard.wait())
         self.assertEqual(clipboard.clipboard_signature, '')
 
+    def test_wait_3(self):
+        # Case when we have no clipboard_signature because
+        # pyperclip is not available
+        self.assertEqual(clipboard.clipboard_signature, '')
+        self.assertIsNone(clipboard.wait())
+
     @patch.object(pyperclip, 'copy')
     @patch.object(pyperclip, 'paste')
     def test_erase(self, patched, patched2):

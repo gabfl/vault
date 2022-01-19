@@ -56,6 +56,9 @@ def wait():
         Wait X seconds and erase the clipboard
     """
 
+    if not clipboard_signature:
+        return None
+
     print("* Clipboard will be erased in %s seconds" %
           (global_scope['conf'].clipboardTTL))
 
