@@ -28,7 +28,7 @@ Vault 2.x requires `sqlcipher` to be installed on your machine.
 
 ### MacOS
 
-On MacOS, you can install `sqlcipher`` with [brew](https://brew.sh/):
+On MacOS, you can install `sqlcipher` with [brew](https://brew.sh/):
 ```bash
 brew install sqlcipher
 
@@ -54,7 +54,7 @@ vault
 On Ubuntu/Debian, you can install `sqlcipher` with apt:
 ```bash
 sudo apt update
-sudo apt install -y gcc python3-dev libsqlcipher-dev
+sudo apt install -y gcc python3-dev libsqlcipher-dev xclip
 ```
 
 Then install the vault:

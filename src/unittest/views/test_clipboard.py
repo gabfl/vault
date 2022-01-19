@@ -33,10 +33,8 @@ class Test(BaseTest):
         clipboard.clipboard_signature = clipboard.get_signature('some string')
         self.assertTrue(clipboard.is_changed())
 
-    @patch.object(pyperclip, 'paste')
-    def test_is_changed_3(self, patched):
-        patched.return_value = ''
-        clipboard.clipboard_signature = clipboard.get_signature('some string')
+    def test_is_changed_3(self):
+        clipboard.clipboard_signature = ''
         self.assertIsNone(clipboard.is_changed())
 
     def test_getSignature(self):
