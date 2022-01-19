@@ -86,7 +86,7 @@ docker run -v ~/.vault:/root/.vault -ti gabfl/vault
 git clone https://github.com/gabfl/vault && cd vault
 
 # Installation
-python3 setup.py install
+pip3 install .
 
 # Run setup
 vault
