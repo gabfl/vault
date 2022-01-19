@@ -38,7 +38,8 @@ def is_changed():
         Returns `True` if the clipboard content has changed
     """
 
-    return clipboard_signature != get_signature(pyperclip.paste())
+    if clipboard_signature:
+        return clipboard_signature != get_signature(pyperclip.paste())
 
 
 def get_signature(item):
