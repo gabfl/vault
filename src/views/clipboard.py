@@ -20,7 +20,11 @@ def copy(to_copy, name='password', erase=False):
         print('* Nothing to copy!')
         return False
 
-    pyperclip.copy(to_copy)
+    try:
+        pyperclip.copy(to_copy)
+    except pyperclip.PyperclipException:
+        print('* Error: could not find a copy/paste mechanism for your system')
+        return False
 
     if not erase:
         print('* The %s has been copied to the clipboard.' % (name))
