@@ -20,7 +20,11 @@ def copy(to_copy, name='password', erase=False):
         print('* Nothing to copy!')
         return False
 
-    pyperclip.copy(to_copy)
+    try:
+        pyperclip.copy(to_copy)
+    except pyperclip.PyperclipException:
+        print('* Error: could not find a copy/paste mechanism for your system')
+        return False
 
     if not erase:
         print('* The %s has been copied to the clipboard.' % (name))
@@ -34,7 +38,8 @@ def is_changed():
         Returns `True` if the clipboard content has changed
     """
 
-    return clipboard_signature != get_signature(pyperclip.paste())
+    if clipboard_signature:
+        return clipboard_signature != get_signature(pyperclip.paste())
 
 
 def get_signature(item):
@@ -50,6 +55,9 @@ def wait():
     """
         Wait X seconds and erase the clipboard
     """
+
+    if not clipboard_signature:
+        return None
 
     print("* Clipboard will be erased in %s seconds" %
           (global_scope['conf'].clipboardTTL))

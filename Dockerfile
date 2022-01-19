@@ -27,6 +27,10 @@ RUN git clone https://github.com/sqlcipher/sqlcipher.git \
 RUN wget https://bootstrap.pypa.io/get-pip.py \
       && python3 get-pip.py
 
+# RUN git clone -b pyperclip-except https://github.com/gabfl/vault.git \
+#       && cd vault \
+#       && pip3 install .
+
 RUN pip3 install pyvault
 
-ENTRYPOINT [ "vault" ]
+ENTRYPOINT [ "/bin/bash", "-c", "sqlcipher --version && pip3 freeze | grep pyvault && vault" ]
