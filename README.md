@@ -24,11 +24,11 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Installation and setup
 
-### Install sqlcipher
-
 Vault 2.x requires `sqlcipher` to be installed on your machine.
 
-On MacOS, you can install it with [brew](https://brew.sh/):
+### MacOS
+
+On MacOS, you can install `sqlcipher`` with [brew](https://brew.sh/):
 ```bash
 brew install sqlcipher
 
@@ -40,19 +40,43 @@ SQLCIPHER_PATH="$(brew --cellar sqlcipher)/$(brew list --versions sqlcipher | tr
 C_INCLUDE_PATH=$SQLCIPHER_PATH/include LIBRARY_PATH=$SQLCIPHER_PATH/lib pip3 install sqlcipher3==0.4.5
 ```
 
-On Ubuntu/Debian, you can install it with apt-get:
-```bash
-sudo apt-get update
-sudo apt-get install --yes gcc python3-dev libsqlcipher-dev
-```
-
-### Using PyPI
+Then install the vault:
 
 ```bash
 pip3 install pyvault
 
 # Run setup
 vault
+```
+
+### Ubuntu / Debian
+
+On Ubuntu/Debian, you can install `sqlcipher` with apt:
+```bash
+sudo apt update
+sudo apt install -y gcc python3-dev libsqlcipher-dev
+```
+
+Then install the vault:
+
+```bash
+pip3 install pyvault
+
+# Run setup
+vault
+```
+
+### Using Docker
+
+```bash
+# Pull the image
+docker pull gabfl/vault
+
+# Create local directory
+mkdir ~/.vault
+
+# Launch image
+docker run -v ~/.vault:/root/.vault -ti gabfl/vault
 ```
 
 ### Cloning the project
