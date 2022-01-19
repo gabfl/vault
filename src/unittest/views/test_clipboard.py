@@ -46,6 +46,7 @@ class Test(BaseTest):
     def test_wait(self, patched, patched2):
         patched.return_value = 'some string'
         patched2.return_value = 'some string'
+        clipboard.clipboard_signature = clipboard.get_signature('some string')
         # Ensure we have a short wait time
         global_scope['conf'].update('clipboardTTL', '1')
 
@@ -57,6 +58,7 @@ class Test(BaseTest):
     def test_wait_2(self, patched, patched2):
         patched.return_value = 'some other string'
         patched2.return_value = 'some string'
+        clipboard.clipboard_signature = clipboard.get_signature('some string')
         # Ensure we have a short wait time
         global_scope['conf'].update('clipboardTTL', '1')
 
