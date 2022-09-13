@@ -3,12 +3,12 @@ from setuptools import setup
 try:
     import pypandoc
     long_description = pypandoc.convert_file('README.md', 'rst')
-except(IOError, ImportError):
+except (IOError, ImportError):
     long_description = open('README.md').read()
 
 setup(
     name='pyvault',
-    version='2.4.2',
+    version='2.4.3',
     description='Python password manager',
     long_description=long_description,
     author='Gabriel Bordeaux',
@@ -19,11 +19,11 @@ setup(
               'vault.modules', 'vault.views'],
     package_dir={'vault': 'src'},
     install_requires=[
-        'pycryptodome==3.12.0',
+        'pycryptodome==3.15.0',
         'pyperclip',
         'tabulate',
         'passwordgenerator',
-        'SQLAlchemy==1.4.28',
+        'SQLAlchemy==1.4.41',
         'sqlcipher3==0.4.5'
     ],  # external dependencies
     entry_points={
