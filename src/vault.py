@@ -152,7 +152,7 @@ def main():
     parser.add_argument("-x", "--export", type=str,
                         help="File to export credentials to")
     parser.add_argument("-f", "--file_format", type=str, help="Import/export file format (default: 'json')",
-                        choices=['json'], nargs='?', default='json')
+                        choices=['json','toml'], nargs='?', default='json')
     parser.add_argument("-e", "--erase_vault", action='store_true',
                         help="Erase the vault and config file")
     args = parser.parse_args()

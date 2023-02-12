@@ -2,6 +2,7 @@
 
 import sys
 import json
+import toml
 
 from tabulate import tabulate
 
@@ -31,6 +32,8 @@ def import_(format_, path):
 
     if format_ == 'json':
         return import_from_json(path)
+    elif format_ == 'toml':
+        return import_from_toml(path)
     else:
         raise ValueError('%s is not a supported file format' % (format_))
 
@@ -42,6 +45,8 @@ def export_(format_, path):
 
     if format_ == 'json':
         return export_to_json(path)
+    elif format_ == 'toml':
+        pass
     else:
         raise ValueError('%s is not a supported file format' % (format_))
 
@@ -67,7 +72,27 @@ def export_to_json(path):
         })
 
     return save_file(path, json.dumps(out))
+def export_to_toml(path):
+    """
+        Export to a Toml file
+    """
 
+    # Ask user to unlock the vault
+    unlock()
+
+    # Create dict of secrets
+    out = []
+    for secret in secrets.all():
+        out.append({
+            'name': secret.name,
+            'url': secret.url,
+            'login': secret.login,
+            'password': secret.password,
+            'notes': secret.notes,
+            'category': categories.get_name(secret.category_id),
+        })
+
+    return save_file(path, toml.dumps(out))
 
 def import_from_json(path=None, rows=None):
     """
@@ -97,7 +122,30 @@ def import_from_json(path=None, rows=None):
     else:
         print("Import cancelled.")
         return False
+def import_from_toml(path=None, rows=None):
+    # Ask user to unlock the vault (except if its already unlocked in migration)
+    if not isinstance(global_scope['enc'], Encryption):
+        unlock()
 
+    if not rows:  # If importing from a file
+        # Read content
+        content = read_file(path)
+
+        # Decode toml
+        rows = toml.loads(content)
+
+    # User view of items
+    print("The following items will be imported:")
+    print()
+    print(to_table(
+        [[row['name'], row['url'], row['login'], row['category']] for row in rows]))
+    print()
+
+    if confirm('Confirm import?', False):
+        return import_items(rows)
+    else:
+        print("Import cancelled.")
+        return False
 
 def import_items(rows):
     """
