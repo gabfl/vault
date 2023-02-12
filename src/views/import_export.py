@@ -72,6 +72,8 @@ def export_to_json(path):
         })
 
     return save_file(path, json.dumps(out))
+
+
 def export_to_toml(path):
     """
         Export to a Toml file
@@ -93,6 +95,7 @@ def export_to_toml(path):
         })
 
     return save_file(path, toml.dumps(out))
+
 
 def import_from_json(path=None, rows=None):
     """
@@ -122,6 +125,8 @@ def import_from_json(path=None, rows=None):
     else:
         print("Import cancelled.")
         return False
+
+
 def import_from_toml(path=None, rows=None):
     # Ask user to unlock the vault (except if its already unlocked in migration)
     if not isinstance(global_scope['enc'], Encryption):
@@ -142,6 +147,7 @@ def import_from_toml(path=None, rows=None):
     print()
 
     if confirm('Confirm import?', False):
+        
         return import_items(rows)
     else:
         print("Import cancelled.")
