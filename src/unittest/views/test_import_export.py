@@ -1,6 +1,6 @@
 from unittest.mock import patch
 import tempfile
-import toml
+import json
 
 from ..base import BaseTest
 from ...views import import_export
@@ -43,8 +43,8 @@ class Test(BaseTest):
         with patch('builtins.input', return_value='y'):
             with patch('getpass.getpass', return_value=self.secret_key):
                 self.assertTrue(import_export.import_(
-                    format_='toml',
-                    path='sample/export.toml'))
+                    format_='json',
+                    path='sample/export.json'))
 
     def test_import_2(self):
         self.assertRaises(ValueError, import_export.import_,
@@ -75,7 +75,7 @@ class Test(BaseTest):
             content = f.read()
 
             # Decode content
-            content = toml.loads(content)
+            content = json.loads(content)
 
             # The content should be a list
             self.assertIsInstance(content, list)
