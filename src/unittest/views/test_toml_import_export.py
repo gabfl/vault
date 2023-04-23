@@ -1,6 +1,6 @@
 from unittest.mock import patch
 import tempfile
-import toml
+import tomllib as toml
 
 from ..base import BaseTest
 from ...views import import_export
@@ -8,9 +8,7 @@ from ...models.Secret import SecretModel
 from ...models.Category import CategoryModel
 from ...modules.carry import global_scope
 
-
 class Test(BaseTest):
-
     def setUp(self):
         # Create some secrets
         secret_1 = SecretModel(name='Paypal',
@@ -56,18 +54,18 @@ class Test(BaseTest):
 
         with patch('getpass.getpass', return_value=self.secret_key):
             self.assertTrue(import_export.export_(
-                format_='json', path=file_.name))
+                format_='toml', path=file_.name))
 
     def test_export_2(self):
         self.assertRaises(ValueError, import_export.export_,
                           format_='some_invalid_format', path='/tmp/')
 
-    def test_export_to_json(self):
+    def test_export_to_toml(self):
         # Create a temporary file
         file_ = tempfile.NamedTemporaryFile(delete=False)
 
         with patch('getpass.getpass', return_value=self.secret_key):
-            self.assertTrue(import_export.export_to_json(file_.name))
+            self.assertTrue(import_export.export_to_toml(file_.name))
 
         # Try read the file
         with open(file_.name, mode='r') as f:
@@ -84,26 +82,26 @@ class Test(BaseTest):
             for item in content:
                 self.assertIsInstance(item, dict)
 
-    def test_import_from_json(self):
+    def test_import_from_toml(self):
         # Test basic import
         global_scope['enc'] = None
         with patch('builtins.input', return_value='y'):
             with patch('getpass.getpass', return_value=self.secret_key):
-                self.assertTrue(import_export.import_from_json(
-                    'sample/export.json'))
+                self.assertTrue(import_export.import_from_toml(
+                    'sample/export.toml'))
 
-    def test_import_from_json_2(self):
+    def test_import_from_toml_2(self):
         # Test import when vault is already unlocked (in unit test base)
         with patch('builtins.input', return_value='y'):
-            self.assertTrue(import_export.import_from_json(
-                'sample/export.json'))
+            self.assertTrue(import_export.import_from_toml(
+                'sample/export.toml'))
 
-    def test_import_from_json_3(self):
+    def test_import_from_toml_3(self):
         # Test import with confirmation denied
         with patch('builtins.input', return_value='n'):
             with patch('getpass.getpass', return_value=self.secret_key):
-                self.assertFalse(import_export.import_from_json(
-                    'sample/export.json'))
+                self.assertFalse(import_export.import_from_toml(
+                    'sample/export.toml'))
 
     def test_to_table(self):
         self.assertIsInstance(import_export.to_table(
