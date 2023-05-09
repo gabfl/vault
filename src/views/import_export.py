@@ -102,7 +102,8 @@ def import_from_json(path=None, rows=None):
         Import a Json file
     """
 
-    # Ask user to unlock the vault (except if its already unlocked in migration)
+    # Ask user to unlock the vault (except if its already unlocked in
+    # migration)
     if not isinstance(global_scope['enc'], Encryption):
         unlock()
 
@@ -128,7 +129,8 @@ def import_from_json(path=None, rows=None):
 
 
 def import_from_toml(path=None, rows=None):
-    # Ask user to unlock the vault (except if its already unlocked in migration)
+    # Ask user to unlock the vault (except if its already unlocked in
+    # migration)
     if not isinstance(global_scope['enc'], Encryption):
         unlock()
 
@@ -147,11 +149,12 @@ def import_from_toml(path=None, rows=None):
     print()
 
     if confirm('Confirm import?', False):
-        
+
         return import_items(rows)
     else:
         print("Import cancelled.")
         return False
+
 
 def import_items(rows):
     """

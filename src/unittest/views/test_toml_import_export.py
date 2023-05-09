@@ -8,6 +8,7 @@ from ...models.Secret import SecretModel
 from ...models.Category import CategoryModel
 from ...modules.carry import global_scope
 
+
 class Test(BaseTest):
     def setUp(self):
         # Create some secrets
