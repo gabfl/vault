@@ -1,6 +1,6 @@
 from unittest.mock import patch
 import tempfile
-import tomllib as toml
+import toml
 
 from ..base import BaseTest
 from ...views import import_export
