@@ -25,7 +25,7 @@ setup(
         'passwordgenerator',
         'SQLAlchemy==1.4.41',
         'sqlcipher3==0.4.5',
-        'toml'
+        'tomli >= 1.1.0 ; python_version < "3.11"'
 
     ],  # external dependencies
     entry_points={

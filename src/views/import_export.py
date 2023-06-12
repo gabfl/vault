@@ -2,7 +2,10 @@
 
 import sys
 import json
-import toml
+try:
+    import tomllib as toml
+except ModuleNotFoundError:
+    import tomli as toml
 
 from tabulate import tabulate
 

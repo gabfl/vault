@@ -1,6 +1,9 @@
 from unittest.mock import patch
 import tempfile
-import toml
+try:
+    import tomllib as toml
+except ModuleNotFoundError:
+    import tomli as toml
 
 from ..base import BaseTest
 from ...views import import_export
@@ -10,6 +13,7 @@ from ...modules.carry import global_scope
 
 
 class Test(BaseTest):
+
     def setUp(self):
         # Create some secrets
         secret_1 = SecretModel(name='Paypal',
