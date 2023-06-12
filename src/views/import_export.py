@@ -6,7 +6,7 @@ try:
     import tomllib as toml
 except ModuleNotFoundError:
     import tomli as toml
-
+import tomli_w
 from tabulate import tabulate
 
 from . import menu, secrets, categories
@@ -97,7 +97,7 @@ def export_to_toml(path):
             'category': categories.get_name(secret.category_id),
         })
 
-    return save_file(path, toml.dumps(out))
+    return save_file(path, tomli_w.dumps(out))
 
 
 def import_from_json(path=None, rows=None):
