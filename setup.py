@@ -19,7 +19,7 @@ setup(
               'vault.modules', 'vault.views'],
     package_dir={'vault': 'src'},
     install_requires=[
-        'pycryptodome==3.15.0',
+        'pycryptodome==3.19.1',
         'pyperclip',
         'tabulate',
         'passwordgenerator',
