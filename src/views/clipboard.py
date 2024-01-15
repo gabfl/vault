@@ -16,7 +16,7 @@ def copy(to_copy, name='password', erase=False):
     global clipboard_signature
 
     # Discard invalid input like `None` or empty strings
-    if not erase and (type(to_copy) != str or to_copy == ''):
+    if not erase and (type(to_copy) is not str or to_copy == ''):
         print('* Nothing to copy!')
         return False
 
