@@ -1,16 +1,14 @@
 from setuptools import setup
 
-try:
-    import pypandoc
-    long_description = pypandoc.convert_file('README.md', 'rst')
-except (IOError, ImportError):
-    long_description = open('README.md').read()
+with open('README.md', encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='pyvault',
     version='2.4.6',
     description='Python password manager',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Gabriel Bordeaux',
     author_email='pypi@gab.lc',
     url='https://github.com/gabfl/vault',
