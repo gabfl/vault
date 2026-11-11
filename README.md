@@ -24,24 +24,7 @@ Vault is a simple Python password manager. It allows you to securely save secret
 
 ## Installation and setup
 
-Vault 2.x requires `sqlcipher` to be installed on your machine.
-
-### MacOS
-
-On MacOS, you can install `sqlcipher` with [brew](https://brew.sh/):
-```bash
-brew install sqlcipher
-
-# Install sqlcipher3
-SQLCIPHER_VERSION="0.5.3"
-pip3 install sqlcipher3==$SQLCIPHER_VERSION
-
-# If you are getting an error "Failed to build sqlcipher3", you would need to fix the build flags:
-SQLCIPHER_PATH="$(brew --cellar sqlcipher)/$(brew list --versions sqlcipher | tr ' ' '\n' | tail -1)"
-C_INCLUDE_PATH=$SQLCIPHER_PATH/include LIBRARY_PATH=$SQLCIPHER_PATH/lib pip3 install sqlcipher3==$SQLCIPHER_VERSION
-```
-
-Then install the vault:
+Vault is tested on Python 3.11 to 3.15. SQLCipher is bundled with the [sqlcipher3](https://pypi.org/project/sqlcipher3/) package on macOS, Linux and Windows, so you do not need to install it separately.
 
 ```bash
 pip3 install pyvault
@@ -50,22 +33,23 @@ pip3 install pyvault
 vault
 ```
 
-### Ubuntu / Debian
-
-On Ubuntu/Debian, you can install `sqlcipher` with apt:
-```bash
-sudo apt update
-sudo apt install -y gcc python3-dev libsqlcipher-dev xclip
-```
-
-Then install the vault:
+On Linux, copying secrets to the clipboard requires `xclip` (or `xsel`):
 
 ```bash
-pip3 install pyvault
-
-# Run setup
-vault
+sudo apt install -y xclip
 ```
+
+### Upgrading from 2.4.5 or earlier
+
+Earlier versions used the SQLCipher library installed on your system. Vault now uses the bundled SQLCipher 4, which opens any vault created with SQLCipher 4.x (the version shipped by Homebrew and by Ubuntu 20.04 and later). If your vault was created with SQLCipher 3.x, export it with your current version before upgrading and import it again afterwards (see [import](docs/import.md)):
+
+```bash
+vault --export vault_backup.json        # before upgrading
+pip3 install -U pyvault
+vault --import_items vault_backup.json  # after upgrading, then delete vault_backup.json
+```
+
+If no prebuilt package exists for your platform, pip builds `sqlcipher3` from source. You then need the SQLCipher headers (`brew install sqlcipher` on macOS, `sudo apt install -y gcc python3-dev libsqlcipher-dev` on Ubuntu/Debian).
 
 ### Using Docker
 
