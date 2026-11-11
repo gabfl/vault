@@ -50,7 +50,7 @@ def create_directory_if_missing(dir_):
             dir_))
         print('Please check the permissions or run `./vault.py --help` to find out how to specify an alternative path for both files.')
         print()
-        sys.exit()
+        sys.exit(1)
 
 
 def assess_integrity(vault_path, config_path):
