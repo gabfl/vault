@@ -25,9 +25,10 @@ jobs:
           pip install -U pip
           pip install -r requirements-test.txt
           pip install .
-      - name: Run pycodestyle
-        run: |
-          pycodestyle --exclude=venv --ignore=E501 .
+      - name: python-flake8
+          uses: julianwachholz/flake8-action@75749239077651dfd0ecbe405899cdcb0673ee8f
+        with:
+          checkName: python-flake8
       - name: Run pytest
         run: |
           coverage run --source=. -m pytest
